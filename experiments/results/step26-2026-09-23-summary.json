@@ -1,0 +1,462 @@
+{
+  "metadata": {
+    "kind": "metadata",
+    "run_at_utc": "2026-09-23T10:41:23.070220+00:00",
+    "macos_version": "27.0",
+    "macos_build": "26A428",
+    "chip": "Apple M1 Max",
+    "physical_bytes": "68719476736",
+    "arch": "arm64",
+    "source_sha256": "c2b740812e630f51d6e6c567425f585f688cf821515f32e7e573e2d543e97f9e",
+    "binary_sha256": "0a16d76b7985f54f455cdf6831757f647fab14294a88640525aeaf6d15281e71",
+    "probe_argv": [
+      "~/Documents/ChatGPT/MAC性能压榨助手/experiments/bin/telemetry-probe",
+      "--groups",
+      "public,gpu,power,temperature,memory,bandwidth",
+      "--stability"
+    ],
+    "plan": [
+      {
+        "segment": 0,
+        "interval_s": 2,
+        "planned_duration_s": 120
+      },
+      {
+        "segment": 1,
+        "interval_s": 5,
+        "planned_duration_s": 120
+      },
+      {
+        "segment": 2,
+        "interval_s": 2,
+        "planned_duration_s": 120
+      },
+      {
+        "segment": 3,
+        "interval_s": 5,
+        "planned_duration_s": 120
+      },
+      {
+        "segment": 4,
+        "interval_s": 2,
+        "planned_duration_s": 120
+      },
+      {
+        "segment": 5,
+        "interval_s": 5,
+        "planned_duration_s": 120
+      }
+    ],
+    "warmup_s": 30,
+    "injected_delay": {
+      "segment": 2,
+      "sample_index": 30,
+      "seconds": 6.2
+    }
+  },
+  "setup": {
+    "groups": "public,gpu,power,temperature,memory,bandwidth",
+    "stability": true,
+    "interval_s": 2,
+    "source": "step2.6-probe",
+    "kind": "setup",
+    "timestamp": "2026-09-23T10:41:23.629Z",
+    "ioreport": {
+      "gpu_dvfs_mhz": [
+        0,
+        388.8,
+        486,
+        648,
+        777.6,
+        972,
+        1296
+      ],
+      "power": {
+        "status": "measured",
+        "subscribed": 4,
+        "enumerated": 162,
+        "selected": 4
+      },
+      "gpu": {
+        "status": "measured",
+        "subscribed": 1,
+        "enumerated": 1,
+        "selected": 1
+      },
+      "topology": {
+        "status": "measured",
+        "logical_cpus": 10,
+        "reason": "validated_m1_max_0_1_e_2_9_p",
+        "source": "IODeviceTree+sysctl"
+      },
+      "smc": {
+        "status": "open",
+        "kr": 0
+      },
+      "bandwidth": {
+        "status": "measured",
+        "subscribed": 63,
+        "enumerated": 127,
+        "selected": 63
+      }
+    },
+    "pid": 71990
+  },
+  "segments": [
+    {
+      "segment": 0,
+      "nominal_interval_s": 2,
+      "duration_s": 120.72580899999593,
+      "samples": 60,
+      "cpu_seconds": 0.401537,
+      "cpu_percent_one_core": 0.3326024512289775,
+      "rss_first_bytes": 12173312,
+      "rss_last_bytes": 12189696,
+      "rss_observed_bytes": {
+        "min": 12173312,
+        "median": 12189696.0,
+        "mean": 12189431.741935484,
+        "p95": 12189696,
+        "max": 12189696
+      },
+      "host_port_refs": {
+        "min": 2,
+        "median": 2.0,
+        "mean": 2,
+        "p95": 2,
+        "max": 2
+      },
+      "child_process_count": {
+        "min": 0,
+        "median": 0.0,
+        "mean": 0,
+        "p95": 0,
+        "max": 0
+      },
+      "tick_window_s": {
+        "min": 2.0046589999983553,
+        "median": 2.011744000003091,
+        "mean": 2.01207379999978,
+        "p95": 2.0197800000023562,
+        "max": 2.024578999989899
+      },
+      "latency_ms": {
+        "min": 3.0149999947752804,
+        "median": 5.851000008988194,
+        "mean": 6.5933499960616855,
+        "p95": 12.27199999266304,
+        "max": 14.314999978523701
+      },
+      "statuses": {
+        "cpu:measured": 60,
+        "vm:measured": 60,
+        "swap:measured": 60,
+        "Tp05:measured": 60,
+        "Tg05:measured": 60,
+        "gpu:measured": 60,
+        "power:measured": 60,
+        "bandwidth:measured": 60
+      },
+      "interrupt_wakeups_delta": 60,
+      "package_idle_wakeups_delta": 0
+    },
+    {
+      "segment": 1,
+      "nominal_interval_s": 5,
+      "duration_s": 120.29064799999469,
+      "samples": 24,
+      "cpu_seconds": 0.16766599999999998,
+      "cpu_percent_one_core": 0.13938406915889867,
+      "rss_first_bytes": 12189696,
+      "rss_last_bytes": 12189696,
+      "rss_observed_bytes": {
+        "min": 12189696,
+        "median": 12189696.0,
+        "mean": 12189696,
+        "p95": 12189696,
+        "max": 12189696
+      },
+      "host_port_refs": {
+        "min": 2,
+        "median": 2.0,
+        "mean": 2,
+        "p95": 2,
+        "max": 2
+      },
+      "child_process_count": {
+        "min": 0,
+        "median": 0.0,
+        "mean": 0,
+        "p95": 0,
+        "max": 0
+      },
+      "tick_window_s": {
+        "min": 5.004824000003282,
+        "median": 5.011718499998096,
+        "mean": 5.012103125000674,
+        "p95": 5.021122000005562,
+        "max": 5.021168000006583
+      },
+      "latency_ms": {
+        "min": 3.419999993639067,
+        "median": 6.027000010362826,
+        "mean": 6.815541667795817,
+        "p95": 14.254000008804724,
+        "max": 15.83099999697879
+      },
+      "statuses": {
+        "cpu:measured": 24,
+        "vm:measured": 24,
+        "swap:measured": 24,
+        "Tp05:measured": 24,
+        "Tg05:measured": 24,
+        "gpu:measured": 24,
+        "power:measured": 24,
+        "bandwidth:measured": 24
+      },
+      "interrupt_wakeups_delta": 24,
+      "package_idle_wakeups_delta": 0
+    },
+    {
+      "segment": 2,
+      "nominal_interval_s": 2,
+      "duration_s": 124.97404300002381,
+      "samples": 60,
+      "cpu_seconds": 0.45322400000000007,
+      "cpu_percent_one_core": 0.36265450738431637,
+      "rss_first_bytes": 12189696,
+      "rss_last_bytes": 12206080,
+      "rss_observed_bytes": {
+        "min": 12189696,
+        "median": 12189696.0,
+        "mean": 12197623.741935484,
+        "p95": 12206080,
+        "max": 12206080
+      },
+      "host_port_refs": {
+        "min": 2,
+        "median": 2.0,
+        "mean": 2,
+        "p95": 2,
+        "max": 2
+      },
+      "child_process_count": {
+        "min": 0,
+        "median": 0.0,
+        "mean": 0,
+        "p95": 0,
+        "max": 0
+      },
+      "tick_window_s": {
+        "min": 2.0050309999787714,
+        "median": 2.0120929999975488,
+        "mean": 2.082902849999664,
+        "p95": 2.020714999991469,
+        "max": 6.21775300000445
+      },
+      "latency_ms": {
+        "min": 4.605000023730099,
+        "median": 6.388000008882955,
+        "mean": 7.157350000731337,
+        "p95": 13.876000011805445,
+        "max": 15.234999998938292
+      },
+      "statuses": {
+        "cpu:measured": 60,
+        "vm:measured": 60,
+        "swap:measured": 60,
+        "Tp05:measured": 60,
+        "Tg05:measured": 60,
+        "gpu:measured": 60,
+        "power:measured": 60,
+        "bandwidth:measured": 60
+      },
+      "interrupt_wakeups_delta": 60,
+      "package_idle_wakeups_delta": 1
+    },
+    {
+      "segment": 3,
+      "nominal_interval_s": 5,
+      "duration_s": 120.29276199999731,
+      "samples": 24,
+      "cpu_seconds": 0.18420799999999993,
+      "cpu_percent_one_core": 0.15313307046686986,
+      "rss_first_bytes": 12206080,
+      "rss_last_bytes": 12206080,
+      "rss_observed_bytes": {
+        "min": 12206080,
+        "median": 12206080.0,
+        "mean": 12206080,
+        "p95": 12206080,
+        "max": 12206080
+      },
+      "host_port_refs": {
+        "min": 2,
+        "median": 2.0,
+        "mean": 2,
+        "p95": 2,
+        "max": 2
+      },
+      "child_process_count": {
+        "min": 0,
+        "median": 0.0,
+        "mean": 0,
+        "p95": 0,
+        "max": 0
+      },
+      "tick_window_s": {
+        "min": 5.0012229999993,
+        "median": 5.012292500003241,
+        "mean": 5.012283250000716,
+        "p95": 5.019811999984086,
+        "max": 5.020783999993
+      },
+      "latency_ms": {
+        "min": 3.1470000103581697,
+        "median": 6.586999996216036,
+        "mean": 7.008416667910448,
+        "p95": 12.443000014172867,
+        "max": 14.063999988138676
+      },
+      "statuses": {
+        "cpu:measured": 24,
+        "vm:measured": 24,
+        "swap:measured": 24,
+        "Tp05:measured": 24,
+        "Tg05:measured": 24,
+        "gpu:measured": 24,
+        "power:measured": 24,
+        "bandwidth:measured": 24
+      },
+      "interrupt_wakeups_delta": 24,
+      "package_idle_wakeups_delta": 0
+    },
+    {
+      "segment": 4,
+      "nominal_interval_s": 2,
+      "duration_s": 120.69481000001542,
+      "samples": 60,
+      "cpu_seconds": 0.3907959999999999,
+      "cpu_percent_one_core": 0.3237885705275562,
+      "rss_first_bytes": 12206080,
+      "rss_last_bytes": 12206080,
+      "rss_observed_bytes": {
+        "min": 12206080,
+        "median": 12206080.0,
+        "mean": 12206080,
+        "p95": 12206080,
+        "max": 12206080
+      },
+      "host_port_refs": {
+        "min": 2,
+        "median": 2.0,
+        "mean": 2,
+        "p95": 2,
+        "max": 2
+      },
+      "child_process_count": {
+        "min": 0,
+        "median": 0.0,
+        "mean": 0,
+        "p95": 0,
+        "max": 0
+      },
+      "tick_window_s": {
+        "min": 2.004460999974981,
+        "median": 2.0113414999941597,
+        "mean": 2.011556983333139,
+        "p95": 2.018772999988869,
+        "max": 2.0250170000072103
+      },
+      "latency_ms": {
+        "min": 3.0510000069625676,
+        "median": 5.794999990030192,
+        "mean": 6.153516666866683,
+        "p95": 10.635999991791323,
+        "max": 11.123999982373789
+      },
+      "statuses": {
+        "cpu:measured": 60,
+        "vm:measured": 60,
+        "swap:measured": 60,
+        "Tp05:measured": 60,
+        "Tg05:measured": 60,
+        "gpu:measured": 60,
+        "power:measured": 60,
+        "bandwidth:measured": 60
+      },
+      "interrupt_wakeups_delta": 60,
+      "package_idle_wakeups_delta": 0
+    },
+    {
+      "segment": 5,
+      "nominal_interval_s": 5,
+      "duration_s": 120.27895700000226,
+      "samples": 24,
+      "cpu_seconds": 0.14721600000000046,
+      "cpu_percent_one_core": 0.12239547438044186,
+      "rss_first_bytes": 12206080,
+      "rss_last_bytes": 12206080,
+      "rss_observed_bytes": {
+        "min": 12206080,
+        "median": 12206080.0,
+        "mean": 12206080,
+        "p95": 12206080,
+        "max": 12206080
+      },
+      "host_port_refs": {
+        "min": 2,
+        "median": 2.0,
+        "mean": 2,
+        "p95": 2,
+        "max": 2
+      },
+      "child_process_count": {
+        "min": 0,
+        "median": 0.0,
+        "mean": 0,
+        "p95": 0,
+        "max": 0
+      },
+      "tick_window_s": {
+        "min": 5.001905000011902,
+        "median": 5.011608000000706,
+        "mean": 5.011641541666904,
+        "p95": 5.017405999999028,
+        "max": 5.022804999985965
+      },
+      "latency_ms": {
+        "min": 2.993000001879409,
+        "median": 5.206500005442649,
+        "mean": 5.766999999953744,
+        "p95": 9.502000000793487,
+        "max": 10.749999986728653
+      },
+      "statuses": {
+        "cpu:measured": 24,
+        "vm:measured": 24,
+        "swap:measured": 24,
+        "Tp05:measured": 24,
+        "Tg05:measured": 24,
+        "gpu:measured": 24,
+        "power:measured": 24,
+        "bandwidth:measured": 24
+      },
+      "interrupt_wakeups_delta": 24,
+      "package_idle_wakeups_delta": 0
+    }
+  ],
+  "warmup_samples": 15,
+  "injected_samples": [
+    {
+      "segment": 2,
+      "index": 30,
+      "delay_s": 6.2,
+      "tick_window_s": 6.21775300000445,
+      "gpu_power_window_s": 6.217002999997931,
+      "gpu_estimated_w": 0.2200255444625739,
+      "bandwidth_window_s": 6.2169880000001285,
+      "gfx_dcs_traffic_gbs": 2.1993309223050965
+    }
+  ]
+}

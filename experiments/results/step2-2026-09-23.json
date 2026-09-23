@@ -1,0 +1,4069 @@
+{
+  "environment": {
+    "chip": "Apple M1 Max",
+    "cpu": "10 cores: E indices 0-1, P indices 2-9",
+    "memory_bytes": 68719476736,
+    "os": "macOS 27.0",
+    "build": "26A428",
+    "arch": "arm64",
+    "branch": "codex/telemetry-step2",
+    "run_date": "2026-09-23"
+  },
+  "permission_checks": {
+    "codex_sandbox": {
+      "ioreport_subscription": "failed_all_groups",
+      "smc_open_kr": -536870174,
+      "swap_errno": 1,
+      "pressure_errno": 1
+    },
+    "ordinary_user_host": {
+      "ioreport_setup": {
+        "power": {
+          "status": "measured",
+          "subscribed": 19,
+          "enumerated": 162,
+          "selected": 19
+        },
+        "gpu": {
+          "status": "measured",
+          "subscribed": 1,
+          "enumerated": 1,
+          "selected": 1
+        },
+        "cpustates": {
+          "status": "measured",
+          "subscribed": 3,
+          "enumerated": 6,
+          "selected": 3
+        },
+        "smc": {
+          "status": "open",
+          "kr": 0
+        },
+        "bandwidth": {
+          "status": "measured",
+          "subscribed": 63,
+          "enumerated": 127,
+          "selected": 63
+        },
+        "pmp": {
+          "status": "measured",
+          "subscribed": 1,
+          "enumerated": 1,
+          "selected": 1
+        }
+      },
+      "swap": {
+        "status": "measured",
+        "total_bytes": 0,
+        "used_bytes": 0
+      },
+      "pressure": {
+        "event_state": "unknown",
+        "current": {
+          "status": "measured",
+          "raw": 1
+        },
+        "event_source": "active",
+        "events": 0
+      }
+    },
+    "app_sandbox_signed_bundle": {
+      "ioreport_setup": {
+        "gpu_dvfs_mhz": [
+          0,
+          388.8,
+          486,
+          648,
+          777.6,
+          972,
+          1296
+        ],
+        "gpu": {
+          "status": "unavailable",
+          "enumerated": 1,
+          "selected": 1,
+          "reason": "subscription_failed"
+        },
+        "pmp": {
+          "status": "unavailable",
+          "enumerated": 1,
+          "selected": 1,
+          "reason": "subscription_failed"
+        },
+        "power": {
+          "status": "unavailable",
+          "enumerated": 162,
+          "selected": 19,
+          "reason": "subscription_failed"
+        },
+        "smc": {
+          "status": "unavailable",
+          "kr": -536870174
+        },
+        "bandwidth": {
+          "status": "unavailable",
+          "enumerated": 127,
+          "selected": 63,
+          "reason": "subscription_failed"
+        },
+        "cpustates": {
+          "status": "unavailable",
+          "enumerated": 6,
+          "selected": 3,
+          "reason": "subscription_failed"
+        }
+      },
+      "swap": {
+        "status": "measured",
+        "total_bytes": 0,
+        "used_bytes": 0
+      },
+      "pressure": {
+        "event_state": "unknown",
+        "current": {
+          "status": "measured",
+          "raw": 1
+        },
+        "event_source": "active",
+        "events": 0
+      }
+    },
+    "powermetrics_unprivileged": "powermetrics must be invoked as the superuser"
+  },
+  "topology_evidence": {
+    "device_tree": "logical-cpu-id 0-1 cluster-type E; 2-9 cluster-type P",
+    "perflevel": "Performance=8, Efficiency=2",
+    "cpu_multi_all_cores_busy": true
+  },
+  "ioreport": {
+    "initial_host_setup": {
+      "power": {
+        "status": "measured",
+        "subscribed": 19,
+        "enumerated": 162,
+        "selected": 19
+      },
+      "gpu": {
+        "status": "measured",
+        "subscribed": 1,
+        "enumerated": 1,
+        "selected": 1
+      },
+      "cpustates": {
+        "status": "measured",
+        "subscribed": 3,
+        "enumerated": 6,
+        "selected": 3
+      },
+      "smc": {
+        "status": "open",
+        "kr": 0
+      },
+      "bandwidth": {
+        "status": "measured",
+        "subscribed": 63,
+        "enumerated": 127,
+        "selected": 63
+      },
+      "pmp": {
+        "status": "measured",
+        "subscribed": 1,
+        "enumerated": 1,
+        "selected": 1
+      }
+    },
+    "sample_statuses": {
+      "gpu": [
+        "measured",
+        "measured"
+      ],
+      "power": [
+        "measured",
+        "measured"
+      ],
+      "cpustates": [
+        "measured",
+        "measured"
+      ],
+      "bandwidth": [
+        "measured",
+        "measured"
+      ],
+      "pmp": [
+        "measured",
+        "measured"
+      ]
+    },
+    "power_all_162_channels_under_cpu_load": {
+      "samples": 4,
+      "nonzero_channels": [
+        [
+          "GPU Energy",
+          228030230,
+          "nJ"
+        ],
+        [
+          "GPU Energy",
+          210571780,
+          "nJ"
+        ],
+        [
+          "GPU Energy",
+          149866350,
+          "nJ"
+        ],
+        [
+          "GPU Energy",
+          230494690,
+          "nJ"
+        ]
+      ],
+      "cpu_energy_zero_on_all_samples": true
+    },
+    "gpu_dvfs_mhz": [
+      0,
+      388.8,
+      486,
+      648,
+      777.6,
+      972,
+      1296
+    ]
+  },
+  "loads": [
+    {
+      "groups": "public,gpu,power,cpustates,temperature,memory,bandwidth,ane",
+      "interval_s": 1,
+      "samples": 8,
+      "workload": "idle",
+      "elapsed_s": 8.659,
+      "setup": {
+        "power": {
+          "status": "measured",
+          "subscribed": 19,
+          "enumerated": 162,
+          "selected": 19
+        },
+        "gpu": {
+          "status": "measured",
+          "subscribed": 1,
+          "enumerated": 1,
+          "selected": 1
+        },
+        "cpustates": {
+          "status": "measured",
+          "subscribed": 3,
+          "enumerated": 6,
+          "selected": 3
+        },
+        "smc": {
+          "status": "open",
+          "kr": 0
+        },
+        "bandwidth": {
+          "status": "measured",
+          "subscribed": 63,
+          "enumerated": 127,
+          "selected": 63
+        }
+      },
+      "metrics": {
+        "cpu_total": {
+          "min": 0.15434,
+          "mean": 0.17136,
+          "max": 0.2364
+        },
+        "cpu_p": {
+          "min": 0.07044,
+          "mean": 0.09582,
+          "max": 0.18313
+        },
+        "cpu_e": {
+          "min": 0.37879,
+          "mean": 0.47352,
+          "max": 0.52525
+        },
+        "gpu_active": {
+          "min": 0.35008,
+          "mean": 0.37072,
+          "max": 0.42383
+        },
+        "power_cpu_energy_w": {
+          "min": 0.0,
+          "mean": 0.0,
+          "max": 0.0
+        },
+        "power_gpu0_w": {
+          "min": 0.0,
+          "mean": 0.0,
+          "max": 0.0
+        },
+        "power_gpu_energy_w": {
+          "min": 0.27114,
+          "mean": 0.29189,
+          "max": 0.32087
+        },
+        "power_ane0_w": {
+          "min": 0.0,
+          "mean": 0.0,
+          "max": 0.0
+        },
+        "bandwidth_gpu_gbs": {
+          "min": 1.2154,
+          "mean": 1.43494,
+          "max": 1.93451
+        },
+        "bandwidth_p0_gbs": {
+          "min": 1.62588,
+          "mean": 2.75425,
+          "max": 5.46739
+        },
+        "temperature_cpu_c": {
+          "min": 50.19385,
+          "mean": 51.34928,
+          "max": 53.36484
+        },
+        "temperature_gpu_c": {
+          "min": 50.58109,
+          "mean": 50.97629,
+          "max": 51.93806
+        }
+      },
+      "overhead": {
+        "cpu_seconds_between_first_last": 0.058522,
+        "cpu_percent_one_core_between_first_last": 0.836,
+        "resident_bytes": {
+          "min": 11812864,
+          "mean": 11931648,
+          "max": 12009472
+        },
+        "sampling_latency_ms": {
+          "min": 5.035,
+          "mean": 8.31625,
+          "max": 12.376
+        },
+        "package_idle_wakeups_delta": 0,
+        "interrupt_wakeups_delta": 7,
+        "context_switches_delta": 70,
+        "subscribed_channels": {
+          "power": 19,
+          "gpu": 1,
+          "cpustates": 3,
+          "smc": 0,
+          "bandwidth": 63
+        },
+        "non_sample_rows": 1,
+        "persistent_children": 0
+      },
+      "failures": {},
+      "load": null,
+      "representative_sample": {
+        "timestamp": "2026-09-23T10:02:40.585Z",
+        "cpu": {
+          "status": "measured",
+          "p": 0.0704441547095886,
+          "cores": [
+            0.494949494949495,
+            0.48484848484848486,
+            0.2727272727272727,
+            0.15151515151515152,
+            0.09,
+            0.0297029702970297,
+            0,
+            0.0196078431372549,
+            0,
+            0
+          ],
+          "e": 0.48989898989898994,
+          "total": 0.15433512174746888
+        },
+        "vm": {
+          "page_bytes": 16384,
+          "physical_bytes": 68719476736,
+          "swapouts_cumulative": 0,
+          "inactive_bytes": 27172765696,
+          "wired_bytes": 3136421888,
+          "pageouts_cumulative": 290,
+          "compressed_bytes": 809385984,
+          "active_bytes": 27009384448,
+          "pageins_cumulative": 6611152,
+          "swapins_cumulative": 0,
+          "status": "measured",
+          "free_bytes": 9667084288
+        },
+        "swap": {
+          "status": "measured",
+          "total_bytes": 0,
+          "used_bytes": 0
+        },
+        "pressure": {
+          "event_state": "unknown",
+          "current": {
+            "status": "measured",
+            "raw": 1
+          },
+          "event_source": "active",
+          "events": 0
+        },
+        "thermal_state": "nominal",
+        "temperature": {
+          "Tp05": {
+            "status": "measured",
+            "celsius": 50.19384765625,
+            "encoding": "flt"
+          },
+          "Tg0D": {
+            "status": "measured",
+            "celsius": 51.08304214477539,
+            "encoding": "flt"
+          },
+          "Tp01": {
+            "status": "measured",
+            "celsius": 50.51182556152344,
+            "encoding": "flt"
+          },
+          "Tg0P": {
+            "status": "unavailable",
+            "smc_result": 132,
+            "kr": 0,
+            "reason": "key_info_failed",
+            "size": 0
+          },
+          "Tg05": {
+            "status": "measured",
+            "celsius": 50.97894287109375,
+            "encoding": "flt"
+          },
+          "Tp09": {
+            "status": "measured",
+            "celsius": 50.56364059448242,
+            "encoding": "flt"
+          }
+        },
+        "ioreport": {
+          "power": {
+            "status": "measured",
+            "channels": [
+              {
+                "name": "EACC_CPU",
+                "delta": 0,
+                "unit": "mJ"
+              },
+              {
+                "name": "PACC0_CPU",
+                "delta": 0,
+                "unit": "mJ"
+              },
+              {
+                "name": "PACC1_CPU",
+                "delta": 0,
+                "unit": "mJ"
+              },
+              {
+                "name": "CPU Energy",
+                "delta": 0,
+                "unit": "mJ"
+              },
+              {
+                "name": "GPU0",
+                "delta": 0,
+                "unit": "mJ"
+              },
+              {
+                "name": "GPU SRAM0",
+                "delta": 0,
+                "unit": "mJ"
+              },
+              {
+                "name": "ANE0",
+                "delta": 0,
+                "unit": "mJ"
+              },
+              {
+                "name": "DRAM0",
+                "delta": 0,
+                "unit": "mJ"
+              },
+              {
+                "name": "GPU Energy",
+                "delta": 285844760,
+                "unit": "nJ"
+              }
+            ]
+          },
+          "bandwidth": {
+            "status": "measured",
+            "channels": [
+              {
+                "name": "PCPU0 DCS RD",
+                "delta": 1522237440,
+                "unit": "B"
+              },
+              {
+                "name": "PCPU0 DCS WR",
+                "delta": 103643136,
+                "unit": "B"
+              },
+              {
+                "name": "GFX DCS RD",
+                "delta": 862943232,
+                "unit": "B"
+              },
+              {
+                "name": "GFX DCS WR",
+                "delta": 355072000,
+                "unit": "B"
+              },
+              {
+                "name": "DCS",
+                "delta": 4792224768,
+                "unit": "B"
+              },
+              {
+                "name": "DCS RD",
+                "delta": 3850706944,
+                "unit": "B"
+              },
+              {
+                "name": "DCS WR",
+                "delta": 941558784,
+                "unit": "B"
+              }
+            ]
+          },
+          "gpu": {
+            "status": "measured",
+            "channels": [
+              {
+                "name": "GPUPH",
+                "states": [
+                  {
+                    "state": "OFF",
+                    "ticks": 15424667
+                  },
+                  {
+                    "state": "P1",
+                    "ticks": 5764365
+                  },
+                  {
+                    "state": "P2",
+                    "ticks": 544914
+                  },
+                  {
+                    "state": "P3",
+                    "ticks": 694149
+                  },
+                  {
+                    "state": "P4",
+                    "ticks": 955518
+                  },
+                  {
+                    "state": "P5",
+                    "ticks": 594125
+                  },
+                  {
+                    "state": "P6",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "P7",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "P8",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "P9",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "P10",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "P11",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "P12",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "P13",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "P14",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "P15",
+                    "ticks": 0
+                  }
+                ],
+                "unit": "24Mticks"
+              }
+            ]
+          },
+          "cpustates": {
+            "status": "measured",
+            "channels": [
+              {
+                "name": "ECPU",
+                "states": [
+                  {
+                    "state": "IDLE",
+                    "ticks": 8892041
+                  },
+                  {
+                    "state": "V0P4",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "V1P3",
+                    "ticks": 5566955
+                  },
+                  {
+                    "state": "V2P2",
+                    "ticks": 1798586
+                  },
+                  {
+                    "state": "V3P1",
+                    "ticks": 3078484
+                  },
+                  {
+                    "state": "V4P0",
+                    "ticks": 4623604
+                  }
+                ],
+                "unit": "24Mticks"
+              },
+              {
+                "name": "PCPU",
+                "states": [
+                  {
+                    "state": "IDLE",
+                    "ticks": 12991952
+                  },
+                  {
+                    "state": "V0P14",
+                    "ticks": 40186
+                  },
+                  {
+                    "state": "V1P13",
+                    "ticks": 9207
+                  },
+                  {
+                    "state": "V2P12",
+                    "ticks": 202127
+                  },
+                  {
+                    "state": "V3P11",
+                    "ticks": 5280959
+                  },
+                  {
+                    "state": "V4P10",
+                    "ticks": 3182102
+                  },
+                  {
+                    "state": "V5P9",
+                    "ticks": 541110
+                  },
+                  {
+                    "state": "V6P8",
+                    "ticks": 355544
+                  },
+                  {
+                    "state": "V7P7",
+                    "ticks": 543336
+                  },
+                  {
+                    "state": "V8P6",
+                    "ticks": 813090
+                  },
+                  {
+                    "state": "V9P5",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "V10P4",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "V11P3",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "V12P2",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "V13P1",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "V14P0",
+                    "ticks": 0
+                  }
+                ],
+                "unit": "24Mticks"
+              },
+              {
+                "name": "PCPU1",
+                "states": [
+                  {
+                    "state": "IDLE",
+                    "ticks": 23603152
+                  },
+                  {
+                    "state": "V0P14",
+                    "ticks": 72435
+                  },
+                  {
+                    "state": "V1P13",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "V2P12",
+                    "ticks": 56706
+                  },
+                  {
+                    "state": "V3P11",
+                    "ticks": 82600
+                  },
+                  {
+                    "state": "V4P10",
+                    "ticks": 17128
+                  },
+                  {
+                    "state": "V5P9",
+                    "ticks": 87686
+                  },
+                  {
+                    "state": "V6P8",
+                    "ticks": 10628
+                  },
+                  {
+                    "state": "V7P7",
+                    "ticks": 6033
+                  },
+                  {
+                    "state": "V8P6",
+                    "ticks": 22912
+                  },
+                  {
+                    "state": "V9P5",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "V10P4",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "V11P3",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "V12P2",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "V13P1",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "V14P0",
+                    "ticks": 0
+                  }
+                ],
+                "unit": "24Mticks"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "groups": "public,gpu,power,cpustates,temperature,memory,bandwidth,ane",
+      "interval_s": 1,
+      "samples": 8,
+      "workload": "cpu-single",
+      "elapsed_s": 8.255,
+      "setup": {
+        "power": {
+          "status": "measured",
+          "subscribed": 19,
+          "enumerated": 162,
+          "selected": 19
+        },
+        "gpu": {
+          "status": "measured",
+          "subscribed": 1,
+          "enumerated": 1,
+          "selected": 1
+        },
+        "cpustates": {
+          "status": "measured",
+          "subscribed": 3,
+          "enumerated": 6,
+          "selected": 3
+        },
+        "smc": {
+          "status": "open",
+          "kr": 0
+        },
+        "bandwidth": {
+          "status": "measured",
+          "subscribed": 63,
+          "enumerated": 127,
+          "selected": 63
+        }
+      },
+      "metrics": {
+        "cpu_total": {
+          "min": 0.19439,
+          "mean": 0.2258,
+          "max": 0.33844
+        },
+        "cpu_p": {
+          "min": 0.16138,
+          "mean": 0.18269,
+          "max": 0.2597
+        },
+        "cpu_e": {
+          "min": 0.325,
+          "mean": 0.39828,
+          "max": 0.65338
+        },
+        "gpu_active": {
+          "min": 0.34141,
+          "mean": 0.34362,
+          "max": 0.34747
+        },
+        "power_cpu_energy_w": {
+          "min": 0.0,
+          "mean": 0.0,
+          "max": 0.0
+        },
+        "power_gpu0_w": {
+          "min": 0.0,
+          "mean": 0.0,
+          "max": 0.0
+        },
+        "power_gpu_energy_w": {
+          "min": 0.25067,
+          "mean": 0.26075,
+          "max": 0.29104
+        },
+        "power_ane0_w": {
+          "min": 0.0,
+          "mean": 0.0,
+          "max": 0.0
+        },
+        "bandwidth_gpu_gbs": {
+          "min": 1.23987,
+          "mean": 1.34207,
+          "max": 1.49749
+        },
+        "bandwidth_p0_gbs": {
+          "min": 1.8841,
+          "mean": 2.33655,
+          "max": 3.22509
+        },
+        "temperature_cpu_c": {
+          "min": 52.5767,
+          "mean": 53.37628,
+          "max": 55.16903
+        },
+        "temperature_gpu_c": {
+          "min": 50.65442,
+          "mean": 51.20718,
+          "max": 51.48957
+        }
+      },
+      "overhead": {
+        "cpu_seconds_between_first_last": 0.032316,
+        "cpu_percent_one_core_between_first_last": 0.4617,
+        "resident_bytes": {
+          "min": 11812864,
+          "mean": 11931648,
+          "max": 12009472
+        },
+        "sampling_latency_ms": {
+          "min": 4.596,
+          "mean": 5.20587,
+          "max": 6.327
+        },
+        "package_idle_wakeups_delta": 0,
+        "interrupt_wakeups_delta": 7,
+        "context_switches_delta": 71,
+        "subscribed_channels": {
+          "power": 19,
+          "gpu": 1,
+          "cpustates": 3,
+          "smc": 0,
+          "bandwidth": 63
+        },
+        "non_sample_rows": 1,
+        "persistent_children": 0
+      },
+      "failures": {},
+      "load": {
+        "exit_code": 0,
+        "stderr": ""
+      },
+      "representative_sample": {
+        "timestamp": "2026-09-23T10:02:49.209Z",
+        "cpu": {
+          "status": "measured",
+          "p": 0.16354485448544853,
+          "cores": [
+            0.33,
+            0.32,
+            0.53,
+            0.24752475247524752,
+            0.10101010101010101,
+            0.12871287128712872,
+            0.19,
+            0.1111111111111111,
+            0,
+            0
+          ],
+          "e": 0.325,
+          "total": 0.19583588358835885
+        },
+        "vm": {
+          "page_bytes": 16384,
+          "physical_bytes": 68719476736,
+          "swapouts_cumulative": 0,
+          "inactive_bytes": 27166556160,
+          "wired_bytes": 3111157760,
+          "pageouts_cumulative": 290,
+          "compressed_bytes": 809385984,
+          "active_bytes": 27038924800,
+          "pageins_cumulative": 6611439,
+          "swapins_cumulative": 0,
+          "status": "measured",
+          "free_bytes": 9669017600
+        },
+        "swap": {
+          "status": "measured",
+          "total_bytes": 0,
+          "used_bytes": 0
+        },
+        "pressure": {
+          "event_state": "unknown",
+          "current": {
+            "status": "measured",
+            "raw": 1
+          },
+          "event_source": "active",
+          "events": 0
+        },
+        "thermal_state": "nominal",
+        "temperature": {
+          "Tp05": {
+            "status": "measured",
+            "celsius": 53.22433090209961,
+            "encoding": "flt"
+          },
+          "Tg0D": {
+            "status": "measured",
+            "celsius": 51.97844696044922,
+            "encoding": "flt"
+          },
+          "Tp01": {
+            "status": "measured",
+            "celsius": 53.54650115966797,
+            "encoding": "flt"
+          },
+          "Tg0P": {
+            "status": "unavailable",
+            "smc_result": 132,
+            "kr": 0,
+            "reason": "key_info_failed",
+            "size": 0
+          },
+          "Tg05": {
+            "status": "measured",
+            "celsius": 51.37288284301758,
+            "encoding": "flt"
+          },
+          "Tp09": {
+            "status": "measured",
+            "celsius": 52.07379150390625,
+            "encoding": "flt"
+          }
+        },
+        "ioreport": {
+          "power": {
+            "status": "measured",
+            "channels": [
+              {
+                "name": "EACC_CPU",
+                "delta": 0,
+                "unit": "mJ"
+              },
+              {
+                "name": "PACC0_CPU",
+                "delta": 0,
+                "unit": "mJ"
+              },
+              {
+                "name": "PACC1_CPU",
+                "delta": 0,
+                "unit": "mJ"
+              },
+              {
+                "name": "CPU Energy",
+                "delta": 0,
+                "unit": "mJ"
+              },
+              {
+                "name": "GPU0",
+                "delta": 0,
+                "unit": "mJ"
+              },
+              {
+                "name": "GPU SRAM0",
+                "delta": 0,
+                "unit": "mJ"
+              },
+              {
+                "name": "ANE0",
+                "delta": 0,
+                "unit": "mJ"
+              },
+              {
+                "name": "DRAM0",
+                "delta": 0,
+                "unit": "mJ"
+              },
+              {
+                "name": "GPU Energy",
+                "delta": 263406450,
+                "unit": "nJ"
+              }
+            ]
+          },
+          "bandwidth": {
+            "status": "measured",
+            "channels": [
+              {
+                "name": "PCPU0 DCS RD",
+                "delta": 1828794368,
+                "unit": "B"
+              },
+              {
+                "name": "PCPU0 DCS WR",
+                "delta": 131272704,
+                "unit": "B"
+              },
+              {
+                "name": "GFX DCS RD",
+                "delta": 937156608,
+                "unit": "B"
+              },
+              {
+                "name": "GFX DCS WR",
+                "delta": 401453056,
+                "unit": "B"
+              },
+              {
+                "name": "DCS",
+                "delta": 5222823936,
+                "unit": "B"
+              },
+              {
+                "name": "DCS RD",
+                "delta": 4203288576,
+                "unit": "B"
+              },
+              {
+                "name": "DCS WR",
+                "delta": 1019518976,
+                "unit": "B"
+              }
+            ]
+          },
+          "gpu": {
+            "status": "measured",
+            "channels": [
+              {
+                "name": "GPUPH",
+                "states": [
+                  {
+                    "state": "OFF",
+                    "ticks": 15700689
+                  },
+                  {
+                    "state": "P1",
+                    "ticks": 8360412
+                  },
+                  {
+                    "state": "P2",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "P3",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "P4",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "P5",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "P6",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "P7",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "P8",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "P9",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "P10",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "P11",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "P12",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "P13",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "P14",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "P15",
+                    "ticks": 0
+                  }
+                ],
+                "unit": "24Mticks"
+              }
+            ]
+          },
+          "cpustates": {
+            "status": "measured",
+            "channels": [
+              {
+                "name": "ECPU",
+                "states": [
+                  {
+                    "state": "IDLE",
+                    "ticks": 12827206
+                  },
+                  {
+                    "state": "V0P4",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "V1P3",
+                    "ticks": 10053836
+                  },
+                  {
+                    "state": "V2P2",
+                    "ticks": 782022
+                  },
+                  {
+                    "state": "V3P1",
+                    "ticks": 285597
+                  },
+                  {
+                    "state": "V4P0",
+                    "ticks": 107375
+                  }
+                ],
+                "unit": "24Mticks"
+              },
+              {
+                "name": "PCPU",
+                "states": [
+                  {
+                    "state": "IDLE",
+                    "ticks": 4975963
+                  },
+                  {
+                    "state": "V0P14",
+                    "ticks": 18571
+                  },
+                  {
+                    "state": "V1P13",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "V2P12",
+                    "ticks": 347028
+                  },
+                  {
+                    "state": "V3P11",
+                    "ticks": 233249
+                  },
+                  {
+                    "state": "V4P10",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "V5P9",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "V6P8",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "V7P7",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "V8P6",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "V9P5",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "V10P4",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "V11P3",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "V12P2",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "V13P1",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "V14P0",
+                    "ticks": 18481174
+                  }
+                ],
+                "unit": "24Mticks"
+              },
+              {
+                "name": "PCPU1",
+                "states": [
+                  {
+                    "state": "IDLE",
+                    "ticks": 16799518
+                  },
+                  {
+                    "state": "V0P14",
+                    "ticks": 63009
+                  },
+                  {
+                    "state": "V1P13",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "V2P12",
+                    "ticks": 1858
+                  },
+                  {
+                    "state": "V3P11",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "V4P10",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "V5P9",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "V6P8",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "V7P7",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "V8P6",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "V9P5",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "V10P4",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "V11P3",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "V12P2",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "V13P1",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "V14P0",
+                    "ticks": 7191596
+                  }
+                ],
+                "unit": "24Mticks"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "groups": "public,gpu,power,cpustates,temperature,memory,bandwidth,ane",
+      "interval_s": 1,
+      "samples": 8,
+      "workload": "cpu-multi",
+      "elapsed_s": 8.396,
+      "setup": {
+        "power": {
+          "status": "measured",
+          "subscribed": 19,
+          "enumerated": 162,
+          "selected": 19
+        },
+        "gpu": {
+          "status": "measured",
+          "subscribed": 1,
+          "enumerated": 1,
+          "selected": 1
+        },
+        "cpustates": {
+          "status": "measured",
+          "subscribed": 3,
+          "enumerated": 6,
+          "selected": 3
+        },
+        "smc": {
+          "status": "open",
+          "kr": 0
+        },
+        "bandwidth": {
+          "status": "measured",
+          "subscribed": 63,
+          "enumerated": 127,
+          "selected": 63
+        }
+      },
+      "metrics": {
+        "cpu_total": {
+          "min": 1,
+          "mean": 1,
+          "max": 1
+        },
+        "cpu_p": {
+          "min": 1,
+          "mean": 1,
+          "max": 1
+        },
+        "cpu_e": {
+          "min": 1,
+          "mean": 1,
+          "max": 1
+        },
+        "gpu_active": {
+          "min": 0.34552,
+          "mean": 0.34721,
+          "max": 0.34965
+        },
+        "power_cpu_energy_w": {
+          "min": 0.0,
+          "mean": 0.0,
+          "max": 0.0
+        },
+        "power_gpu0_w": {
+          "min": 0.0,
+          "mean": 0.0,
+          "max": 0.0
+        },
+        "power_gpu_energy_w": {
+          "min": 0.25185,
+          "mean": 0.26447,
+          "max": 0.30111
+        },
+        "power_ane0_w": {
+          "min": 0.0,
+          "mean": 0.0,
+          "max": 0.0
+        },
+        "bandwidth_gpu_gbs": {
+          "min": 1.22378,
+          "mean": 1.26889,
+          "max": 1.33425
+        },
+        "bandwidth_p0_gbs": {
+          "min": 1.7276,
+          "mean": 1.84159,
+          "max": 1.97829
+        },
+        "temperature_cpu_c": {
+          "min": 59.1343,
+          "mean": 60.00014,
+          "max": 61.05286
+        },
+        "temperature_gpu_c": {
+          "min": 52.02553,
+          "mean": 52.55839,
+          "max": 53.32405
+        }
+      },
+      "overhead": {
+        "cpu_seconds_between_first_last": 0.034982,
+        "cpu_percent_one_core_between_first_last": 0.4997,
+        "resident_bytes": {
+          "min": 11812864,
+          "mean": 11931648,
+          "max": 12009472
+        },
+        "sampling_latency_ms": {
+          "min": 4.373,
+          "mean": 5.59163,
+          "max": 9.462
+        },
+        "package_idle_wakeups_delta": 0,
+        "interrupt_wakeups_delta": 8,
+        "context_switches_delta": 74,
+        "subscribed_channels": {
+          "power": 19,
+          "gpu": 1,
+          "cpustates": 3,
+          "smc": 0,
+          "bandwidth": 63
+        },
+        "non_sample_rows": 1,
+        "persistent_children": 0
+      },
+      "failures": {},
+      "load": {
+        "exit_code": 0,
+        "stderr": ""
+      },
+      "representative_sample": {
+        "timestamp": "2026-09-23T10:02:59.363Z",
+        "cpu": {
+          "status": "measured",
+          "p": 1,
+          "cores": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          "e": 1,
+          "total": 1
+        },
+        "vm": {
+          "page_bytes": 16384,
+          "physical_bytes": 68719476736,
+          "swapouts_cumulative": 0,
+          "inactive_bytes": 27155169280,
+          "wired_bytes": 3095789568,
+          "pageouts_cumulative": 290,
+          "compressed_bytes": 809385984,
+          "active_bytes": 27047854080,
+          "pageins_cumulative": 6611456,
+          "swapins_cumulative": 0,
+          "status": "measured",
+          "free_bytes": 9686843392
+        },
+        "swap": {
+          "status": "measured",
+          "total_bytes": 0,
+          "used_bytes": 0
+        },
+        "pressure": {
+          "event_state": "unknown",
+          "current": {
+            "status": "measured",
+            "raw": 1
+          },
+          "event_source": "active",
+          "events": 0
+        },
+        "thermal_state": "nominal",
+        "temperature": {
+          "Tp05": {
+            "status": "measured",
+            "celsius": 60.27028274536133,
+            "encoding": "flt"
+          },
+          "Tg0D": {
+            "status": "measured",
+            "celsius": 53.46665954589844,
+            "encoding": "flt"
+          },
+          "Tp01": {
+            "status": "measured",
+            "celsius": 59.241485595703125,
+            "encoding": "flt"
+          },
+          "Tg0P": {
+            "status": "unavailable",
+            "smc_result": 132,
+            "kr": 0,
+            "reason": "key_info_failed",
+            "size": 0
+          },
+          "Tg05": {
+            "status": "measured",
+            "celsius": 52.573333740234375,
+            "encoding": "flt"
+          },
+          "Tp09": {
+            "status": "measured",
+            "celsius": 56.6157341003418,
+            "encoding": "flt"
+          }
+        },
+        "ioreport": {
+          "power": {
+            "status": "measured",
+            "channels": [
+              {
+                "name": "EACC_CPU",
+                "delta": 0,
+                "unit": "mJ"
+              },
+              {
+                "name": "PACC0_CPU",
+                "delta": 0,
+                "unit": "mJ"
+              },
+              {
+                "name": "PACC1_CPU",
+                "delta": 0,
+                "unit": "mJ"
+              },
+              {
+                "name": "CPU Energy",
+                "delta": 0,
+                "unit": "mJ"
+              },
+              {
+                "name": "GPU0",
+                "delta": 0,
+                "unit": "mJ"
+              },
+              {
+                "name": "GPU SRAM0",
+                "delta": 0,
+                "unit": "mJ"
+              },
+              {
+                "name": "ANE0",
+                "delta": 0,
+                "unit": "mJ"
+              },
+              {
+                "name": "DRAM0",
+                "delta": 0,
+                "unit": "mJ"
+              },
+              {
+                "name": "GPU Energy",
+                "delta": 263449500,
+                "unit": "nJ"
+              }
+            ]
+          },
+          "bandwidth": {
+            "status": "measured",
+            "channels": [
+              {
+                "name": "PCPU0 DCS RD",
+                "delta": 1679364096,
+                "unit": "B"
+              },
+              {
+                "name": "PCPU0 DCS WR",
+                "delta": 108132352,
+                "unit": "B"
+              },
+              {
+                "name": "GFX DCS RD",
+                "delta": 884639744,
+                "unit": "B"
+              },
+              {
+                "name": "GFX DCS WR",
+                "delta": 360912896,
+                "unit": "B"
+              },
+              {
+                "name": "DCS",
+                "delta": 4931862528,
+                "unit": "B"
+              },
+              {
+                "name": "DCS RD",
+                "delta": 3983142912,
+                "unit": "B"
+              },
+              {
+                "name": "DCS WR",
+                "delta": 948736000,
+                "unit": "B"
+              }
+            ]
+          },
+          "gpu": {
+            "status": "measured",
+            "channels": [
+              {
+                "name": "GPUPH",
+                "states": [
+                  {
+                    "state": "OFF",
+                    "ticks": 15761723
+                  },
+                  {
+                    "state": "P1",
+                    "ticks": 8417980
+                  },
+                  {
+                    "state": "P2",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "P3",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "P4",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "P5",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "P6",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "P7",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "P8",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "P9",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "P10",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "P11",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "P12",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "P13",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "P14",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "P15",
+                    "ticks": 0
+                  }
+                ],
+                "unit": "24Mticks"
+              }
+            ]
+          },
+          "cpustates": {
+            "status": "measured",
+            "channels": [
+              {
+                "name": "ECPU",
+                "states": [
+                  {
+                    "state": "IDLE",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "V0P4",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "V1P3",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "V2P2",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "V3P1",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "V4P0",
+                    "ticks": 24158254
+                  }
+                ],
+                "unit": "24Mticks"
+              },
+              {
+                "name": "PCPU",
+                "states": [
+                  {
+                    "state": "IDLE",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "V0P14",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "V1P13",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "V2P12",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "V3P11",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "V4P10",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "V5P9",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "V6P8",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "V7P7",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "V8P6",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "V9P5",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "V10P4",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "V11P3",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "V12P2",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "V13P1",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "V14P0",
+                    "ticks": 24158250
+                  }
+                ],
+                "unit": "24Mticks"
+              },
+              {
+                "name": "PCPU1",
+                "states": [
+                  {
+                    "state": "IDLE",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "V0P14",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "V1P13",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "V2P12",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "V3P11",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "V4P10",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "V5P9",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "V6P8",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "V7P7",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "V8P6",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "V9P5",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "V10P4",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "V11P3",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "V12P2",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "V13P1",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "V14P0",
+                    "ticks": 24158242
+                  }
+                ],
+                "unit": "24Mticks"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "groups": "public,gpu,power,cpustates,temperature,memory,bandwidth,ane",
+      "interval_s": 1,
+      "samples": 10,
+      "workload": "gpu-moderate",
+      "elapsed_s": 10.284,
+      "setup": {
+        "power": {
+          "status": "measured",
+          "subscribed": 19,
+          "enumerated": 162,
+          "selected": 19
+        },
+        "gpu": {
+          "status": "measured",
+          "subscribed": 1,
+          "enumerated": 1,
+          "selected": 1
+        },
+        "cpustates": {
+          "status": "measured",
+          "subscribed": 3,
+          "enumerated": 6,
+          "selected": 3
+        },
+        "smc": {
+          "status": "open",
+          "kr": 0
+        },
+        "bandwidth": {
+          "status": "measured",
+          "subscribed": 63,
+          "enumerated": 127,
+          "selected": 63
+        }
+      },
+      "metrics": {
+        "cpu_total": {
+          "min": 0.15177,
+          "mean": 0.17833,
+          "max": 0.25321
+        },
+        "cpu_p": {
+          "min": 0.07054,
+          "mean": 0.09764,
+          "max": 0.20527
+        },
+        "cpu_e": {
+          "min": 0.445,
+          "mean": 0.50107,
+          "max": 0.64646
+        },
+        "gpu_active": {
+          "min": 0.75118,
+          "mean": 0.76875,
+          "max": 0.78616
+        },
+        "power_cpu_energy_w": {
+          "min": 0.0,
+          "mean": 0.0,
+          "max": 0.0
+        },
+        "power_gpu0_w": {
+          "min": 0.0,
+          "mean": 0.0,
+          "max": 0.0
+        },
+        "power_gpu_energy_w": {
+          "min": 3.08391,
+          "mean": 3.30026,
+          "max": 3.7713
+        },
+        "power_ane0_w": {
+          "min": 0.0,
+          "mean": 0.0,
+          "max": 0.0
+        },
+        "bandwidth_gpu_gbs": {
+          "min": 1.59077,
+          "mean": 1.74609,
+          "max": 2.00256
+        },
+        "bandwidth_p0_gbs": {
+          "min": 1.84528,
+          "mean": 2.27673,
+          "max": 3.84982
+        },
+        "temperature_cpu_c": {
+          "min": 52.34897,
+          "mean": 53.7923,
+          "max": 57.20942
+        },
+        "temperature_gpu_c": {
+          "min": 53.70407,
+          "mean": 54.06393,
+          "max": 54.42793
+        }
+      },
+      "overhead": {
+        "cpu_seconds_between_first_last": 0.096545,
+        "cpu_percent_one_core_between_first_last": 1.0727,
+        "resident_bytes": {
+          "min": 11812864,
+          "mean": 11952128,
+          "max": 12042240
+        },
+        "sampling_latency_ms": {
+          "min": 6.044,
+          "mean": 11.4347,
+          "max": 16.756
+        },
+        "package_idle_wakeups_delta": 0,
+        "interrupt_wakeups_delta": 9,
+        "context_switches_delta": 126,
+        "subscribed_channels": {
+          "power": 19,
+          "gpu": 1,
+          "cpustates": 3,
+          "smc": 0,
+          "bandwidth": 63
+        },
+        "non_sample_rows": 1,
+        "persistent_children": 0
+      },
+      "failures": {},
+      "load": {
+        "exit_code": 0,
+        "stderr": "Metal launches=762"
+      },
+      "representative_sample": {
+        "timestamp": "2026-09-23T10:03:10.266Z",
+        "cpu": {
+          "status": "measured",
+          "p": 0.13229110411041103,
+          "cores": [
+            0.494949494949495,
+            0.48,
+            0.31,
+            0.22772277227722773,
+            0.14,
+            0.21,
+            0.09,
+            0.04040404040404041,
+            0.020202020202020204,
+            0.02
+          ],
+          "e": 0.4874747474747475,
+          "total": 0.20332783278327837
+        },
+        "vm": {
+          "page_bytes": 16384,
+          "physical_bytes": 68719476736,
+          "swapouts_cumulative": 0,
+          "inactive_bytes": 27091714048,
+          "wired_bytes": 3121364992,
+          "pageouts_cumulative": 290,
+          "compressed_bytes": 809385984,
+          "active_bytes": 27099103232,
+          "pageins_cumulative": 6611469,
+          "swapins_cumulative": 0,
+          "status": "measured",
+          "free_bytes": 9673474048
+        },
+        "swap": {
+          "status": "measured",
+          "total_bytes": 0,
+          "used_bytes": 0
+        },
+        "pressure": {
+          "event_state": "unknown",
+          "current": {
+            "status": "measured",
+            "raw": 1
+          },
+          "event_source": "active",
+          "events": 0
+        },
+        "thermal_state": "nominal",
+        "temperature": {
+          "Tp05": {
+            "status": "measured",
+            "celsius": 52.9610481262207,
+            "encoding": "flt"
+          },
+          "Tg0D": {
+            "status": "measured",
+            "celsius": 54.38180923461914,
+            "encoding": "flt"
+          },
+          "Tp01": {
+            "status": "measured",
+            "celsius": 53.62492370605469,
+            "encoding": "flt"
+          },
+          "Tg0P": {
+            "status": "unavailable",
+            "smc_result": 132,
+            "kr": 0,
+            "reason": "key_info_failed",
+            "size": 0
+          },
+          "Tg05": {
+            "status": "measured",
+            "celsius": 53.98060607910156,
+            "encoding": "flt"
+          },
+          "Tp09": {
+            "status": "measured",
+            "celsius": 52.423213958740234,
+            "encoding": "flt"
+          }
+        },
+        "ioreport": {
+          "power": {
+            "status": "measured",
+            "channels": [
+              {
+                "name": "EACC_CPU",
+                "delta": 0,
+                "unit": "mJ"
+              },
+              {
+                "name": "PACC0_CPU",
+                "delta": 0,
+                "unit": "mJ"
+              },
+              {
+                "name": "PACC1_CPU",
+                "delta": 0,
+                "unit": "mJ"
+              },
+              {
+                "name": "CPU Energy",
+                "delta": 0,
+                "unit": "mJ"
+              },
+              {
+                "name": "GPU0",
+                "delta": 0,
+                "unit": "mJ"
+              },
+              {
+                "name": "GPU SRAM0",
+                "delta": 0,
+                "unit": "mJ"
+              },
+              {
+                "name": "ANE0",
+                "delta": 0,
+                "unit": "mJ"
+              },
+              {
+                "name": "DRAM0",
+                "delta": 0,
+                "unit": "mJ"
+              },
+              {
+                "name": "GPU Energy",
+                "delta": 3218626360,
+                "unit": "nJ"
+              }
+            ]
+          },
+          "bandwidth": {
+            "status": "measured",
+            "channels": [
+              {
+                "name": "PCPU0 DCS RD",
+                "delta": 2520311808,
+                "unit": "B"
+              },
+              {
+                "name": "PCPU0 DCS WR",
+                "delta": 296546304,
+                "unit": "B"
+              },
+              {
+                "name": "GFX DCS RD",
+                "delta": 1230729216,
+                "unit": "B"
+              },
+              {
+                "name": "GFX DCS WR",
+                "delta": 657051648,
+                "unit": "B"
+              },
+              {
+                "name": "DCS",
+                "delta": 7614513152,
+                "unit": "B"
+              },
+              {
+                "name": "DCS RD",
+                "delta": 5981722624,
+                "unit": "B"
+              },
+              {
+                "name": "DCS WR",
+                "delta": 1632794624,
+                "unit": "B"
+              }
+            ]
+          },
+          "gpu": {
+            "status": "measured",
+            "channels": [
+              {
+                "name": "GPUPH",
+                "states": [
+                  {
+                    "state": "OFF",
+                    "ticks": 5484325
+                  },
+                  {
+                    "state": "P1",
+                    "ticks": 3236134
+                  },
+                  {
+                    "state": "P2",
+                    "ticks": 4027639
+                  },
+                  {
+                    "state": "P3",
+                    "ticks": 4970039
+                  },
+                  {
+                    "state": "P4",
+                    "ticks": 4507698
+                  },
+                  {
+                    "state": "P5",
+                    "ticks": 1806044
+                  },
+                  {
+                    "state": "P6",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "P7",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "P8",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "P9",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "P10",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "P11",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "P12",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "P13",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "P14",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "P15",
+                    "ticks": 0
+                  }
+                ],
+                "unit": "24Mticks"
+              }
+            ]
+          },
+          "cpustates": {
+            "status": "measured",
+            "channels": [
+              {
+                "name": "ECPU",
+                "states": [
+                  {
+                    "state": "IDLE",
+                    "ticks": 9058576
+                  },
+                  {
+                    "state": "V0P4",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "V1P3",
+                    "ticks": 5861320
+                  },
+                  {
+                    "state": "V2P2",
+                    "ticks": 2088486
+                  },
+                  {
+                    "state": "V3P1",
+                    "ticks": 3169622
+                  },
+                  {
+                    "state": "V4P0",
+                    "ticks": 3858092
+                  }
+                ],
+                "unit": "24Mticks"
+              },
+              {
+                "name": "PCPU",
+                "states": [
+                  {
+                    "state": "IDLE",
+                    "ticks": 8778453
+                  },
+                  {
+                    "state": "V0P14",
+                    "ticks": 5124
+                  },
+                  {
+                    "state": "V1P13",
+                    "ticks": 3447
+                  },
+                  {
+                    "state": "V2P12",
+                    "ticks": 641641
+                  },
+                  {
+                    "state": "V3P11",
+                    "ticks": 2135931
+                  },
+                  {
+                    "state": "V4P10",
+                    "ticks": 362654
+                  },
+                  {
+                    "state": "V5P9",
+                    "ticks": 1091736
+                  },
+                  {
+                    "state": "V6P8",
+                    "ticks": 190518
+                  },
+                  {
+                    "state": "V7P7",
+                    "ticks": 758398
+                  },
+                  {
+                    "state": "V8P6",
+                    "ticks": 1179861
+                  },
+                  {
+                    "state": "V9P5",
+                    "ticks": 366390
+                  },
+                  {
+                    "state": "V10P4",
+                    "ticks": 282025
+                  },
+                  {
+                    "state": "V11P3",
+                    "ticks": 44756
+                  },
+                  {
+                    "state": "V12P2",
+                    "ticks": 8562
+                  },
+                  {
+                    "state": "V13P1",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "V14P0",
+                    "ticks": 8186760
+                  }
+                ],
+                "unit": "24Mticks"
+              },
+              {
+                "name": "PCPU1",
+                "states": [
+                  {
+                    "state": "IDLE",
+                    "ticks": 21368259
+                  },
+                  {
+                    "state": "V0P14",
+                    "ticks": 54094
+                  },
+                  {
+                    "state": "V1P13",
+                    "ticks": 858
+                  },
+                  {
+                    "state": "V2P12",
+                    "ticks": 196279
+                  },
+                  {
+                    "state": "V3P11",
+                    "ticks": 58099
+                  },
+                  {
+                    "state": "V4P10",
+                    "ticks": 7501
+                  },
+                  {
+                    "state": "V5P9",
+                    "ticks": 146157
+                  },
+                  {
+                    "state": "V6P8",
+                    "ticks": 193527
+                  },
+                  {
+                    "state": "V7P7",
+                    "ticks": 97843
+                  },
+                  {
+                    "state": "V8P6",
+                    "ticks": 443755
+                  },
+                  {
+                    "state": "V9P5",
+                    "ticks": 85078
+                  },
+                  {
+                    "state": "V10P4",
+                    "ticks": 42343
+                  },
+                  {
+                    "state": "V11P3",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "V12P2",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "V13P1",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "V14P0",
+                    "ticks": 1343239
+                  }
+                ],
+                "unit": "24Mticks"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "groups": "public,gpu,power,cpustates,temperature,memory,bandwidth,ane",
+      "interval_s": 1,
+      "samples": 12,
+      "workload": "gpu-heavy",
+      "elapsed_s": 12.375,
+      "setup": {
+        "gpu_dvfs_mhz": [
+          0,
+          388.8,
+          486,
+          648,
+          777.6,
+          972,
+          1296
+        ],
+        "power": {
+          "status": "measured",
+          "subscribed": 19,
+          "enumerated": 162,
+          "selected": 19
+        },
+        "gpu": {
+          "status": "measured",
+          "subscribed": 1,
+          "enumerated": 1,
+          "selected": 1
+        },
+        "cpustates": {
+          "status": "measured",
+          "subscribed": 3,
+          "enumerated": 6,
+          "selected": 3
+        },
+        "smc": {
+          "status": "open",
+          "kr": 0
+        },
+        "bandwidth": {
+          "status": "measured",
+          "subscribed": 63,
+          "enumerated": 127,
+          "selected": 63
+        }
+      },
+      "metrics": {
+        "cpu_total": {
+          "min": 0.0992,
+          "mean": 0.18974,
+          "max": 0.28644
+        },
+        "cpu_p": {
+          "min": 0.02639,
+          "mean": 0.05478,
+          "max": 0.1693
+        },
+        "cpu_e": {
+          "min": 0.345,
+          "mean": 0.72957,
+          "max": 0.855
+        },
+        "gpu_active": {
+          "min": 1.0,
+          "mean": 1.0,
+          "max": 1.0
+        },
+        "gpu_weighted_active_frequency_mhz": {
+          "min": 1296,
+          "mean": 1296,
+          "max": 1296
+        },
+        "power_cpu_energy_w": {
+          "min": 0.0,
+          "mean": 0.0,
+          "max": 0.0
+        },
+        "power_gpu0_w": {
+          "min": 0.0,
+          "mean": 0.0,
+          "max": 0.0
+        },
+        "power_gpu_energy_w": {
+          "min": 19.70617,
+          "mean": 20.14146,
+          "max": 22.14907
+        },
+        "power_ane0_w": {
+          "min": 0.0,
+          "mean": 0.0,
+          "max": 0.0
+        },
+        "bandwidth_gpu_gbs": {
+          "min": 1.53383,
+          "mean": 1.69511,
+          "max": 2.18103
+        },
+        "bandwidth_p0_gbs": {
+          "min": 1.27661,
+          "mean": 2.33725,
+          "max": 4.57405
+        },
+        "temperature_cpu_c": {
+          "min": 51.80229,
+          "mean": 54.6427,
+          "max": 56.79834
+        },
+        "temperature_gpu_c": {
+          "min": 51.66161,
+          "mean": 58.44112,
+          "max": 61.03581
+        }
+      },
+      "overhead": {
+        "cpu_seconds_between_first_last": 0.049407,
+        "cpu_percent_one_core_between_first_last": 0.4492,
+        "resident_bytes": {
+          "min": 11878400,
+          "mean": 12061354.66667,
+          "max": 12173312
+        },
+        "sampling_latency_ms": {
+          "min": 4.307,
+          "mean": 4.50608,
+          "max": 4.777
+        },
+        "package_idle_wakeups_delta": 1,
+        "interrupt_wakeups_delta": 11,
+        "context_switches_delta": 92,
+        "subscribed_channels": {
+          "power": 19,
+          "gpu": 1,
+          "cpustates": 3,
+          "smc": 0,
+          "bandwidth": 63
+        },
+        "non_sample_rows": 1,
+        "persistent_children": 0
+      },
+      "failures": {},
+      "load": {
+        "exit_code": 0,
+        "stderr": "Metal launches=3417"
+      },
+      "representative_sample": {
+        "timestamp": "2026-09-23T10:05:40.329Z",
+        "cpu": {
+          "status": "measured",
+          "p": 0.027475247524752475,
+          "cores": [
+            0.8,
+            0.8118811881188119,
+            0.14,
+            0.04,
+            0.02,
+            0.019801980198019802,
+            0,
+            0,
+            0,
+            0
+          ],
+          "e": 0.805940594059406,
+          "total": 0.1831683168316832
+        },
+        "vm": {
+          "page_bytes": 16384,
+          "physical_bytes": 68719476736,
+          "swapouts_cumulative": 0,
+          "inactive_bytes": 26972635136,
+          "wired_bytes": 3126640640,
+          "pageouts_cumulative": 290,
+          "compressed_bytes": 808681472,
+          "active_bytes": 27085570048,
+          "pageins_cumulative": 6612940,
+          "swapins_cumulative": 0,
+          "status": "measured",
+          "free_bytes": 9801515008
+        },
+        "swap": {
+          "status": "measured",
+          "total_bytes": 0,
+          "used_bytes": 0
+        },
+        "pressure": {
+          "event_state": "unknown",
+          "current": {
+            "status": "measured",
+            "raw": 1
+          },
+          "event_source": "active",
+          "events": 0
+        },
+        "thermal_state": "nominal",
+        "temperature": {
+          "Tp05": {
+            "status": "measured",
+            "celsius": 54.3405647277832,
+            "encoding": "flt"
+          },
+          "Tg0D": {
+            "status": "measured",
+            "celsius": 59.15366744995117,
+            "encoding": "flt"
+          },
+          "Tp01": {
+            "status": "measured",
+            "celsius": 54.61090850830078,
+            "encoding": "flt"
+          },
+          "Tg0P": {
+            "status": "unavailable",
+            "smc_result": 132,
+            "kr": 0,
+            "reason": "key_info_failed",
+            "size": 0
+          },
+          "Tg05": {
+            "status": "measured",
+            "celsius": 59.40498733520508,
+            "encoding": "flt"
+          },
+          "Tp09": {
+            "status": "measured",
+            "celsius": 52.74142074584961,
+            "encoding": "flt"
+          }
+        },
+        "ioreport": {
+          "power": {
+            "status": "measured",
+            "channels": [
+              {
+                "name": "EACC_CPU",
+                "delta": 0,
+                "unit": "mJ"
+              },
+              {
+                "name": "PACC0_CPU",
+                "delta": 0,
+                "unit": "mJ"
+              },
+              {
+                "name": "PACC1_CPU",
+                "delta": 0,
+                "unit": "mJ"
+              },
+              {
+                "name": "CPU Energy",
+                "delta": 0,
+                "unit": "mJ"
+              },
+              {
+                "name": "GPU0",
+                "delta": 0,
+                "unit": "mJ"
+              },
+              {
+                "name": "GPU SRAM0",
+                "delta": 0,
+                "unit": "mJ"
+              },
+              {
+                "name": "ANE0",
+                "delta": 0,
+                "unit": "mJ"
+              },
+              {
+                "name": "DRAM0",
+                "delta": 0,
+                "unit": "mJ"
+              },
+              {
+                "name": "GPU Energy",
+                "delta": 20100090150,
+                "unit": "nJ"
+              }
+            ]
+          },
+          "bandwidth": {
+            "status": "measured",
+            "channels": [
+              {
+                "name": "PCPU0 DCS RD",
+                "delta": 1409648640,
+                "unit": "B"
+              },
+              {
+                "name": "PCPU0 DCS WR",
+                "delta": 110274560,
+                "unit": "B"
+              },
+              {
+                "name": "GFX DCS RD",
+                "delta": 1049675776,
+                "unit": "B"
+              },
+              {
+                "name": "GFX DCS WR",
+                "delta": 528201728,
+                "unit": "B"
+              },
+              {
+                "name": "DCS",
+                "delta": 5627866112,
+                "unit": "B"
+              },
+              {
+                "name": "DCS RD",
+                "delta": 4432036864,
+                "unit": "B"
+              },
+              {
+                "name": "DCS WR",
+                "delta": 1195812864,
+                "unit": "B"
+              }
+            ]
+          },
+          "gpu": {
+            "status": "measured",
+            "channels": [
+              {
+                "name": "GPUPH",
+                "states": [
+                  {
+                    "state": "OFF",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "P1",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "P2",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "P3",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "P4",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "P5",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "P6",
+                    "ticks": 24002363
+                  },
+                  {
+                    "state": "P7",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "P8",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "P9",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "P10",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "P11",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "P12",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "P13",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "P14",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "P15",
+                    "ticks": 0
+                  }
+                ],
+                "unit": "24Mticks"
+              }
+            ]
+          },
+          "cpustates": {
+            "status": "measured",
+            "channels": [
+              {
+                "name": "ECPU",
+                "states": [
+                  {
+                    "state": "IDLE",
+                    "ticks": 21908
+                  },
+                  {
+                    "state": "V0P4",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "V1P3",
+                    "ticks": 11597283
+                  },
+                  {
+                    "state": "V2P2",
+                    "ticks": 1175749
+                  },
+                  {
+                    "state": "V3P1",
+                    "ticks": 1667343
+                  },
+                  {
+                    "state": "V4P0",
+                    "ticks": 9540385
+                  }
+                ],
+                "unit": "24Mticks"
+              },
+              {
+                "name": "PCPU",
+                "states": [
+                  {
+                    "state": "IDLE",
+                    "ticks": 19047996
+                  },
+                  {
+                    "state": "V0P14",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "V1P13",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "V2P12",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "V3P11",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "V4P10",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "V5P9",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "V6P8",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "V7P7",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "V8P6",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "V9P5",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "V10P4",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "V11P3",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "V12P2",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "V13P1",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "V14P0",
+                    "ticks": 4954671
+                  }
+                ],
+                "unit": "24Mticks"
+              },
+              {
+                "name": "PCPU1",
+                "states": [
+                  {
+                    "state": "IDLE",
+                    "ticks": 23871852
+                  },
+                  {
+                    "state": "V0P14",
+                    "ticks": 52166
+                  },
+                  {
+                    "state": "V1P13",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "V2P12",
+                    "ticks": 2360
+                  },
+                  {
+                    "state": "V3P11",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "V4P10",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "V5P9",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "V6P8",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "V7P7",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "V8P6",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "V9P5",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "V10P4",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "V11P3",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "V12P2",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "V13P1",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "V14P0",
+                    "ticks": 76293
+                  }
+                ],
+                "unit": "24Mticks"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "groups": "public,gpu,power,cpustates,temperature,memory,bandwidth,ane",
+      "interval_s": 1,
+      "samples": 10,
+      "workload": "gpu-bandwidth",
+      "elapsed_s": 10.276,
+      "setup": {
+        "gpu_dvfs_mhz": [
+          0,
+          388.8,
+          486,
+          648,
+          777.6,
+          972,
+          1296
+        ],
+        "power": {
+          "status": "measured",
+          "subscribed": 19,
+          "enumerated": 162,
+          "selected": 19
+        },
+        "gpu": {
+          "status": "measured",
+          "subscribed": 1,
+          "enumerated": 1,
+          "selected": 1
+        },
+        "cpustates": {
+          "status": "measured",
+          "subscribed": 3,
+          "enumerated": 6,
+          "selected": 3
+        },
+        "smc": {
+          "status": "open",
+          "kr": 0
+        },
+        "bandwidth": {
+          "status": "measured",
+          "subscribed": 63,
+          "enumerated": 127,
+          "selected": 63
+        }
+      },
+      "metrics": {
+        "cpu_total": {
+          "min": 0.13324,
+          "mean": 0.18598,
+          "max": 0.27634
+        },
+        "cpu_p": {
+          "min": 0.06049,
+          "mean": 0.09751,
+          "max": 0.20202
+        },
+        "cpu_e": {
+          "min": 0.42424,
+          "mean": 0.53988,
+          "max": 0.71359
+        },
+        "gpu_active": {
+          "min": 0.99895,
+          "mean": 0.9999,
+          "max": 1.0
+        },
+        "gpu_weighted_active_frequency_mhz": {
+          "min": 994.38928,
+          "mean": 1241.95148,
+          "max": 1296
+        },
+        "power_cpu_energy_w": {
+          "min": 0.0,
+          "mean": 0.0,
+          "max": 0.0
+        },
+        "power_gpu0_w": {
+          "min": 0.0,
+          "mean": 0.0,
+          "max": 0.0
+        },
+        "power_gpu_energy_w": {
+          "min": 6.19557,
+          "mean": 6.71472,
+          "max": 6.96548
+        },
+        "power_ane0_w": {
+          "min": 0.0,
+          "mean": 0.0,
+          "max": 0.0
+        },
+        "bandwidth_gpu_gbs": {
+          "min": 212.89254,
+          "mean": 215.19497,
+          "max": 216.96212
+        },
+        "bandwidth_p0_gbs": {
+          "min": 2.54387,
+          "mean": 3.16158,
+          "max": 4.48838
+        },
+        "temperature_cpu_c": {
+          "min": 56.94136,
+          "mean": 58.78555,
+          "max": 60.33214
+        },
+        "temperature_gpu_c": {
+          "min": 58.6354,
+          "mean": 60.21054,
+          "max": 61.5843
+        }
+      },
+      "overhead": {
+        "cpu_seconds_between_first_last": 0.043984,
+        "cpu_percent_one_core_between_first_last": 0.4887,
+        "resident_bytes": {
+          "min": 11878400,
+          "mean": 12038963.2,
+          "max": 12156928
+        },
+        "sampling_latency_ms": {
+          "min": 5.317,
+          "mean": 5.5711,
+          "max": 6.337
+        },
+        "package_idle_wakeups_delta": 0,
+        "interrupt_wakeups_delta": 9,
+        "context_switches_delta": 68,
+        "subscribed_channels": {
+          "power": 19,
+          "gpu": 1,
+          "cpustates": 3,
+          "smc": 0,
+          "bandwidth": 63
+        },
+        "non_sample_rows": 1,
+        "persistent_children": 0
+      },
+      "failures": {},
+      "load": {
+        "exit_code": 0,
+        "stderr": "Metal launches=18879"
+      },
+      "representative_sample": {
+        "timestamp": "2026-09-23T10:05:53.697Z",
+        "cpu": {
+          "status": "measured",
+          "p": 0.0745420434900633,
+          "cores": [
+            0.46464646464646464,
+            0.4387755102040816,
+            0.2857142857142857,
+            0.1414141414141414,
+            0.08,
+            0.04950495049504951,
+            0.0297029702970297,
+            0.01,
+            0,
+            0
+          ],
+          "e": 0.45171098742527316,
+          "total": 0.14997583227710526
+        },
+        "vm": {
+          "page_bytes": 16384,
+          "physical_bytes": 68719476736,
+          "swapouts_cumulative": 0,
+          "inactive_bytes": 26822000640,
+          "wired_bytes": 3133227008,
+          "pageouts_cumulative": 290,
+          "compressed_bytes": 808681472,
+          "active_bytes": 26936803328,
+          "pageins_cumulative": 6613069,
+          "swapins_cumulative": 0,
+          "status": "measured",
+          "free_bytes": 10094329856
+        },
+        "swap": {
+          "status": "measured",
+          "total_bytes": 0,
+          "used_bytes": 0
+        },
+        "pressure": {
+          "event_state": "unknown",
+          "current": {
+            "status": "measured",
+            "raw": 1
+          },
+          "event_source": "active",
+          "events": 0
+        },
+        "thermal_state": "nominal",
+        "temperature": {
+          "Tp05": {
+            "status": "measured",
+            "celsius": 58.39717483520508,
+            "encoding": "flt"
+          },
+          "Tg0D": {
+            "status": "measured",
+            "celsius": 60.87206268310547,
+            "encoding": "flt"
+          },
+          "Tp01": {
+            "status": "measured",
+            "celsius": 59.334564208984375,
+            "encoding": "flt"
+          },
+          "Tg0P": {
+            "status": "unavailable",
+            "smc_result": 132,
+            "kr": 0,
+            "reason": "key_info_failed",
+            "size": 0
+          },
+          "Tg05": {
+            "status": "measured",
+            "celsius": 60.1866569519043,
+            "encoding": "flt"
+          },
+          "Tp09": {
+            "status": "measured",
+            "celsius": 57.21804428100586,
+            "encoding": "flt"
+          }
+        },
+        "ioreport": {
+          "power": {
+            "status": "measured",
+            "channels": [
+              {
+                "name": "EACC_CPU",
+                "delta": 0,
+                "unit": "mJ"
+              },
+              {
+                "name": "PACC0_CPU",
+                "delta": 0,
+                "unit": "mJ"
+              },
+              {
+                "name": "PACC1_CPU",
+                "delta": 0,
+                "unit": "mJ"
+              },
+              {
+                "name": "CPU Energy",
+                "delta": 0,
+                "unit": "mJ"
+              },
+              {
+                "name": "GPU0",
+                "delta": 0,
+                "unit": "mJ"
+              },
+              {
+                "name": "GPU SRAM0",
+                "delta": 0,
+                "unit": "mJ"
+              },
+              {
+                "name": "ANE0",
+                "delta": 0,
+                "unit": "mJ"
+              },
+              {
+                "name": "DRAM0",
+                "delta": 0,
+                "unit": "mJ"
+              },
+              {
+                "name": "GPU Energy",
+                "delta": 6906144400,
+                "unit": "nJ"
+              }
+            ]
+          },
+          "bandwidth": {
+            "status": "measured",
+            "channels": [
+              {
+                "name": "PCPU0 DCS RD",
+                "delta": 2626596864,
+                "unit": "B"
+              },
+              {
+                "name": "PCPU0 DCS WR",
+                "delta": 155731968,
+                "unit": "B"
+              },
+              {
+                "name": "GFX DCS RD",
+                "delta": 107619033088,
+                "unit": "B"
+              },
+              {
+                "name": "GFX DCS WR",
+                "delta": 107788005376,
+                "unit": "B"
+              },
+              {
+                "name": "DCS",
+                "delta": 220743445504,
+                "unit": "B"
+              },
+              {
+                "name": "DCS RD",
+                "delta": 112328797184,
+                "unit": "B"
+              },
+              {
+                "name": "DCS WR",
+                "delta": 108414490624,
+                "unit": "B"
+              }
+            ]
+          },
+          "gpu": {
+            "status": "measured",
+            "channels": [
+              {
+                "name": "GPUPH",
+                "states": [
+                  {
+                    "state": "OFF",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "P1",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "P2",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "P3",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "P4",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "P5",
+                    "ticks": 177548
+                  },
+                  {
+                    "state": "P6",
+                    "ticks": 23824279
+                  },
+                  {
+                    "state": "P7",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "P8",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "P9",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "P10",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "P11",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "P12",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "P13",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "P14",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "P15",
+                    "ticks": 0
+                  }
+                ],
+                "unit": "24Mticks"
+              }
+            ]
+          },
+          "cpustates": {
+            "status": "measured",
+            "channels": [
+              {
+                "name": "ECPU",
+                "states": [
+                  {
+                    "state": "IDLE",
+                    "ticks": 9086219
+                  },
+                  {
+                    "state": "V0P4",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "V1P3",
+                    "ticks": 10676257
+                  },
+                  {
+                    "state": "V2P2",
+                    "ticks": 1409159
+                  },
+                  {
+                    "state": "V3P1",
+                    "ticks": 1462450
+                  },
+                  {
+                    "state": "V4P0",
+                    "ticks": 1367841
+                  }
+                ],
+                "unit": "24Mticks"
+              },
+              {
+                "name": "PCPU",
+                "states": [
+                  {
+                    "state": "IDLE",
+                    "ticks": 13480180
+                  },
+                  {
+                    "state": "V0P14",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "V1P13",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "V2P12",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "V3P11",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "V4P10",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "V5P9",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "V6P8",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "V7P7",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "V8P6",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "V9P5",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "V10P4",
+                    "ticks": 155416
+                  },
+                  {
+                    "state": "V11P3",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "V12P2",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "V13P1",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "V14P0",
+                    "ticks": 10366348
+                  }
+                ],
+                "unit": "24Mticks"
+              },
+              {
+                "name": "PCPU1",
+                "states": [
+                  {
+                    "state": "IDLE",
+                    "ticks": 23243717
+                  },
+                  {
+                    "state": "V0P14",
+                    "ticks": 93713
+                  },
+                  {
+                    "state": "V1P13",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "V2P12",
+                    "ticks": 48752
+                  },
+                  {
+                    "state": "V3P11",
+                    "ticks": 118477
+                  },
+                  {
+                    "state": "V4P10",
+                    "ticks": 130455
+                  },
+                  {
+                    "state": "V5P9",
+                    "ticks": 1530
+                  },
+                  {
+                    "state": "V6P8",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "V7P7",
+                    "ticks": 1747
+                  },
+                  {
+                    "state": "V8P6",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "V9P5",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "V10P4",
+                    "ticks": 4457
+                  },
+                  {
+                    "state": "V11P3",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "V12P2",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "V13P1",
+                    "ticks": 0
+                  },
+                  {
+                    "state": "V14P0",
+                    "ticks": 359084
+                  }
+                ],
+                "unit": "24Mticks"
+              }
+            ]
+          }
+        }
+      }
+    }
+  ],
+  "overhead_matrix": [
+    {
+      "configuration": "A",
+      "groups": "public",
+      "interval_s": 1,
+      "samples": 5,
+      "overhead": {
+        "cpu_seconds_between_first_last": 0.010107,
+        "cpu_percent_one_core_between_first_last": 0.2527,
+        "resident_bytes": {
+          "min": 8650752,
+          "mean": 8739225.6,
+          "max": 8798208
+        },
+        "sampling_latency_ms": {
+          "min": 0.119,
+          "mean": 0.5044,
+          "max": 1.046
+        },
+        "package_idle_wakeups_delta": 0,
+        "interrupt_wakeups_delta": 4,
+        "context_switches_delta": 28,
+        "subscribed_channels": {},
+        "non_sample_rows": 1,
+        "persistent_children": 0
+      },
+      "failures": {}
+    },
+    {
+      "configuration": "A",
+      "groups": "public",
+      "interval_s": 2,
+      "samples": 4,
+      "overhead": {
+        "cpu_seconds_between_first_last": 0.003815,
+        "cpu_percent_one_core_between_first_last": 0.0636,
+        "resident_bytes": {
+          "min": 8667136,
+          "mean": 8757248,
+          "max": 8830976
+        },
+        "sampling_latency_ms": {
+          "min": 0.068,
+          "mean": 0.25725,
+          "max": 0.607
+        },
+        "package_idle_wakeups_delta": 0,
+        "interrupt_wakeups_delta": 3,
+        "context_switches_delta": 4,
+        "subscribed_channels": {},
+        "non_sample_rows": 1,
+        "persistent_children": 0
+      },
+      "failures": {}
+    },
+    {
+      "configuration": "A",
+      "groups": "public",
+      "interval_s": 5,
+      "samples": 3,
+      "overhead": {
+        "cpu_seconds_between_first_last": 0.003296,
+        "cpu_percent_one_core_between_first_last": 0.033,
+        "resident_bytes": {
+          "min": 8683520,
+          "mean": 8727210.66667,
+          "max": 8765440
+        },
+        "sampling_latency_ms": {
+          "min": 0.164,
+          "mean": 0.309,
+          "max": 0.598
+        },
+        "package_idle_wakeups_delta": 0,
+        "interrupt_wakeups_delta": 2,
+        "context_switches_delta": 2,
+        "subscribed_channels": {},
+        "non_sample_rows": 1,
+        "persistent_children": 0
+      },
+      "failures": {}
+    },
+    {
+      "configuration": "B",
+      "groups": "public,gpu",
+      "interval_s": 1,
+      "samples": 5,
+      "overhead": {
+        "cpu_seconds_between_first_last": 0.012664,
+        "cpu_percent_one_core_between_first_last": 0.3166,
+        "resident_bytes": {
+          "min": 11501568,
+          "mean": 11576934.4,
+          "max": 11632640
+        },
+        "sampling_latency_ms": {
+          "min": 1.787,
+          "mean": 2.0196,
+          "max": 2.279
+        },
+        "package_idle_wakeups_delta": 0,
+        "interrupt_wakeups_delta": 4,
+        "context_switches_delta": 6,
+        "subscribed_channels": {
+          "gpu": 1
+        },
+        "non_sample_rows": 1,
+        "persistent_children": 0
+      },
+      "failures": {}
+    },
+    {
+      "configuration": "B",
+      "groups": "public,gpu",
+      "interval_s": 2,
+      "samples": 4,
+      "overhead": {
+        "cpu_seconds_between_first_last": 0.006091,
+        "cpu_percent_one_core_between_first_last": 0.1015,
+        "resident_bytes": {
+          "min": 11517952,
+          "mean": 11579392,
+          "max": 11632640
+        },
+        "sampling_latency_ms": {
+          "min": 0.752,
+          "mean": 1.1595,
+          "max": 1.95
+        },
+        "package_idle_wakeups_delta": 0,
+        "interrupt_wakeups_delta": 3,
+        "context_switches_delta": 6,
+        "subscribed_channels": {
+          "gpu": 1
+        },
+        "non_sample_rows": 1,
+        "persistent_children": 0
+      },
+      "failures": {}
+    },
+    {
+      "configuration": "B",
+      "groups": "public,gpu",
+      "interval_s": 5,
+      "samples": 3,
+      "overhead": {
+        "cpu_seconds_between_first_last": 0.008069,
+        "cpu_percent_one_core_between_first_last": 0.0807,
+        "resident_bytes": {
+          "min": 11517952,
+          "mean": 11561642.66667,
+          "max": 11599872
+        },
+        "sampling_latency_ms": {
+          "min": 1.008,
+          "mean": 2.36133,
+          "max": 4.608
+        },
+        "package_idle_wakeups_delta": 0,
+        "interrupt_wakeups_delta": 2,
+        "context_switches_delta": 8,
+        "subscribed_channels": {
+          "gpu": 1
+        },
+        "non_sample_rows": 1,
+        "persistent_children": 0
+      },
+      "failures": {}
+    },
+    {
+      "configuration": "C",
+      "groups": "public,gpu,power",
+      "interval_s": 1,
+      "samples": 5,
+      "overhead": {
+        "cpu_seconds_between_first_last": 0.02002,
+        "cpu_percent_one_core_between_first_last": 0.5005,
+        "resident_bytes": {
+          "min": 11780096,
+          "mean": 11855462.4,
+          "max": 11894784
+        },
+        "sampling_latency_ms": {
+          "min": 3.007,
+          "mean": 4.3838,
+          "max": 5.626
+        },
+        "package_idle_wakeups_delta": 0,
+        "interrupt_wakeups_delta": 4,
+        "context_switches_delta": 27,
+        "subscribed_channels": {
+          "gpu": 1,
+          "power": 19
+        },
+        "non_sample_rows": 1,
+        "persistent_children": 0
+      },
+      "failures": {}
+    },
+    {
+      "configuration": "C",
+      "groups": "public,gpu,power",
+      "interval_s": 2,
+      "samples": 4,
+      "overhead": {
+        "cpu_seconds_between_first_last": 0.015569,
+        "cpu_percent_one_core_between_first_last": 0.2595,
+        "resident_bytes": {
+          "min": 11780096,
+          "mean": 11845632,
+          "max": 11894784
+        },
+        "sampling_latency_ms": {
+          "min": 3.471,
+          "mean": 4.25925,
+          "max": 4.84
+        },
+        "package_idle_wakeups_delta": 0,
+        "interrupt_wakeups_delta": 3,
+        "context_switches_delta": 13,
+        "subscribed_channels": {
+          "gpu": 1,
+          "power": 19
+        },
+        "non_sample_rows": 1,
+        "persistent_children": 0
+      },
+      "failures": {}
+    },
+    {
+      "configuration": "C",
+      "groups": "public,gpu,power",
+      "interval_s": 5,
+      "samples": 3,
+      "overhead": {
+        "cpu_seconds_between_first_last": 0.011886,
+        "cpu_percent_one_core_between_first_last": 0.1189,
+        "resident_bytes": {
+          "min": 11780096,
+          "mean": 11829248,
+          "max": 11878400
+        },
+        "sampling_latency_ms": {
+          "min": 4.207,
+          "mean": 5.75033,
+          "max": 8.478
+        },
+        "package_idle_wakeups_delta": 0,
+        "interrupt_wakeups_delta": 2,
+        "context_switches_delta": 13,
+        "subscribed_channels": {
+          "gpu": 1,
+          "power": 19
+        },
+        "non_sample_rows": 1,
+        "persistent_children": 0
+      },
+      "failures": {}
+    },
+    {
+      "configuration": "D",
+      "groups": "public,gpu,power,temperature",
+      "interval_s": 1,
+      "samples": 5,
+      "overhead": {
+        "cpu_seconds_between_first_last": 0.015562,
+        "cpu_percent_one_core_between_first_last": 0.389,
+        "resident_bytes": {
+          "min": 11812864,
+          "mean": 11914444.8,
+          "max": 11960320
+        },
+        "sampling_latency_ms": {
+          "min": 2.413,
+          "mean": 3.8262,
+          "max": 5.382
+        },
+        "package_idle_wakeups_delta": 0,
+        "interrupt_wakeups_delta": 4,
+        "context_switches_delta": 35,
+        "subscribed_channels": {
+          "power": 19,
+          "gpu": 1,
+          "smc": 0
+        },
+        "non_sample_rows": 1,
+        "persistent_children": 0
+      },
+      "failures": {}
+    },
+    {
+      "configuration": "D",
+      "groups": "public,gpu,power,temperature",
+      "interval_s": 2,
+      "samples": 4,
+      "overhead": {
+        "cpu_seconds_between_first_last": 0.010585,
+        "cpu_percent_one_core_between_first_last": 0.1764,
+        "resident_bytes": {
+          "min": 11812864,
+          "mean": 11902976,
+          "max": 11943936
+        },
+        "sampling_latency_ms": {
+          "min": 2.854,
+          "mean": 3.2355,
+          "max": 3.786
+        },
+        "package_idle_wakeups_delta": 0,
+        "interrupt_wakeups_delta": 3,
+        "context_switches_delta": 19,
+        "subscribed_channels": {
+          "power": 19,
+          "gpu": 1,
+          "smc": 0
+        },
+        "non_sample_rows": 1,
+        "persistent_children": 0
+      },
+      "failures": {}
+    },
+    {
+      "configuration": "D",
+      "groups": "public,gpu,power,temperature",
+      "interval_s": 5,
+      "samples": 3,
+      "overhead": {
+        "cpu_seconds_between_first_last": 0.011675,
+        "cpu_percent_one_core_between_first_last": 0.1167,
+        "resident_bytes": {
+          "min": 11812864,
+          "mean": 11889322.66667,
+          "max": 11943936
+        },
+        "sampling_latency_ms": {
+          "min": 4.752,
+          "mean": 5.13067,
+          "max": 5.762
+        },
+        "package_idle_wakeups_delta": 0,
+        "interrupt_wakeups_delta": 2,
+        "context_switches_delta": 12,
+        "subscribed_channels": {
+          "power": 19,
+          "gpu": 1,
+          "smc": 0
+        },
+        "non_sample_rows": 1,
+        "persistent_children": 0
+      },
+      "failures": {}
+    },
+    {
+      "configuration": "E",
+      "groups": "public,gpu,power,temperature,bandwidth",
+      "interval_s": 1,
+      "samples": 5,
+      "overhead": {
+        "cpu_seconds_between_first_last": 0.023921,
+        "cpu_percent_one_core_between_first_last": 0.598,
+        "resident_bytes": {
+          "min": 11927552,
+          "mean": 12029132.8,
+          "max": 12091392
+        },
+        "sampling_latency_ms": {
+          "min": 3.467,
+          "mean": 6.041,
+          "max": 7.851
+        },
+        "package_idle_wakeups_delta": 0,
+        "interrupt_wakeups_delta": 4,
+        "context_switches_delta": 21,
+        "subscribed_channels": {
+          "power": 19,
+          "gpu": 1,
+          "smc": 0,
+          "bandwidth": 63
+        },
+        "non_sample_rows": 1,
+        "persistent_children": 0
+      },
+      "failures": {}
+    },
+    {
+      "configuration": "E",
+      "groups": "public,gpu,power,temperature,bandwidth",
+      "interval_s": 2,
+      "samples": 4,
+      "overhead": {
+        "cpu_seconds_between_first_last": 0.018499,
+        "cpu_percent_one_core_between_first_last": 0.3083,
+        "resident_bytes": {
+          "min": 11927552,
+          "mean": 12013568,
+          "max": 12058624
+        },
+        "sampling_latency_ms": {
+          "min": 3.599,
+          "mean": 5.84725,
+          "max": 7.773
+        },
+        "package_idle_wakeups_delta": 0,
+        "interrupt_wakeups_delta": 3,
+        "context_switches_delta": 24,
+        "subscribed_channels": {
+          "power": 19,
+          "gpu": 1,
+          "smc": 0,
+          "bandwidth": 63
+        },
+        "non_sample_rows": 1,
+        "persistent_children": 0
+      },
+      "failures": {}
+    },
+    {
+      "configuration": "E",
+      "groups": "public,gpu,power,temperature,bandwidth",
+      "interval_s": 5,
+      "samples": 3,
+      "overhead": {
+        "cpu_seconds_between_first_last": 0.013093,
+        "cpu_percent_one_core_between_first_last": 0.1309,
+        "resident_bytes": {
+          "min": 11927552,
+          "mean": 11998549.33333,
+          "max": 12058624
+        },
+        "sampling_latency_ms": {
+          "min": 5.634,
+          "mean": 7.098,
+          "max": 7.832
+        },
+        "package_idle_wakeups_delta": 0,
+        "interrupt_wakeups_delta": 2,
+        "context_switches_delta": 20,
+        "subscribed_channels": {
+          "power": 19,
+          "gpu": 1,
+          "smc": 0,
+          "bandwidth": 63
+        },
+        "non_sample_rows": 1,
+        "persistent_children": 0
+      },
+      "failures": {}
+    }
+  ],
+  "temperature_diagnostic": {
+    "valid_keys": [
+      "Tp01",
+      "Tp05",
+      "Tp09",
+      "Tg05",
+      "Tg0D"
+    ],
+    "invalid_key": "Tg0P",
+    "invalid_smc_result": 132,
+    "overhead_matrix_default_keys": [
+      "Tp05",
+      "Tg05"
+    ]
+  },
+  "limitations": [
+    "No root powermetrics reference",
+    "ANE had no controlled workload",
+    "Memory-pressure event transition was not induced",
+    "CPU/DRAM mJ Energy Model channels stayed zero under load",
+    "App Sandbox disallows IOReport subscriptions and SMC open",
+    "Overhead includes Foundation and JSON encoding"
+  ]
+}
