@@ -35,3 +35,7 @@ copy ownership. IOReport subscription inputs are explicitly released after the
 call; Step 3.1 verified that the private function does not consume the caller
 reference, correcting the earlier ownership comment. The ordinary build
 excludes all Step 3.1 observation hooks.
+
+## Step 3.2 history amendment
+
+`HistoryLogger` consumes the centralized typed snapshot after main-queue publication. The collector performs no extra hardware reads, and the logger's single SQLite writer queue never shares the collector queue. Fast/slow samples and state changes are stored separately with per-metric quality and actual backend windows. A batch is committed approximately every 30 seconds on the existing cadence, with a final synchronous flush during normal AppKit Quit. The versioned local schema and read-only query examples are documented in [HISTORY_SCHEMA.md](HISTORY_SCHEMA.md); implementation and validation are in [STEP32_HISTORY_LOGGING.md](STEP32_HISTORY_LOGGING.md).

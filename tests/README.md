@@ -77,3 +77,32 @@ The saved September 23 long trace predates the final popover height and two
 initialization-input releases. The exact difference is retained in
 `docs/results/step31-post-start-fixes.patch`; all sampling/scheduler/quality fixes
 were already in that long-run binary. The later checks cover the final sources.
+
+## Step 3.2 history checks
+
+```sh
+sh app/build.sh
+python3 tests/run-history-checks.py
+sh tests/build-review.sh
+python3 tests/run_step32.py docs/results/a-new-step32.jsonl
+python3 tests/analyze_step32.py docs/results/a-new-step32.jsonl
+python3 tests/run-app-crash.py docs/results/a-new-app-crash.json
+python3 tests/measure_release.py docs/results/a-new-release-comparison.json
+```
+
+`run-history-checks.py` uses isolated temporary databases. It checks schema,
+UTC/quality semantics, app runs, sample/event tables, WAL read-only access while
+a writer is active, normal flush, reopening, and a controlled SIGKILL with one
+committed and one uncommitted sample. The long runner uses production source
+with the same Step 3.1 observation hooks, plus external read-only SQLite/file
+observations approximately every 30 seconds. It performs 30 seconds of warmup,
+then idle, existing GPU load, and recovery phases of about 10 minutes each.
+It writes the ordinary Application Support database. The normal app build has
+no Step 3.1 hooks.
+
+After the long run and a final ordinary `app/build.sh`, `run-app-crash.py`
+launches only its own normal app PIDs. Each time it waits for a committed batch,
+allows several more uncommitted ticks, sends SIGKILL, checks recovery and
+integrity, then starts a second run to prove appending. `measure_release.py`
+gives a separate 90-second ordinary-build comparison with the earlier Step 3.1
+release sample; it sends SIGTERM to its own PID at the end.

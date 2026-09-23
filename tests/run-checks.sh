@@ -15,6 +15,6 @@ clang -O2 -Wall -Wextra -mmacosx-version-min=13.0 -DSTEP31_REVIEW -fobjc-arc -fb
   -c app/TelemetryBackend.m -o .build/step31-checks/backend.o
 swiftc -O -target arm64-apple-macos13.0 -D STEP31_REVIEW -Xcc -DSTEP31_REVIEW \
   -module-cache-path "$CLANG_MODULE_CACHE_PATH" -import-objc-header app/TelemetryBackend.h \
-  .build/step31-checks/main.swift tests/Step31Review.swift .build/step31-checks/backend.o \
-  -framework AppKit -framework IOKit -o .build/step31-checks/metric-checks
+  .build/step31-checks/main.swift app/HistoryLogger.swift tests/Step31Review.swift .build/step31-checks/backend.o \
+  -framework AppKit -framework IOKit -lsqlite3 -o .build/step31-checks/metric-checks
 .build/step31-checks/metric-checks

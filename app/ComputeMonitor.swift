@@ -105,9 +105,10 @@ enum PrimaryMetric: Int, CaseIterable {
             guard let number = snapshot["cpuTemperature"]?.number else { return "Temp —" }
             return String(format: "Temp %.0f°C", number)
         case .gpuPower:
-            guard let number = snapshot["gpuPower"]?.number else { return "GPU Power —" }
-            let watts = String(format: "%.1f", number)
-            return "GPU Power \(watts.hasSuffix(".0") ? String(watts.dropLast(2)) : watts)W"
+            guard let number = snapshot["gpuPower"]?.number else { return "Pwr —" }
+            if number < 9.95 { return String(format: "Pwr %.1fW", number) }
+            if number < 999.5 { return String(format: "Pwr %.0fW", number) }
+            return String(format: "Pwr %.0fkW", number / 1000)
         }
     }
 }
@@ -122,6 +123,7 @@ final class TelemetryService {
     private var thermalObserver: NSObjectProtocol?
     private(set) var snapshot = TelemetrySnapshot()
     var onUpdate: ((TelemetrySnapshot) -> Void)?
+    var history: HistoryLogger?
 #if STEP31_REVIEW
     var reviewOnSample: (([String: Any]) -> Void)?
     private var reviewLastTick = ProcessInfo.processInfo.systemUptime
@@ -131,11 +133,13 @@ final class TelemetryService {
         guard !started else { return }
         started = true
         snapshot.metrics["thermal"] = .thermal(ProcessInfo.processInfo.thermalState)
+        history?.observeStates(snapshot, time: Date(), uptime: ProcessInfo.processInfo.systemUptime)
         thermalObserver = NotificationCenter.default.addObserver(
             forName: ProcessInfo.thermalStateDidChangeNotification, object: nil, queue: .main
         ) { [weak self] _ in
             guard let self else { return }
             self.snapshot.metrics["thermal"] = .thermal(ProcessInfo.processInfo.thermalState)
+            self.history?.observeStates(self.snapshot, time: Date(), uptime: ProcessInfo.processInfo.systemUptime)
             self.onUpdate?(self.snapshot)
         }
         onUpdate?(snapshot)
@@ -144,13 +148,14 @@ final class TelemetryService {
             autoreleasepool {
                 let collector = TelemetryBackend()
                 self.backend = collector
+                self.history?.start(topologyVerified: collector.capabilities["topology"] == "measured")
                 collector.pressureChanged = { [weak self] in
                     self?.queue.async { [weak self] in
                         guard let self, !self.stopped, let collector = self.backend else { return }
-                        autoreleasepool { self.deliver(collector.samplePressure() as NSDictionary) }
+                        autoreleasepool { self.deliver(collector.samplePressure() as NSDictionary, kind: .pressure, seq: self.ticks) }
                     }
                 }
-                self.deliver(collector.sampleSlow() as NSDictionary)
+                self.deliver(collector.sampleSlow() as NSDictionary, kind: .slow, seq: 0)
                 let timer = DispatchSource.makeTimerSource(queue: self.queue)
                 self.timer = timer
                 timer.setEventHandler { [weak self] in self?.tick() }
@@ -172,8 +177,9 @@ final class TelemetryService {
 #endif
             let readings = NSMutableDictionary(dictionary: backend.sampleFast())
             ticks += 1
-            if ticks % 3 == 0 { readings.addEntries(from: backend.sampleSlow()) }
-            deliver(readings)
+            let includesSlow = ticks % 3 == 0
+            if includesSlow { readings.addEntries(from: backend.sampleSlow()) }
+            deliver(readings, kind: includesSlow ? .fastAndSlow : .fast, seq: ticks)
 #if STEP31_REVIEW
             let end = ProcessInfo.processInfo.systemUptime
             let resources = backend.reviewResources()
@@ -189,12 +195,20 @@ final class TelemetryService {
         armTimer()
     }
 
-    private func deliver(_ readings: NSDictionary) {
+    private enum DeliveryKind { case fast, slow, fastAndSlow, pressure }
+    private func deliver(_ readings: NSDictionary, kind: DeliveryKind, seq: Int) {
         let time = Date()
         let uptime = ProcessInfo.processInfo.systemUptime
         DispatchQueue.main.async { [weak self] in
             guard let self, !self.stopped else { return }
             self.snapshot.merge(readings, at: time, uptime: uptime)
+            if kind == .fast || kind == .fastAndSlow {
+                self.history?.recordFast(self.snapshot, seq: seq, time: time, uptime: uptime)
+            }
+            if kind == .slow || kind == .fastAndSlow {
+                self.history?.recordSlow(self.snapshot, seq: seq, time: time, uptime: uptime)
+            }
+            if kind != .fast { self.history?.observeStates(self.snapshot, time: time, uptime: uptime) }
             self.onUpdate?(self.snapshot)
         }
     }
@@ -293,6 +307,7 @@ final class MonitorPopover: NSViewController {
 
 final class AppDelegate: NSObject, NSApplicationDelegate {
     private let service = TelemetryService()
+    private let history = HistoryLogger()
     private let statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
     private let popover = NSPopover()
     private let content = MonitorPopover()
@@ -302,6 +317,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private var selected = PrimaryMetric(rawValue: UserDefaults.standard.integer(forKey: "primaryMetric")) ?? .cpu
 
     func applicationDidFinishLaunching(_ notification: Notification) {
+        service.history = history
         NSApp.setActivationPolicy(.accessory)
         popover.behavior = .transient
         popover.animates = false
@@ -351,7 +367,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
     }
 
-    func applicationWillTerminate(_ notification: Notification) { service.stop() }
+    func applicationWillTerminate(_ notification: Notification) {
+        service.stop()
+        history.stop()
+    }
 
 #if STEP3_UI_SMOKE
     private func runUISmoke() {
@@ -363,13 +382,23 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             return selected == mode && statusItem.button?.title == mode.title(in: service.snapshot)
         }
         let variableWidth = statusItem.length == NSStatusItem.variableLength
-        let boundaryFits = ["CPU 100%", "GPU 100%", "Temp 100°C", "GPU Power 99.9W"].allSatisfy { title in
+        let boundaryFits = ["CPU 100%", "GPU 100%", "Temp 100°C", "Pwr 100W"].allSatisfy { title in
             guard let button = statusItem.button, let font = button.font else { return false }
             button.title = title
             RunLoop.main.run(until: Date().addingTimeInterval(0.1))
             let textWidth = (title as NSString).size(withAttributes: [.font: font]).width
             return button.bounds.width >= textWidth
         }
+        let compactPowerFits: Bool = {
+            guard let font = statusItem.button?.font else { return false }
+            let limit = ("GPU 100%" as NSString).size(withAttributes: [.font: font]).width
+            return [0.2, 9.9, 9.96, 14, 99.9, 100, 999.9].allSatisfy { watts in
+                var sample = TelemetrySnapshot()
+                sample.merge(["gpuPower": ["status": "estimated", "value": watts, "unit": "W"]], at: Date())
+                let title = PrimaryMetric.gpuPower.title(in: sample)
+                return (title as NSString).size(withAttributes: [.font: font]).width <= limit
+            }
+        }()
         render(service.snapshot)
         togglePopover()
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { [weak self] in
@@ -378,8 +407,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             let accessory = NSApp.activationPolicy() == .accessory
             let cpuLive = self.service.snapshot["total"]?.number != nil
             let gpuLive = self.service.snapshot["gpuActive"]?.number != nil
-            let passed = opened && switched && variableWidth && boundaryFits && closed && accessory && cpuLive && gpuLive
-            print("UI_SMOKE opened=\(opened) switched=\(switched) variable_width=\(variableWidth) boundary_fits=\(boundaryFits) closed=\(closed) accessory=\(accessory) cpu=\(cpuLive) gpu=\(gpuLive) initial=\(initial) result=\(passed ? "PASS" : "FAIL")")
+            let passed = opened && switched && variableWidth && boundaryFits && compactPowerFits && closed && accessory && cpuLive && gpuLive
+            print("UI_SMOKE opened=\(opened) switched=\(switched) variable_width=\(variableWidth) boundary_fits=\(boundaryFits) compact_power_fits=\(compactPowerFits) closed=\(closed) accessory=\(accessory) cpu=\(cpuLive) gpu=\(gpuLive) initial=\(initial) result=\(passed ? "PASS" : "FAIL")")
             fflush(stdout)
             NSApp.terminate(nil)
         }

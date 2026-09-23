@@ -1,0 +1,100 @@
+--- long-run source/app/ComputeMonitor.swift
++++ final source/app/ComputeMonitor.swift
+@@ -105,9 +105,10 @@
+             guard let number = snapshot["cpuTemperature"]?.number else { return "Temp —" }
+             return String(format: "Temp %.0f°C", number)
+         case .gpuPower:
+-            guard let number = snapshot["gpuPower"]?.number else { return "GPU Power —" }
+-            let watts = String(format: "%.1f", number)
+-            return "GPU Power \(watts.hasSuffix(".0") ? String(watts.dropLast(2)) : watts)W"
++            guard let number = snapshot["gpuPower"]?.number else { return "Pwr —" }
++            if number < 9.95 { return String(format: "Pwr %.1fW", number) }
++            if number < 999.5 { return String(format: "Pwr %.0fW", number) }
++            return String(format: "Pwr %.0fkW", number / 1000)
+         }
+     }
+ }
+@@ -381,13 +382,23 @@
+             return selected == mode && statusItem.button?.title == mode.title(in: service.snapshot)
+         }
+         let variableWidth = statusItem.length == NSStatusItem.variableLength
+-        let boundaryFits = ["CPU 100%", "GPU 100%", "Temp 100°C", "GPU Power 99.9W"].allSatisfy { title in
++        let boundaryFits = ["CPU 100%", "GPU 100%", "Temp 100°C", "Pwr 100W"].allSatisfy { title in
+             guard let button = statusItem.button, let font = button.font else { return false }
+             button.title = title
+             RunLoop.main.run(until: Date().addingTimeInterval(0.1))
+             let textWidth = (title as NSString).size(withAttributes: [.font: font]).width
+             return button.bounds.width >= textWidth
+         }
++        let compactPowerFits: Bool = {
++            guard let font = statusItem.button?.font else { return false }
++            let limit = ("GPU 100%" as NSString).size(withAttributes: [.font: font]).width
++            return [0.2, 9.9, 9.96, 14, 99.9, 100, 999.9].allSatisfy { watts in
++                var sample = TelemetrySnapshot()
++                sample.merge(["gpuPower": ["status": "estimated", "value": watts, "unit": "W"]], at: Date())
++                let title = PrimaryMetric.gpuPower.title(in: sample)
++                return (title as NSString).size(withAttributes: [.font: font]).width <= limit
++            }
++        }()
+         render(service.snapshot)
+         togglePopover()
+         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { [weak self] in
+@@ -396,8 +407,8 @@
+             let accessory = NSApp.activationPolicy() == .accessory
+             let cpuLive = self.service.snapshot["total"]?.number != nil
+             let gpuLive = self.service.snapshot["gpuActive"]?.number != nil
+-            let passed = opened && switched && variableWidth && boundaryFits && closed && accessory && cpuLive && gpuLive
+-            print("UI_SMOKE opened=\(opened) switched=\(switched) variable_width=\(variableWidth) boundary_fits=\(boundaryFits) closed=\(closed) accessory=\(accessory) cpu=\(cpuLive) gpu=\(gpuLive) initial=\(initial) result=\(passed ? "PASS" : "FAIL")")
++            let passed = opened && switched && variableWidth && boundaryFits && compactPowerFits && closed && accessory && cpuLive && gpuLive
++            print("UI_SMOKE opened=\(opened) switched=\(switched) variable_width=\(variableWidth) boundary_fits=\(boundaryFits) compact_power_fits=\(compactPowerFits) closed=\(closed) accessory=\(accessory) cpu=\(cpuLive) gpu=\(gpuLive) initial=\(initial) result=\(passed ? "PASS" : "FAIL")")
+             fflush(stdout)
+             NSApp.terminate(nil)
+         }
+--- long-run source/app/HistoryLogger.swift
++++ final source/app/HistoryLogger.swift
+@@ -163,7 +163,10 @@
+                 .integer(Int64(ProcessInfo.processInfo.processorCount)), .integer(topologyVerified ? 1 : 0)])
+             guard insert(row) else { fputs("History run insert failed\n", stderr); close(); return }
+             active = true
+-            event("app_start", old: nil, new: nil, quality: .measured, time: Date(), uptime: ProcessInfo.processInfo.systemUptime)
++            pending.append(Row(table: "events", values: [.null, .text(runID),
++                .integer(Self.ms(Date().timeIntervalSince1970)),
++                .integer(Self.ms(ProcessInfo.processInfo.systemUptime)),
++                .text("app_start"), .null, .null, .text(Quality.measured.rawValue)]))
+         }
+     }
+     func recordFast(_ snapshot: TelemetrySnapshot, seq: Int, time: Date, uptime: TimeInterval) {
+@@ -201,7 +204,12 @@
+     private func flush() {
+         guard active, !pending.isEmpty else { return }
+         let begin = ProcessInfo.processInfo.systemUptime
+-        guard execute("BEGIN IMMEDIATE") else { return }
++        guard execute("BEGIN IMMEDIATE") else {
++            fputs("History recording disabled after transaction failure\n", stderr)
++            pending.removeAll()
++            close()
++            return
++        }
+         let success = pending.allSatisfy { insert($0) }
+         let counts = (pending.filter { $0.table == "fast_samples" }.count,
+                       pending.filter { $0.table == "slow_samples" }.count,
+@@ -215,7 +223,10 @@
+             pending.removeAll(keepingCapacity: true)
+             lastFlushUptime = ProcessInfo.processInfo.systemUptime
+         } else {
+-            _ = execute("ROLLBACK"); fputs("History batch retained after write failure\n", stderr)
++            _ = execute("ROLLBACK")
++            fputs("History recording disabled after batch failure\n", stderr)
++            pending.removeAll()
++            close()
+         }
+     }
+     private func close() { if let db { sqlite3_close(db) }; db = nil; active = false }
+@@ -226,6 +237,7 @@
+             pending.append(Row(table: "events", values: [.null, .text(runID), .integer(Self.ms(time.timeIntervalSince1970)),
+                 .integer(Self.ms(uptime)), .text("app_graceful_stop"), .null, .null, .text(Quality.measured.rawValue)]))
+             flush()
++            guard active else { return }
+             var stmt: OpaquePointer?
+             if sqlite3_prepare_v2(db, "UPDATE app_runs SET end_utc_ms=? WHERE run_id=?", -1, &stmt, nil) == SQLITE_OK {
+                 sqlite3_bind_int64(stmt, 1, Self.ms(time.timeIntervalSince1970))
