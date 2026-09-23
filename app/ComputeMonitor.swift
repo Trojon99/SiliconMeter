@@ -96,17 +96,18 @@ enum PrimaryMetric: Int, CaseIterable {
     func title(in snapshot: TelemetrySnapshot) -> String {
         switch self {
         case .cpu:
-            guard let number = snapshot["total"]?.number else { return "C —" }
-            return String(format: "C %.0f%%", number * 100)
+            guard let number = snapshot["total"]?.number else { return "CPU —" }
+            return String(format: "CPU %.0f%%", number * 100)
         case .gpu:
-            guard let number = snapshot["gpuActive"]?.number else { return "G —" }
-            return String(format: "G %.0f%%", number * 100)
+            guard let number = snapshot["gpuActive"]?.number else { return "GPU —" }
+            return String(format: "GPU %.0f%%", number * 100)
         case .temperature:
-            guard let number = snapshot["cpuTemperature"]?.number else { return "—°" }
-            return String(format: "%.0f°", number)
+            guard let number = snapshot["cpuTemperature"]?.number else { return "Temp —" }
+            return String(format: "Temp %.0f°C", number)
         case .gpuPower:
-            guard let number = snapshot["gpuPower"]?.number else { return "—W" }
-            return String(format: "%.0fW", number)
+            guard let number = snapshot["gpuPower"]?.number else { return "GPU Power —" }
+            let watts = String(format: "%.1f", number)
+            return "GPU Power \(watts.hasSuffix(".0") ? String(watts.dropLast(2)) : watts)W"
         }
     }
 }
@@ -314,7 +315,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             self.render(self.service.snapshot)
         }
         content.onQuit = { NSApp.terminate(nil) }
-        statusItem.button?.title = "C —"
+        statusItem.button?.title = selected.title(in: service.snapshot)
+        statusItem.button?.font = .monospacedDigitSystemFont(ofSize: NSFont.systemFontSize, weight: .regular)
         statusItem.button?.target = self
         statusItem.button?.action = #selector(togglePopover)
         service.onUpdate = { [weak self] snapshot in self?.render(snapshot) }
@@ -356,8 +358,19 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         let initial = statusItem.button?.title ?? ""
         togglePopover()
         let opened = popover.isShown
-        content.onMode?(.gpu)
-        let switched = selected == .gpu && statusItem.button?.title.hasPrefix("G ") == true
+        let switched = PrimaryMetric.allCases.allSatisfy { mode in
+            content.onMode?(mode)
+            return selected == mode && statusItem.button?.title == mode.title(in: service.snapshot)
+        }
+        let variableWidth = statusItem.length == NSStatusItem.variableLength
+        let boundaryFits = ["CPU 100%", "GPU 100%", "Temp 100°C", "GPU Power 99.9W"].allSatisfy { title in
+            guard let button = statusItem.button, let font = button.font else { return false }
+            button.title = title
+            RunLoop.main.run(until: Date().addingTimeInterval(0.1))
+            let textWidth = (title as NSString).size(withAttributes: [.font: font]).width
+            return button.bounds.width >= textWidth
+        }
+        render(service.snapshot)
         togglePopover()
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { [weak self] in
             guard let self else { return }
@@ -365,8 +378,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             let accessory = NSApp.activationPolicy() == .accessory
             let cpuLive = self.service.snapshot["total"]?.number != nil
             let gpuLive = self.service.snapshot["gpuActive"]?.number != nil
-            let passed = opened && switched && closed && accessory && cpuLive && gpuLive
-            print("UI_SMOKE opened=\(opened) switched=\(switched) closed=\(closed) accessory=\(accessory) cpu=\(cpuLive) gpu=\(gpuLive) initial=\(initial) result=\(passed ? "PASS" : "FAIL")")
+            let passed = opened && switched && variableWidth && boundaryFits && closed && accessory && cpuLive && gpuLive
+            print("UI_SMOKE opened=\(opened) switched=\(switched) variable_width=\(variableWidth) boundary_fits=\(boundaryFits) closed=\(closed) accessory=\(accessory) cpu=\(cpuLive) gpu=\(gpuLive) initial=\(initial) result=\(passed ? "PASS" : "FAIL")")
             fflush(stdout)
             NSApp.terminate(nil)
         }

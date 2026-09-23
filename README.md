@@ -13,7 +13,7 @@ open app/ComputeMonitor.app
 
 The generated app bundle is ignored by Git. It is a **local development build**, not a Developer ID signed or notarized distribution. It has `LSUIElement=true` and runs as an accessory without a Dock icon. It must run outside App Sandbox for IOReport and AppleSMC access. Open the status item to view metrics, choose one of the four primary metrics, or quit. Primary selection is saved with `UserDefaults`; metric history is not saved.
 
-Menu-bar choices: total CPU (`C 23%`), whole-system GPU active ratio (`G 91%`), the selected CPU sensor Tp05 (`72°`), or estimated GPU power (`18W`). `—` means unavailable. The popover labels estimated and unavailable values explicitly.
+Menu-bar choices: total CPU (`CPU 23%`), whole-system GPU active ratio (`GPU 91%`), the selected CPU sensor Tp05 (`Temp 61°C`), or estimated GPU power (`GPU Power 14W`). `—` means unavailable. The popover identifies the temperature sensors and labels estimated and unavailable values explicitly.
 
 ## Local checks
 
