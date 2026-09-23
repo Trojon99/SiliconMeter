@@ -1,0 +1,15 @@
+--- tested/app/ComputeMonitor.swift
++++ final/app/ComputeMonitor.swift
+@@ -218 +218 @@
+-        let root = NSView(frame: NSRect(x: 0, y: 0, width: 330, height: 470))
++        let root = NSView(frame: NSRect(x: 0, y: 0, width: 330, height: 500))
+@@ -250 +250 @@
+-        preferredContentSize = NSSize(width: 330, height: 470)
++        preferredContentSize = NSSize(width: 330, height: 500)
+--- tested/app/TelemetryBackend.m
++++ final/app/TelemetryBackend.m
+@@ -222 +222 @@
+-    // CreateSubscription consumes desired on the validated OS build.
++    // The subscription does not consume our +1 input dictionary (Step 3.1 ownership check).
+@@ -223,0 +224 @@
++    CFRelease(desired);

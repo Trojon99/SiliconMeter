@@ -21,3 +21,17 @@ The intended distribution is a Developer ID signed and notarized **non-App-Sandb
 IOReport symbols/channels, AppleSMC protocol, device-tree topology properties, GPU DVFS mappings, and the pressure sysctl are undocumented or private and may break across hardware or OS updates. Capability failures remain visible as unavailable. GPU power and weighted frequency have not been externally calibrated. Pressure transition and nonzero swap behavior have not been induced in this step.
 
 GFX DCS/AMC bandwidth remains experimental and is absent from the production collector and UI. CPU/DRAM power, ANE, and process attribution remain deferred. Training Saturation, Headroom, AI analysis, automatic tuning, ML framework integration, SQLite/history, and cloud features are outside Step 3.0.
+
+## Step 3.1 review amendments
+
+See [the independent review](STEP31_REVIEW.md) for the long-run evidence and its
+instrumentation limits. Fast and slow results on the same tick now merge before
+one main-thread publication. Freshness uses the observation's monotonic uptime,
+while Date remains its wall-clock timestamp. A VM read failure invalidates every
+VM-derived field immediately; physical memory retains its independent source.
+CPU backward jumps are rejected without rejecting small unsigned counter wraps.
+Service start is idempotent, and the cross-queue pressure callback uses atomic
+copy ownership. IOReport subscription inputs are explicitly released after the
+call; Step 3.1 verified that the private function does not consume the caller
+reference, correcting the earlier ownership comment. The ordinary build
+excludes all Step 3.1 observation hooks.

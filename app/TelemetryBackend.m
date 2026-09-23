@@ -6,6 +6,10 @@
 #import <dlfcn.h>
 #import <time.h>
 #import <math.h>
+#ifdef STEP31_REVIEW
+#import <libproc.h>
+#import <sys/resource.h>
+#endif
 
 // The private ABI and ownership rules here are based on the validated Step 2.6 probe.
 typedef void *IRSubscription;
@@ -215,8 +219,9 @@ static uint32_t fourcc(const char *key) {
     CFMutableDictionaryRef desired = CFDictionaryCreateMutableCopy(kCFAllocatorDefault, 0, all);
     CFDictionarySetValue(desired, CFSTR("IOReportChannels"), picked);
     CFRelease(picked); CFRelease(all);
-    // CreateSubscription consumes desired on the validated OS build.
+    // The subscription does not consume our +1 input dictionary (Step 3.1 ownership check).
     channel->subscription = _ir.subscribe(NULL, desired, &channel->channels, 0, NULL);
+    CFRelease(desired);
     if (!channel->subscription || !channel->channels) return;
     CFArrayRef accepted = CFDictionaryGetValue(channel->channels, CFSTR("IOReportChannels"));
     if (!accepted || CFArrayGetCount(accepted) != 1) return;
@@ -243,6 +248,8 @@ static uint32_t fourcc(const char *key) {
         for (int j = 0; j < CPU_STATE_MAX; j++) {
             uint32_t current = (uint32_t)data[i * CPU_STATE_MAX + j];
             uint32_t difference = current - _ticks[i][j]; _ticks[i][j] = current;
+            // Preserve small UInt32 wraps, but reject backward/reset jumps.
+            if (difference > INT32_MAX) valid = NO;
             ticks += difference; if (j != CPU_STATE_IDLE) busy += difference;
         }
         if (!ticks) valid = NO;
@@ -378,8 +385,12 @@ static uint32_t fourcc(const char *key) {
     double now = monotonic();
     if (kr != KERN_SUCCESS || n < HOST_VM_INFO64_COUNT || !_physical || !vm_kernel_page_size) {
         _vmTime = 0;
-        return @{ @"physical": missing(@"invalid", @"HOST_VM_INFO64", @"read_failed"),
-                  @"free": missing(@"invalid", @"HOST_VM_INFO64", @"read_failed") };
+        NSMutableDictionary *failed = [NSMutableDictionary dictionary];
+        for (NSString *key in @[@"free", @"active", @"inactive", @"wired", @"compressed", @"swapIn", @"swapOut"])
+            failed[key] = missing(@"invalid", @"HOST_VM_INFO64", @"read_failed");
+        failed[@"physical"] = _physical ? reading(@(_physical), @"B", @"measured", @"hw.memsize", 0, nil)
+                                       : missing(@"unavailable", @"hw.memsize", @"read_failed");
+        return failed;
     }
     uint64_t page = vm_kernel_page_size;
     BOOL rateValid = _vmTime > 0 && now > _vmTime && now - _vmTime <= 30 &&
@@ -458,5 +469,8 @@ static uint32_t fourcc(const char *key) {
     if (_host) { mach_port_deallocate(mach_task_self(), _host); _host = MACH_PORT_NULL; }
 }
 
+#ifdef STEP31_REVIEW
+#include "../tests/Step31Diagnostics.inc"
+#endif
 - (void)dealloc { [self shutdown]; }
 @end

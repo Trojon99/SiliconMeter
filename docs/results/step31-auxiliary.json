@@ -1,0 +1,415 @@
+{
+  "recorded_at_utc": "2026-09-23T11:45:07.049956+00:00",
+  "final_source_sha256": {
+    "app/ComputeMonitor.swift": "46e63d99a8c2b5b9301baa7a888ef8860fcb0ae7b63ce8e5673d4f1d97ed38bc",
+    "app/TelemetryBackend.h": "3109489b2f0d542be180be22f32a8ddb7eeccc9327597d5d6c48a236e01bee42",
+    "app/TelemetryBackend.m": "89f7bd48dd9c25fb880c3d3893f84c95bbbdb8432aacf29455c7f3850a106f92",
+    "tests/backend_faults.m": "8a9dc3cd29090c0295f9ace5fa2bef631b1016e0e08398b1dcbf3a60b3323e3b",
+    "tests/metric_checks.swift": "42352b0714f24c4301377a85d4608f693a02666ea8e89b80f9abba6846f5276e",
+    "tests/ioreport_ownership.m": "dba540f967cdc8c3a2253b5906f9a03935009fc27eb7e96fbc64653ec92fc1b8",
+    "tests/backend_lifecycle.m": "4d0796f9ffb41fca632c670da721c44c9b1c81a4918defe44c3d635e482fe483"
+  },
+  "checks": "BACKEND_FAULTS PASS assertions=92\nMETRIC_SERVICE_CHECKS PASS assertions=25\n",
+  "ownership_host": "GPUPH subscribed=1 before=2 after_call=2 after_cleanup=1\nGPU Energy subscribed=1 before=2 after_call=2 after_cleanup=1\nIOREPORT_OWNERSHIP PASS\n",
+  "ownership_sandbox": "GPUPH subscribed=0 before=2 after_call=2 after_cleanup=1\nGPU Energy subscribed=0 before=2 after_call=2 after_cleanup=1\nIOREPORT_OWNERSHIP PASS\n",
+  "lifecycle_asan": "BACKEND_LIFECYCLE iterations=100 host_refs=2->2 port_names=21->21\n",
+  "static_analysis_output": "",
+  "ui_final": "LAYOUT 0 NSView {{0, 0}, {330, 500}}\nLAYOUT 1 NSStackView {{16, 21}, {298, 465}}\nLAYOUT 2 NSTextField {{14, 469}, {124.5, 17}}\nLAYOUT 3 NSTextFieldSimpleLabel {{14, 469}, {124.5, 17}}\nLAYOUT 2 NSTextField {{14, 93}, {228.5, 364}}\nLAYOUT 3 NSTextFieldSimpleLabel {{14, 93}, {228.5, 364}}\nLAYOUT 2 NSStackView {{16, 57}, {298, 24}}\nLAYOUT 3 NSButton {{16, 57}, {45.5, 24}}\nLAYOUT 4 _NSCoreHostingView<AppKitButton> {{16, 57}, {45.5, 24}}\nLAYOUT 3 NSButton {{66.5, 57}, {57.5, 24}}\nLAYOUT 4 _NSCoreHostingView<AppKitButton> {{66.5, 57}, {57.5, 24}}\nLAYOUT 3 NSButton {{129, 57}, {85.5, 24}}\nLAYOUT 4 _NSCoreHostingView<AppKitButton> {{129, 57}, {85.5, 24}}\nLAYOUT 3 NSButton {{219.5, 57}, {78, 24}}\nLAYOUT 4 _NSCoreHostingView<AppKitButton> {{219.5, 57}, {78, 24}}\nLAYOUT 2 NSButton {{16, 21}, {49.5, 24}}\nLAYOUT 3 _NSCoreHostingView<AppKitButton> {{16, 21}, {49.5, 24}}\nUI_SMOKE opened=true switched=true closed=true accessory=true cpu=true gpu=true initial=C 17% result=PASS\n",
+  "backend_smoke": [
+    {
+      "kind": "capabilities",
+      "values": {
+        "gpu": "measured",
+        "gpuPower": "estimated",
+        "smc": "measured",
+        "topology": "measured"
+      }
+    },
+    {
+      "index": 1,
+      "kind": "sample",
+      "values": {
+        "e": {
+          "status": "measured",
+          "value": 0.4393939393939394
+        },
+        "gpuActive": {
+          "status": "measured",
+          "value": 0.4623891672379926
+        },
+        "gpuFrequency": {
+          "status": "estimated",
+          "value": 388.80000000000007
+        },
+        "p": {
+          "status": "measured",
+          "value": 0.23520381759543987
+        },
+        "total": {
+          "status": "measured",
+          "value": 0.2760418419551398
+        }
+      }
+    },
+    {
+      "index": 2,
+      "kind": "sample",
+      "values": {
+        "e": {
+          "status": "measured",
+          "value": 0.4321717171717172
+        },
+        "gpuActive": {
+          "status": "measured",
+          "value": 0.45131871546774205
+        },
+        "gpuFrequency": {
+          "status": "estimated",
+          "value": 388.8
+        },
+        "p": {
+          "status": "measured",
+          "value": 0.19211625603140073
+        },
+        "total": {
+          "status": "measured",
+          "value": 0.240127348259464
+        }
+      }
+    },
+    {
+      "index": 3,
+      "kind": "sample",
+      "values": {
+        "active": {
+          "status": "measured",
+          "value": 28692578304
+        },
+        "compressed": {
+          "status": "measured",
+          "value": 792444928
+        },
+        "cpuTemperature": {
+          "status": "measured",
+          "value": 53.15685272216797
+        },
+        "e": {
+          "status": "measured",
+          "value": 0.4861301456778844
+        },
+        "free": {
+          "status": "measured",
+          "value": 6414565376
+        },
+        "gpuActive": {
+          "status": "measured",
+          "value": 0.44360495837192104
+        },
+        "gpuFrequency": {
+          "status": "estimated",
+          "value": 388.8
+        },
+        "gpuPower": {
+          "status": "estimated",
+          "value": 0.3798006103069203
+        },
+        "gpuTemperature": {
+          "status": "measured",
+          "value": 52.66427993774414
+        },
+        "inactive": {
+          "status": "measured",
+          "value": 28597944320
+        },
+        "p": {
+          "status": "measured",
+          "value": 0.20028956973924347
+        },
+        "physical": {
+          "status": "measured",
+          "value": 68719476736
+        },
+        "pressure": {
+          "status": "measured",
+          "value": "Normal"
+        },
+        "pressureEvents": {
+          "status": "measured",
+          "value": 0
+        },
+        "pressureLastEvent": {
+          "status": "unavailable",
+          "value": null
+        },
+        "swapIn": {
+          "status": "unavailable",
+          "value": null
+        },
+        "swapOut": {
+          "status": "unavailable",
+          "value": null
+        },
+        "swapUsed": {
+          "status": "measured",
+          "value": 0
+        },
+        "total": {
+          "status": "measured",
+          "value": 0.2574576849269717
+        },
+        "wired": {
+          "status": "measured",
+          "value": 3297509376
+        }
+      }
+    },
+    {
+      "index": 4,
+      "kind": "sample",
+      "values": {
+        "e": {
+          "status": "measured",
+          "value": 0.5527638190954773
+        },
+        "gpuActive": {
+          "status": "measured",
+          "value": 0.5476424838759807
+        },
+        "gpuFrequency": {
+          "status": "estimated",
+          "value": 388.80000000000007
+        },
+        "p": {
+          "status": "measured",
+          "value": 0.14491638428261935
+        },
+        "total": {
+          "status": "measured",
+          "value": 0.22648587124519093
+        }
+      }
+    },
+    {
+      "index": 5,
+      "kind": "sample",
+      "values": {
+        "e": {
+          "status": "measured",
+          "value": 0.59
+        },
+        "gpuActive": {
+          "status": "measured",
+          "value": 0.42809755778458797
+        },
+        "gpuFrequency": {
+          "status": "estimated",
+          "value": 395.4786287617415
+        },
+        "p": {
+          "status": "measured",
+          "value": 0.12262578439460987
+        },
+        "total": {
+          "status": "measured",
+          "value": 0.21610062751568787
+        }
+      }
+    },
+    {
+      "index": 6,
+      "kind": "sample",
+      "values": {
+        "active": {
+          "status": "measured",
+          "value": 28804431872
+        },
+        "compressed": {
+          "status": "measured",
+          "value": 792444928
+        },
+        "cpuTemperature": {
+          "status": "measured",
+          "value": 51.100563049316406
+        },
+        "e": {
+          "status": "measured",
+          "value": 0.635678391959799
+        },
+        "free": {
+          "status": "measured",
+          "value": 6431981568
+        },
+        "gpuActive": {
+          "status": "measured",
+          "value": 0.4228328596391852
+        },
+        "gpuFrequency": {
+          "status": "estimated",
+          "value": 394.9228987705153
+        },
+        "gpuPower": {
+          "status": "estimated",
+          "value": 0.49532175105821274
+        },
+        "gpuTemperature": {
+          "status": "measured",
+          "value": 52.0880126953125
+        },
+        "inactive": {
+          "status": "measured",
+          "value": 28633890816
+        },
+        "p": {
+          "status": "measured",
+          "value": 0.13599490667959768
+        },
+        "physical": {
+          "status": "measured",
+          "value": 68719476736
+        },
+        "pressure": {
+          "status": "measured",
+          "value": "Normal"
+        },
+        "pressureEvents": {
+          "status": "measured",
+          "value": 0
+        },
+        "pressureLastEvent": {
+          "status": "unavailable",
+          "value": null
+        },
+        "swapIn": {
+          "status": "measured",
+          "value": 0
+        },
+        "swapOut": {
+          "status": "measured",
+          "value": 0
+        },
+        "swapUsed": {
+          "status": "measured",
+          "value": 0
+        },
+        "total": {
+          "status": "measured",
+          "value": 0.2359316037356379
+        },
+        "wired": {
+          "status": "measured",
+          "value": 3132293120
+        }
+      }
+    },
+    {
+      "index": 7,
+      "kind": "sample",
+      "values": {
+        "e": {
+          "status": "measured",
+          "value": 0.8279228855721392
+        },
+        "gpuActive": {
+          "status": "measured",
+          "value": 0.33885972340223364
+        },
+        "gpuFrequency": {
+          "status": "estimated",
+          "value": 403.81150936910535
+        },
+        "p": {
+          "status": "measured",
+          "value": 0.09584802120053001
+        },
+        "total": {
+          "status": "measured",
+          "value": 0.2422629940748518
+        }
+      }
+    },
+    {
+      "index": 8,
+      "kind": "sample",
+      "values": {
+        "e": {
+          "status": "measured",
+          "value": 0.809040404040404
+        },
+        "gpuActive": {
+          "status": "measured",
+          "value": 0.4307104864379318
+        },
+        "gpuFrequency": {
+          "status": "estimated",
+          "value": 401.99773557570154
+        },
+        "p": {
+          "status": "measured",
+          "value": 0.10833545838645967
+        },
+        "total": {
+          "status": "measured",
+          "value": 0.2484764475172485
+        }
+      }
+    },
+    {
+      "child_pid_count": 0,
+      "cpu_s": 0.015008999999999967,
+      "elapsed_s": 16.048451999988174,
+      "kind": "overhead",
+      "resident_bytes": 10698752
+    }
+  ],
+  "vmmap_excerpt": [
+    "Date/Time:       2026-09-23 21:31:42.657 +1000",
+    "Physical footprint:         41.7M",
+    "Physical footprint (peak):  70.3M",
+    "IOAccelerator                       64K      64K      64K       0K       0K       0K       0K        2 ",
+    "IOAccelerator (graphics)          8240K    4256K    4256K       0K       0K    4256K       0K       58 ",
+    "IOSurface                         12.9M    12.7M    12.7M       0K       0K    12.7M       0K       21 ",
+    "Malloc Small                      31.8M    15.8M    13.4M       0K       0K       0K       0K       93         see MALLOC ZONE table below",
+    "Malloc Small (empty)               208K     160K      96K       0K       0K       0K       0K        8         see MALLOC ZONE table below",
+    "Stack                             10.6M     304K     304K       0K       0K       0K       0K        6 ",
+    "Stack (reserved)                   544K       0K       0K       0K       0K       0K       0K        1         reserved VM address space (unallocated)",
+    "Stack Guard                       56.1M       0K       0K       0K       0K       0K       0K        7 "
+  ],
+  "sample_excerpt": [
+    "",
+    "    236 Thread_2900681   DispatchQueue_1: com.apple.main-thread  (serial)",
+    "    + 236 start  (in dyld) + 6688  [0x19d55be80]",
+    "    +   236 main  (in ComputeMonitor) + 84  [0x100479624]",
+    "    +     236 -[NSApplication run]  (in AppKit) + 396  [0x1a1f9b90c]",
+    "    +       236 -[NSApplication(NSEventRouting) nextEventMatchingMask:untilDate:inMode:dequeue:]  (in AppKit) + 292  [0x1a282026c]",
+    "    +         236 -[NSApplication(NSEventRouting) _nextEventMatchingEventMask:untilDate:inMode:dequeue:]  (in AppKit) + 780  [0x1a2820748]",
+    "    +           236 _DPSNextEvent  (in AppKit) + 580  [0x1a1fa84fc]",
+    "    +             236 _DPSBlockUntilNextEventMatchingListInMode  (in AppKit) + 292  [0x1a22eb29c]",
+    "    +               236 _BlockUntilNextEventMatchingListInMode  (in HIToolbox) + 48  [0x1aafaa380]",
+    "    +                 236 ReceiveNextEventCommon  (in HIToolbox) + 492  [0x1aae2791c]",
+    "    +                   236 RunCurrentEventLoopInMode  (in HIToolbox) + 320  [0x1aae24590]",
+    "    +                     236 _CFRunLoopRunSpecificWithOptions  (in CoreFoundation) + 536  [0x19dacb82c]",
+    "    +                       234 __CFRunLoopRun  (in CoreFoundation) + 1172  [0x19d9f1334]",
+    "    +                       ! 234 __CFRunLoopServiceMachPort  (in CoreFoundation) + 160  [0x19d9f2aec]",
+    "    +                       !   234 mach_msg  (in libsystem_kernel.dylib) + 24  [0x19d8ecfac]",
+    "    +                       !     234 mach_msg_overwrite  (in libsystem_kernel.dylib) + 480  [0x19d8f5a28]",
+    "    +                       !       234 mach_msg2_internal  (in libsystem_kernel.dylib) + 76  [0x19d8ff8e0]",
+    "    +                       !         234 mach_msg2_trap  (in libsystem_kernel.dylib) + 8  [0x19d8ecc20]",
+    "    +                       1 __CFRunLoopRun  (in CoreFoundation) + 832  [0x19d9f11e0]",
+    "    +                       ! 1 __CFRunLoopDoSources0  (in CoreFoundation) + 232  [0x19d9f2610]",
+    "    +                       !   1 __CFRunLoopDoSource0  (in CoreFoundation) + 224  [0x19d9f28d8]",
+    "    +                       !     1 __CFRUNLOOP_IS_CALLING_OUT_TO_A_SOURCE0_PERFORM_FUNCTION__  (in CoreFoundation) + 28  [0x19d9f2944]",
+    "    +                       !       1 UC::DriverCore::continueProcessing()  (in UpdateCycle) + 84  [0x2bce575fc]"
+  ],
+  "external_measurement_calibration": {
+    "pid": 74741,
+    "proc_pidinfo_bytes": 96,
+    "timebase_numer": 125,
+    "timebase_denom": 3,
+    "external_cpu_s": 7.367190333333333,
+    "latest_internal_cpu_s": 7.365682,
+    "external_rss": 85753856,
+    "internal_rss": 85753856
+  },
+  "trace_validation": "PASS: single PID, duration, contiguous ticks, slow cadence, modes/actions, title consistency, quality, host refs, children, load/recovery",
+  "release_binary_has_review_symbols": false
+}

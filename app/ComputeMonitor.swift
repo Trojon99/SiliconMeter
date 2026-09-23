@@ -10,12 +10,13 @@ struct Metric {
     let value: Value?
     let unit: String
     let time: Date
+    let observedUptime: TimeInterval
     let window: TimeInterval?
     let quality: Quality
     let source: String
     let reason: String?
 
-    init(_ raw: NSDictionary, at time: Date) {
+    init(_ raw: NSDictionary, at time: Date, uptime: TimeInterval = ProcessInfo.processInfo.systemUptime) {
         let status = raw["status"] as? String ?? "invalid"
         quality = Quality(rawValue: status) ?? .invalid
         unit = raw["unit"] as? String ?? ""
@@ -23,6 +24,7 @@ struct Metric {
         reason = raw["reason"] as? String
         window = raw["window_s"] as? TimeInterval
         self.time = time
+        observedUptime = uptime
         if let text = raw["value"] as? String { value = .text(text) }
         else if let number = raw["value"] as? NSNumber { value = .number(number.doubleValue) }
         else { value = nil }
@@ -71,16 +73,16 @@ struct Metric {
 
     private var isStale: Bool {
         source != "ProcessInfo.thermalState" && source != "hw.memsize" &&
-        (quality == .measured || quality == .estimated) && Date().timeIntervalSince(time) > 20
+        (quality == .measured || quality == .estimated) && ProcessInfo.processInfo.systemUptime - observedUptime > 20
     }
 }
 
 struct TelemetrySnapshot {
     var metrics: [String: Metric] = [:]
-    mutating func merge(_ readings: NSDictionary, at time: Date) {
+    mutating func merge(_ readings: NSDictionary, at time: Date, uptime: TimeInterval = ProcessInfo.processInfo.systemUptime) {
         for (key, value) in readings {
             guard let key = key as? String, let raw = value as? NSDictionary else { continue }
-            metrics[key] = Metric(raw, at: time)
+            metrics[key] = Metric(raw, at: time, uptime: uptime)
         }
     }
     subscript(_ key: String) -> Metric? { metrics[key] }
@@ -115,11 +117,18 @@ final class TelemetryService {
     private var timer: DispatchSourceTimer?
     private var ticks = 0
     private var stopped = false
+    private var started = false
     private var thermalObserver: NSObjectProtocol?
     private(set) var snapshot = TelemetrySnapshot()
     var onUpdate: ((TelemetrySnapshot) -> Void)?
+#if STEP31_REVIEW
+    var reviewOnSample: (([String: Any]) -> Void)?
+    private var reviewLastTick = ProcessInfo.processInfo.systemUptime
+#endif
 
     func start() {
+        guard !started else { return }
+        started = true
         snapshot.metrics["thermal"] = .thermal(ProcessInfo.processInfo.thermalState)
         thermalObserver = NotificationCenter.default.addObserver(
             forName: ProcessInfo.thermalStateDidChangeNotification, object: nil, queue: .main
@@ -157,9 +166,23 @@ final class TelemetryService {
     private func tick() {
         guard !stopped, let backend else { return }
         autoreleasepool {
-            deliver(backend.sampleFast() as NSDictionary)
+#if STEP31_REVIEW
+            let begin = ProcessInfo.processInfo.systemUptime
+#endif
+            let readings = NSMutableDictionary(dictionary: backend.sampleFast())
             ticks += 1
-            if ticks % 3 == 0 { deliver(backend.sampleSlow() as NSDictionary) }
+            if ticks % 3 == 0 { readings.addEntries(from: backend.sampleSlow()) }
+            deliver(readings)
+#if STEP31_REVIEW
+            let end = ProcessInfo.processInfo.systemUptime
+            let resources = backend.reviewResources()
+            let record: [String: Any] = ["kind": "sample", "tick": ticks,
+                "slow_count": 1 + ticks / 3, "tick_interval_s": begin - reviewLastTick,
+                "sampling_latency_ms": (end - begin) * 1000, "resources": resources,
+                "readings": readings, "uptime_s": end]
+            reviewLastTick = begin
+            DispatchQueue.main.async { [weak self] in self?.reviewOnSample?(record) }
+#endif
         }
         // A one-shot timer is rearmed after collection; delayed ticks are never replayed.
         armTimer()
@@ -167,9 +190,10 @@ final class TelemetryService {
 
     private func deliver(_ readings: NSDictionary) {
         let time = Date()
+        let uptime = ProcessInfo.processInfo.systemUptime
         DispatchQueue.main.async { [weak self] in
             guard let self, !self.stopped else { return }
-            self.snapshot.merge(readings, at: time)
+            self.snapshot.merge(readings, at: time, uptime: uptime)
             self.onUpdate?(self.snapshot)
         }
     }
@@ -191,7 +215,7 @@ final class MonitorPopover: NSViewController {
     var onQuit: (() -> Void)?
 
     override func loadView() {
-        let root = NSView(frame: NSRect(x: 0, y: 0, width: 330, height: 470))
+        let root = NSView(frame: NSRect(x: 0, y: 0, width: 330, height: 500))
         let stack = NSStackView()
         stack.orientation = .vertical
         stack.alignment = .leading
@@ -223,7 +247,7 @@ final class MonitorPopover: NSViewController {
         let quit = NSButton(title: "Quit", target: self, action: #selector(quitApp))
         quit.bezelStyle = .rounded
         stack.addArrangedSubview(quit)
-        preferredContentSize = NSSize(width: 330, height: 470)
+        preferredContentSize = NSSize(width: 330, height: 500)
         view = root
     }
 
@@ -233,6 +257,12 @@ final class MonitorPopover: NSViewController {
     }
     @objc private func quitApp() { onQuit?() }
 
+#if STEP31_REVIEW
+    func reviewSelect(_ mode: PrimaryMetric) {
+        (modeButtons.arrangedSubviews[mode.rawValue] as? NSButton)?.performClick(nil)
+    }
+#endif
+
     func update(_ snapshot: TelemetrySnapshot, selected: PrimaryMetric) {
         _ = view
         func line(_ label: String, _ key: String) -> String {
@@ -241,14 +271,14 @@ final class MonitorPopover: NSViewController {
         }
         let lines = [
             "CPU", line("Total", "total"), line("P-core", "p"), line("E-core", "e"), "",
-            "GPU", line("Active", "gpuActive"), line("Frequency", "gpuFrequency"), line("Power", "gpuPower"), "",
+            "GPU", line("Active", "gpuActive"), line("Weighted freq.", "gpuFrequency"), line("Power", "gpuPower"), "",
             "Memory", line("Physical", "physical"), line("Free", "free"),
             line("Active", "active"), line("Inactive", "inactive"),
             line("Wired", "wired"), line("Compressed", "compressed"),
             line("Pressure", "pressure"), line("Swap used", "swapUsed"),
             line("Swap in", "swapIn"), line("Swap out", "swapOut"), "",
-            "Thermal", line("CPU Tp05", "cpuTemperature"),
-            line("GPU Tg05", "gpuTemperature"), line("System", "thermal")
+            "Temperature sensors", line("CPU Tp05", "cpuTemperature"),
+            line("GPU Tg05", "gpuTemperature"), line("System thermal", "thermal")
         ]
         let rendered = lines.joined(separator: "\n")
         if text.stringValue != rendered { text.stringValue = rendered }
@@ -265,6 +295,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private let statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
     private let popover = NSPopover()
     private let content = MonitorPopover()
+#if STEP31_REVIEW
+    private let review = Step31Review()
+#endif
     private var selected = PrimaryMetric(rawValue: UserDefaults.standard.integer(forKey: "primaryMetric")) ?? .cpu
 
     func applicationDidFinishLaunching(_ notification: Notification) {
@@ -275,7 +308,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         content.onMode = { [weak self] mode in
             guard let self else { return }
             self.selected = mode
+#if !STEP31_REVIEW
             UserDefaults.standard.set(mode.rawValue, forKey: "primaryMetric")
+#endif
             self.render(self.service.snapshot)
         }
         content.onQuit = { NSApp.terminate(nil) }
@@ -283,6 +318,15 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         statusItem.button?.target = self
         statusItem.button?.action = #selector(togglePopover)
         service.onUpdate = { [weak self] snapshot in self?.render(snapshot) }
+#if STEP31_REVIEW
+        service.reviewOnSample = { [weak self] record in
+            guard let self else { return }
+            self.review.observe(record, snapshot: self.service.snapshot,
+                isShown: { self.popover.isShown }, toggle: { self.togglePopover() },
+                select: { self.content.reviewSelect($0) }, selected: { self.selected },
+                title: { self.statusItem.button?.title ?? "" })
+        }
+#endif
         service.start()
 #if STEP3_UI_SMOKE
         DispatchQueue.main.asyncAfter(deadline: .now() + 7) { [weak self] in self?.runUISmoke() }

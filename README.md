@@ -1,4 +1,4 @@
-# Compute Monitor — Step 3.0
+# Compute Monitor — menu-bar v0.1
 
 Lightweight native macOS menu-bar system telemetry for the validated Apple M1 Max / macOS 27.0 setup. The production app lives in `app/`; the frozen Step 2/2.6 evidence remains in `experiments/`.
 
@@ -25,3 +25,11 @@ sh app/ui-smoke.sh
 `smoke.sh` samples the production backend for 16 seconds and prints compact JSON to stdout, including a CPU-time and resident-memory check. `ui-smoke.sh` builds a temporary test variant and programmatically verifies the status item, popover, metric switch, and accessory activation policy. Run these from an ordinary-user macOS session; the Codex shell sandbox can block IOReport, AppleSMC, and sysctl even when the app works normally. Neither check writes metric history.
 
 See [Step 3 architecture](docs/STEP3_ARCHITECTURE.md) for backend boundaries, quality semantics, and distribution risks. Step 2 evidence and reproduction instructions are in [experiments/README.md](experiments/README.md).
+
+## Step 3.1 review
+
+[Independent architecture and stability review](docs/STEP31_REVIEW.md) records
+production-path testing, minimal correctness/lifecycle fixes, and remaining
+limits. Reproduction tools are in [tests/README.md](tests/README.md); their
+compile-time observation hooks are excluded from the ordinary app. Step 3.2
+history logging is not implemented.
