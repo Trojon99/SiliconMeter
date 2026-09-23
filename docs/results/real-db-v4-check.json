@@ -1,0 +1,40 @@
+{
+  "database": "~/Library/Application Support/Compute Monitor/telemetry.sqlite3",
+  "backups": {
+    "v2": {
+      "path": "backups/pre-v3-20260923-234315/consistent-telemetry.sqlite3",
+      "original_counts": {
+        "app_runs": 8,
+        "fast_samples": 1418,
+        "slow_samples": 476,
+        "events": 12,
+        "writer_batches": 97,
+        "training_sessions": 1
+      },
+      "all_rows_preserved": true
+    },
+    "v3": {
+      "path": "backups/pre-v4-20260923-142214/consistent-telemetry.sqlite3",
+      "original_counts": {
+        "app_runs": 14,
+        "fast_samples": 2250,
+        "slow_samples": 758,
+        "events": 24,
+        "writer_batches": 157,
+        "training_sessions": 1
+      },
+      "all_rows_preserved": true
+    }
+  },
+  "version": 4,
+  "integrity": "ok",
+  "current_counts": {
+    "app_runs": 18,
+    "fast_samples": 2971,
+    "slow_samples": 1001,
+    "events": 32,
+    "writer_batches": 208,
+    "training_sessions": 1
+  },
+  "old_network_rows_unavailable": 2538
+}

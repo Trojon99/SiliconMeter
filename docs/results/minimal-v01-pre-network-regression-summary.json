@@ -1,0 +1,41 @@
+{
+  "duration_s": 900.3,
+  "pid": 83066,
+  "observations": 31,
+  "version": 3,
+  "integrity_every_observation": true,
+  "counts_before": {
+    "app_runs": 14,
+    "events": 22,
+    "fast_samples": 1780,
+    "slow_samples": 601,
+    "writer_batches": 125
+  },
+  "counts_after": {
+    "app_runs": 14,
+    "events": 23,
+    "fast_samples": 2200,
+    "slow_samples": 741,
+    "writer_batches": 153
+  },
+  "count_increase": {
+    "app_runs": 0,
+    "events": 1,
+    "fast_samples": 420,
+    "slow_samples": 140,
+    "writer_batches": 28
+  },
+  "cpu_percent_of_one_core": {
+    "mean": 0.303,
+    "median": 0.0,
+    "max": 3.2
+  },
+  "rss_mb": {
+    "initial": 50.98,
+    "maximum": 93.72,
+    "final": 93.69,
+    "late_range": 0.05
+  },
+  "child_processes": 0,
+  "network_connections": 0
+}

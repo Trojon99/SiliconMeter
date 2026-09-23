@@ -1,0 +1,1 @@
+{"v1_to_v4": "PASS", "v2_to_v4": "PASS", "v3_to_v4": "PASS", "invalid_schema": "REJECTED", "wrong_columns": "REJECTED", "future_version": "REJECTED", "core_ddl_identical": true, "v2_legacy_rows_preserved": 1}

@@ -1,5 +1,7 @@
 # Step 3.0 architecture — menu-bar telemetry v0.1
 
+This is the original Step 3 architecture record. The current product boundary is in [PRODUCT_SCOPE.md](PRODUCT_SCOPE.md).
+
 ## Boundary
 
 `app/ComputeMonitor.swift` owns the AppKit status item, compact popover, typed in-process `Metric` and `TelemetrySnapshot`, and one `TelemetryService`. The backend is one `TelemetryBackend` instance, confined to its serial utility queue. Both UI surfaces consume the same snapshot; neither polls hardware. `app/TelemetryBackend.m` implements the measured Mach, IOReport, AppleSMC, IOKit, and sysctl reads. This preserves the validated low-level ABI and counter logic without moving the experiment's JSON output, Metal load generator, bandwidth diagnostics, or process measurement machinery into the app.

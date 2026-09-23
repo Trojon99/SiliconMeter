@@ -4,7 +4,7 @@ import Darwin
 
 // All SQLite state is confined to writer. The collector and main thread only enqueue values.
 final class HistoryLogger {
-    static let schemaVersion = 1
+    static let schemaVersion = 4
     static let defaultFlushInterval: TimeInterval = 30
     static var defaultURL: URL {
         FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
@@ -22,7 +22,9 @@ final class HistoryLogger {
         .init(name: "cpu_p", key: "p", text: false),
         .init(name: "cpu_e", key: "e", text: false),
         .init(name: "gpu_active", key: "gpuActive", text: false),
-        .init(name: "gpu_frequency_mhz", key: "gpuFrequency", text: false)
+        .init(name: "gpu_frequency_mhz", key: "gpuFrequency", text: false),
+        .init(name: "network_rx_bytes_per_sec", key: "network_rx_bytes_per_sec", text: false),
+        .init(name: "network_tx_bytes_per_sec", key: "network_tx_bytes_per_sec", text: false)
     ]
     private static let slow: [Field] = [
         .init(name: "gpu_power_w", key: "gpuPower", text: false),
@@ -52,6 +54,11 @@ final class HistoryLogger {
     private var lastThermal: String?
     private var lastPressure: String?
 
+    struct Status {
+        let recording: Bool
+        let sizeBytes: Int64
+    }
+
     init(databaseURL: URL = HistoryLogger.defaultURL, flushInterval: TimeInterval = HistoryLogger.defaultFlushInterval) {
         url = databaseURL
         self.flushInterval = flushInterval
@@ -75,6 +82,68 @@ final class HistoryLogger {
             return false
         }
         return true
+    }
+    private func scalarText(_ sql: String) -> String? {
+        guard let db else { return nil }
+        var stmt: OpaquePointer?
+        guard sqlite3_prepare_v2(db, sql, -1, &stmt, nil) == SQLITE_OK else { return nil }
+        defer { sqlite3_finalize(stmt) }
+        guard sqlite3_step(stmt) == SQLITE_ROW, let value = sqlite3_column_text(stmt, 0) else { return nil }
+        return String(cString: value)
+    }
+    private func schemaVersion() -> Int32? {
+        guard let db else { return nil }
+        var stmt: OpaquePointer?
+        guard sqlite3_prepare_v2(db, "PRAGMA user_version", -1, &stmt, nil) == SQLITE_OK else { return nil }
+        defer { sqlite3_finalize(stmt) }
+        return sqlite3_step(stmt) == SQLITE_ROW ? sqlite3_column_int(stmt, 0) : nil
+    }
+    private func coreSchemaPresent(hasNetwork: Bool) -> Bool {
+        guard let db else { return false }
+        func columns(_ table: String) -> [String]? {
+            var stmt: OpaquePointer?
+            guard sqlite3_prepare_v2(db, "PRAGMA table_info(\(table))", -1, &stmt, nil) == SQLITE_OK else { return nil }
+            defer { sqlite3_finalize(stmt) }
+            var result: [String] = []
+            while true {
+                switch sqlite3_step(stmt) {
+                case SQLITE_ROW:
+                    guard let value = sqlite3_column_text(stmt, 1) else { return nil }
+                    result.append(String(cString: value))
+                case SQLITE_DONE: return result
+                default: return nil
+                }
+            }
+        }
+        func sampleColumns(_ fields: [Field]) -> [String] {
+            ["run_id", "seq", "utc_ms", "uptime_ms"] + fields.flatMap {
+                [$0.name, "\($0.name)_quality", "\($0.name)_window_s"]
+            }
+        }
+        let expected: [(String, [String])] = [
+            ("app_runs", ["run_id", "start_utc_ms", "end_utc_ms", "app_version", "build_version",
+                          "schema_version", "macos_version", "macos_build", "hardware_id",
+                          "logical_cores", "pe_topology_verified"]),
+            ("fast_samples", sampleColumns(hasNetwork ? Self.fast : Array(Self.fast.prefix(5)))),
+            ("slow_samples", sampleColumns(Self.slow)),
+            ("events", ["id", "run_id", "utc_ms", "uptime_ms", "kind", "old_value", "new_value", "quality"]),
+            ("writer_batches", ["run_id", "batch_seq", "utc_ms", "duration_ms", "fast_rows",
+                                "slow_rows", "event_rows"])
+        ]
+        return expected.allSatisfy { name, expectedColumns in
+            var stmt: OpaquePointer?
+            guard sqlite3_prepare_v2(db, "SELECT 1 FROM sqlite_master WHERE type='table' AND name=?", -1, &stmt, nil) == SQLITE_OK else { return false }
+            defer { sqlite3_finalize(stmt) }
+            _ = name.withCString { sqlite3_bind_text(stmt, 1, $0, -1, unsafeBitCast(-1, to: sqlite3_destructor_type.self)) }
+            return sqlite3_step(stmt) == SQLITE_ROW && columns(name) == expectedColumns
+        }
+    }
+    private func emptyDatabase() -> Bool {
+        guard let db else { return false }
+        var stmt: OpaquePointer?
+        guard sqlite3_prepare_v2(db, "SELECT 1 FROM sqlite_master WHERE type IN ('table','view','index','trigger') AND name NOT LIKE 'sqlite_%' LIMIT 1", -1, &stmt, nil) == SQLITE_OK else { return false }
+        defer { sqlite3_finalize(stmt) }
+        return sqlite3_step(stmt) == SQLITE_DONE
     }
     private static func sampleDDL(_ table: String, _ fields: [Field]) -> String {
         let columns = fields.flatMap { field in
@@ -136,13 +205,10 @@ final class HistoryLogger {
             }
             guard execute("PRAGMA journal_mode=WAL"), execute("PRAGMA synchronous=NORMAL"),
                   execute("PRAGMA foreign_keys=ON") else { close(); return }
-            var version: Int32 = -1
-            var stmt: OpaquePointer?
-            if sqlite3_prepare_v2(db, "PRAGMA user_version", -1, &stmt, nil) == SQLITE_OK,
-               sqlite3_step(stmt) == SQLITE_ROW { version = sqlite3_column_int(stmt, 0) }
-            sqlite3_finalize(stmt)
-            guard version == 0 || version == Self.schemaVersion else {
-                fputs("History schema version \(version) unsupported\n", stderr); close(); return
+            guard let version = schemaVersion(), (0...Self.schemaVersion).contains(Int(version)),
+                  scalarText("PRAGMA integrity_check") == "ok",
+                  (version == 0 ? emptyDatabase() : coreSchemaPresent(hasNetwork: version == Self.schemaVersion)) else {
+                fputs("History schema or integrity check failed\n", stderr); close(); return
             }
             let ddl = [
                 "CREATE TABLE IF NOT EXISTS app_runs (run_id TEXT PRIMARY KEY, start_utc_ms INTEGER NOT NULL, end_utc_ms INTEGER, app_version TEXT NOT NULL, build_version TEXT NOT NULL, schema_version INTEGER NOT NULL, macos_version TEXT NOT NULL, macos_build TEXT NOT NULL, hardware_id TEXT NOT NULL, logical_cores INTEGER NOT NULL, pe_topology_verified INTEGER NOT NULL)",
@@ -150,8 +216,16 @@ final class HistoryLogger {
                 "CREATE TABLE IF NOT EXISTS events (id INTEGER PRIMARY KEY, run_id TEXT NOT NULL REFERENCES app_runs(run_id), utc_ms INTEGER NOT NULL, uptime_ms INTEGER NOT NULL, kind TEXT NOT NULL, old_value TEXT, new_value TEXT, quality TEXT NOT NULL)",
                 "CREATE TABLE IF NOT EXISTS writer_batches (run_id TEXT NOT NULL REFERENCES app_runs(run_id), batch_seq INTEGER NOT NULL, utc_ms INTEGER NOT NULL, duration_ms REAL NOT NULL, fast_rows INTEGER NOT NULL, slow_rows INTEGER NOT NULL, event_rows INTEGER NOT NULL, PRIMARY KEY (run_id, batch_seq)) WITHOUT ROWID"
             ]
+            let additions = ["network_rx_bytes_per_sec", "network_tx_bytes_per_sec"].flatMap { name in
+                ["ALTER TABLE fast_samples ADD COLUMN \(name) REAL",
+                 "ALTER TABLE fast_samples ADD COLUMN \(name)_quality TEXT NOT NULL DEFAULT 'unavailable' CHECK (\(name)_quality IN ('measured','estimated','unavailable','invalid','stale'))",
+                 "ALTER TABLE fast_samples ADD COLUMN \(name)_window_s REAL"]
+            }
             guard execute("BEGIN IMMEDIATE"), ddl.allSatisfy({ execute($0) }),
-                  execute("PRAGMA user_version=\(Self.schemaVersion)"), execute("COMMIT") else {
+                  (version == 0 || version == Self.schemaVersion || additions.allSatisfy({ execute($0) })),
+                  coreSchemaPresent(hasNetwork: true),
+                  execute("PRAGMA user_version=\(Self.schemaVersion)"),
+                  scalarText("PRAGMA integrity_check") == "ok", execute("COMMIT") else {
                 _ = execute("ROLLBACK"); close(); return
             }
             let bundle = Bundle.main
@@ -201,6 +275,17 @@ final class HistoryLogger {
         writer.async { [self] in if active { pending.append(row) } }
     }
     func flushBeforeSleep() { writer.async { [self] in flush() } }
+    func status(_ completion: @escaping (Status) -> Void) {
+        writer.async { [self] in
+            let bytes = ["", "-wal", "-shm"].reduce(Int64(0)) { total, suffix in
+                let path = url.path + suffix
+                let size = (try? FileManager.default.attributesOfItem(atPath: path)[.size] as? NSNumber)?.int64Value ?? 0
+                return total + size
+            }
+            let result = Status(recording: active, sizeBytes: bytes)
+            DispatchQueue.main.async { completion(result) }
+        }
+    }
     private func flush() {
         guard active, !pending.isEmpty else { return }
         let begin = ProcessInfo.processInfo.systemUptime

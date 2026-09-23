@@ -1,0 +1,67 @@
+{
+  "same_binary_sha256": "a49355c4c5afef42c6cb37a30c4aa7cc9fc506206a9be13dfc61236f071697b7",
+  "A_disabled": {
+    "duration_s": 600.01,
+    "cpu_s_after_warmup": 1.785,
+    "cpu_percent_one_core_after_warmup": 0.331,
+    "rss_mb": {
+      "initial": 0.03,
+      "final": 53.19,
+      "late_range": 0.19
+    },
+    "fast_rows": 285,
+    "slow_rows": 96,
+    "writer_batches": 20,
+    "network_quality": {
+      "measured": 0,
+      "estimated": 0,
+      "unavailable": 285,
+      "invalid": 0,
+      "stale": 0
+    },
+    "fast_cadence_s": {
+      "median": 2.1,
+      "max": 2.125
+    }
+  },
+  "B_enabled": {
+    "duration_s": 900.01,
+    "cpu_s_after_warmup": 3.09,
+    "cpu_percent_one_core_after_warmup": 0.368,
+    "rss_mb": {
+      "initial": 0.03,
+      "final": 53.31,
+      "late_range": 0.22
+    },
+    "fast_rows": 428,
+    "slow_rows": 143,
+    "writer_batches": 29,
+    "network_quality": {
+      "measured": 427,
+      "estimated": 0,
+      "unavailable": 1,
+      "invalid": 0,
+      "stale": 0
+    },
+    "fast_cadence_s": {
+      "median": 2.101,
+      "max": 2.11
+    },
+    "network_window_s_median": 2.1004200000024866,
+    "network_zero_samples": 5
+  },
+  "delta_one_core_cpu_percentage_points": 0.037,
+  "delta_final_rss_mb": 0.12,
+  "sampling_latency_ms": "not available from ordinary binary; fast cadence and standalone native sampler timing reported separately",
+  "wakeups": "not available from external libproc sampling; context switches are reported, but are not wakeups",
+  "energy_impact": "not available",
+  "v4_durable_growth_bytes": 172032,
+  "v4_growth_interval_s": 887.1,
+  "v4_growth_mb_per_hour": 0.698,
+  "v4_growth_projection_mb": {
+    "hour": 0.7,
+    "day": 16.75,
+    "7_days": 117.26,
+    "30_days": 502.56
+  }
+}

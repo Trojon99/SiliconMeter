@@ -106,3 +106,55 @@ allows several more uncommitted ticks, sends SIGKILL, checks recovery and
 integrity, then starts a second run to prove appending. `measure_release.py`
 gives a separate 90-second ordinary-build comparison with the earlier Step 3.1
 release sample; it sends SIGTERM to its own PID at the end.
+
+## Minimal Monitor v0.1 checks
+
+Build the ordinary app with `sh app/build.sh`. Run `sh tests/run-checks.sh` and
+`python3 tests/run-history-checks.py` for the established collector and logger
+checks. `python3 tests/run-migration-checks.py` creates a genuine v1 database
+using the frozen `78e2fb2` source, then validates v1→v4, v2 backup→v4,
+and the backed-up v3→v4 against the production logger. It verifies original telemetry rows, integrity,
+new append behavior, and preservation of the unused legacy v2 table. A missing
+core table is rejected without changing `user_version`. The v2/v3 tests need
+the local pre-v3/pre-v4 SQLite backups under `backups/`; this directory is Git-ignored.
+`python3 tests/verify-real-db.py` compares every original row in both backups
+against the current real v4 database without writing to it.
+
+`sh tests/run-localization-checks.sh` checks system-language defaults, both
+translation resources, quality labels, immediate switching, and preferences
+across three separate processes. Run it in an ordinary-user shell with access
+to macOS preferences; the Codex filesystem sandbox can prevent `UserDefaults`
+from persisting across processes. `sh app/ui-smoke.sh` verifies both languages
+in an AppKit popover, live telemetry, five menu choices, dynamic status-item
+width, and layout bounds. It needs an ordinary graphical user session.
+
+With the ordinary app already launched, `python3 tests/run-minimal-regression.py`
+observes one PID for 900 seconds at 30-second intervals. It records CPU, RSS,
+SQLite counts, integrity, child processes, and network sockets in
+`docs/results/minimal-v01-regression.jsonl`. The v3 trace is saved as
+`docs/results/minimal-v01-pre-network-regression.jsonl`. The observer never polls hardware
+or changes the app's collector or database writer.
+
+`sh tests/run-popover-layout.sh` instantiates only the popover in a separate
+AppKit test bundle, without starting the collector or logger. It verifies that
+all control bounds fit in the 740-point popover for both supported languages.
+
+`sh tests/run-network-checks.sh` exercises native interface filtering, separate
+RX/TX deltas, aggregation, zero, reset, appearance/disappearance, link changes,
+and stale windows. It also reads real host interface counters twice without
+creating test traffic. `python3 tests/run-network-ab.py` runs the same ordinary
+binary for 10 minutes with the Network sampler disabled and 15 minutes enabled;
+it uses external libproc and read-only SQLite queries. Network quality and
+fast-sample cadence are recorded in `docs/results/network-ab.json`. The
+ordinary binary has no sampling-latency probe, so the A/B report labels that
+measurement unavailable rather than treating cadence as latency. Energy Impact
+and wakeups are also unavailable; context switches are recorded separately.
+
+`sh tests/run-network-benchmark.sh` performs 100 native interface-counter reads
+and reports sampler mean, median, and 95th-percentile time. Run it after the
+long A/B measurement to avoid contaminating the app CPU comparison.
+
+`sh tests/run-network-latency.sh` is a supplemental review-only timing check:
+it runs 60 collector ticks per phase through the production sampling path,
+first disabled and then enabled. Its timing excludes AppKit and SQLite work,
+so it is kept separate from the 10/15-minute ordinary-binary CPU/RSS A/B.

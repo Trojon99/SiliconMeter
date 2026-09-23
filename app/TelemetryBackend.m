@@ -1,4 +1,5 @@
 #import "TelemetryBackend.h"
+#import "NetworkSampler.h"
 #import <IOKit/IOKitLib.h>
 #import <mach/mach.h>
 #import <mach/processor_info.h>
@@ -95,6 +96,7 @@ static uint32_t fourcc(const char *key) {
     double _vmTime;
     BOOL _closed;
     NSDictionary<NSString *, NSString *> *_capabilities;
+    NetworkSampler *_network;
 }
 
 - (NSDictionary<NSString *, NSString *> *)capabilities { return _capabilities; }
@@ -135,6 +137,7 @@ static uint32_t fourcc(const char *key) {
         });
         dispatch_resume(_pressureSource);
     }
+    if (!getenv("COMPUTE_MONITOR_NETWORK_DISABLED")) _network = [NetworkSampler new];
     (void)[self cpu]; // Prime the first CPU delta without emitting a fake zero.
     return self;
 }
@@ -353,6 +356,17 @@ static uint32_t fourcc(const char *key) {
         result[@"gpuActive"] = gpu;
         result[@"gpuFrequency"] = gpu;
     }
+    NetworkRate network = _network ? [_network sample] : (NetworkRate){ .status = NetworkRateUnavailable };
+    NSString *status = network.status == NetworkRateMeasured ? @"measured" :
+        network.status == NetworkRateInvalid ? @"invalid" :
+        network.status == NetworkRateStale ? @"stale" : @"unavailable";
+    NSString *reason = _network ? @"no_valid_external_interface_or_baseline" : @"test_disabled";
+    result[@"network_rx_bytes_per_sec"] = network.status == NetworkRateMeasured
+        ? reading(@(network.receivedBytesPerSecond), @"B/s", status, @"NET_RT_IFLIST2", network.windowSeconds, nil)
+        : missing(status, @"NET_RT_IFLIST2", reason);
+    result[@"network_tx_bytes_per_sec"] = network.status == NetworkRateMeasured
+        ? reading(@(network.sentBytesPerSecond), @"B/s", status, @"NET_RT_IFLIST2", network.windowSeconds, nil)
+        : missing(status, @"NET_RT_IFLIST2", reason);
     return result;
 }
 

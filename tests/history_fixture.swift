@@ -34,6 +34,8 @@ func snapshot(_ gpu: NSDictionary = metric("measured", 0.0), thermal: String = "
     s.merge(["total": metric("measured", 0.5, 2), "p": metric("measured", 0.4, 2),
              "e": metric("unavailable"), "gpuActive": gpu,
              "gpuFrequency": metric("estimated", 960.0, 2),
+             "network_rx_bytes_per_sec": metric("measured", 1250.0, 2),
+             "network_tx_bytes_per_sec": metric("measured", 0.0, 2),
              "gpuPower": metric("estimated", 5.2, 6),
              "cpuTemperature": metric("measured", 60.0), "gpuTemperature": metric("measured", 65.0),
              "physical": metric("measured", 64_000_000_000.0), "free": metric("measured", 100.0),

@@ -1,38 +1,63 @@
-# Compute Monitor — menu-bar v0.1
+English | [简体中文](README.zh-CN.md)
 
-Lightweight native macOS menu-bar system telemetry for the validated Apple M1 Max / macOS 27.0 setup. The production app lives in `app/`; the frozen Step 2/2.6 evidence remains in `experiments/`.
+# Compute Monitor
 
-## Build and run
+A lightweight Apple Silicon telemetry monitor and local history recorder for the macOS menu bar.
 
-Requires Apple Command Line Tools with Swift and Clang. No package dependencies, root helper, network access, or `powermetrics` are used.
+## UI preview
+
+Screenshots will be added with a future release. The status item shows one selected metric, such as `CPU 23%`, `GPU 91%`, `Temp 61°C`, `GPU Power 14W`, or `NET ↓12.4 ↑1.3 MB/s`.
+
+## Features
+
+- Live status item with five selectable metrics and a compact popover for current system telemetry.
+- Local SQLite history recorded continuously from the same shared snapshots, with a serial batched writer and WAL.
+- English and Simplified Chinese UI, with immediate switching and a locally saved language choice.
+- Ordinary-user operation without a helper, persistent child process, `powermetrics`, outgoing network connections, or telemetry upload.
+
+## Supported metrics
+
+CPU total and validated P-core/E-core activity; GPU active residency, estimated weighted active frequency, and estimated GPU power; Network download/upload rate; Tp05/Tg05 temperatures; VM and unified-memory fields, swap, memory pressure, and thermal state. Network is the current aggregate receive/transmit rate across selected external network interfaces. It reads native cumulative counters and sends no test traffic. VPN tunnel counters are excluded to avoid counting traffic again on top of the underlying link. An unavailable or invalid status-item value displays `—`, never a made-up zero. Estimated values are labeled in the popover and in history quality columns.
+
+## History logging
+
+The app records fast samples about every 2 seconds and slow samples about every 6 seconds. Network RX/TX share the fast timestamp, quality, and actual measurement-window fields. It batches writes about every 30 seconds and flushes on normal Quit. A crash can lose only the latest uncommitted batch. The popover shows recording status, database size, and an **Open Data Folder** button. Ordinary SQLite tools can read committed history; see [schema v4, units, and read-only queries](docs/HISTORY_SCHEMA.md). No retention or aggregation is implemented. A 15-minute v4 run observed about 0.698 MB/hour of durable growth, a short-run estimate; see the [verification report](docs/MINIMAL_V01_REPORT.md). Active WAL and SHM files add temporary disk use.
+
+## Privacy
+
+Collection and history stay on this Mac. The app reads Network counters but does not make a network connection or run a speed test. There is no account, network service, cloud sync, analytics, or upload. The database stores system metrics and app-run metadata, without process attribution or workload labels. Language and primary-metric choices are local `UserDefaults` preferences, outside the telemetry database.
+
+## System requirements
+
+Apple Silicon Mac with macOS 13 or newer, outside App Sandbox. The current hardware and long-run evidence is for M1 Max on the documented macOS 27.0 setup; other chips and releases are not yet validated. No root privilege is required.
+
+## Installation
+
+There is no signed or notarized downloadable release yet. The build below is for local development. A future public release should include short **English** and **简体中文** sections in its release notes.
+
+## Build from source
+
+Install Apple Command Line Tools with Swift and Clang, then run:
 
 ```sh
 sh app/build.sh
 open app/ComputeMonitor.app
 ```
 
-The generated app bundle is ignored by Git. It is a **local development build**, not a Developer ID signed or notarized distribution. It has `LSUIElement=true` and runs as an accessory without a Dock icon. It must run outside App Sandbox for IOReport and AppleSMC access. Open the status item to view metrics, choose one of the four primary metrics, or quit. Primary selection is saved with `UserDefaults`. Telemetry history is recorded locally in SQLite under Application Support; see [schema and queries](docs/HISTORY_SCHEMA.md).
+Click the status item to view current telemetry, choose a primary metric or language, open the data folder, or Quit. The app runs as an accessory without a Dock icon. Focused checks are documented in [tests/README.md](tests/README.md). [Product scope](docs/PRODUCT_SCOPE.md) defines the v0.1 boundary.
 
-Menu-bar choices: total CPU (`CPU 23%`), whole-system GPU active ratio (`GPU 91%`), the selected CPU sensor Tp05 (`Temp 61°C`), or estimated GPU power (`Pwr 14W`). `—` means unavailable. The compact power title stays within the width of `GPU 100%` for tested values, with one decimal below 10 W; the popover keeps the precise estimated value. The popover identifies the temperature sensors and labels estimated and unavailable values explicitly.
+## Data location
 
-## Local checks
+The database is `~/Library/Application Support/Compute Monitor/telemetry.sqlite3`. Its `-wal` and `-shm` sidecars may exist while the app runs. Use SQLite's backup API for a consistent live backup. Read-only external programs can query the database directly; the app does not provide an HTTP or socket API.
 
-```sh
-sh app/smoke.sh 8
-sh app/ui-smoke.sh
-```
+## Known limitations
 
-`smoke.sh` samples the production backend for 16 seconds and prints compact JSON to stdout, including a CPU-time and resident-memory check. `ui-smoke.sh` builds a temporary test variant and programmatically verifies the status item, popover, metric switch, and accessory activation policy. The UI smoke variant uses the production history logger and writes a short run to the normal Application Support database. Run these from an ordinary-user macOS session; the Codex shell sandbox can block IOReport, AppleSMC, and sysctl even when the app works normally.
+Private IOReport and AppleSMC behavior can change with macOS or hardware updates; unavailable capabilities remain visibly unavailable. GPU power and weighted frequency are estimates, not externally calibrated measurements. Network selection is conservative: unusual physical links without Ethernet type or a reported link rate may be omitted; VPN tunnel traffic is not separately counted. There is no in-app chart, data retention policy, process attribution, workload analysis, or automatic tuning. Workloads such as local LLMs, compilation, and rendering are external use cases for the generic history. A preexisting v2 database may retain an unused legacy experimental table to preserve its data; fresh and v1-upgraded v4 databases do not create it.
 
-See [Step 3 architecture](docs/STEP3_ARCHITECTURE.md) for backend boundaries, quality semantics, and distribution risks. Step 2 evidence and reproduction instructions are in [experiments/README.md](experiments/README.md).
+## Private API compatibility risk
 
-## Step 3.1 review
+The full telemetry build is intentionally non-App-Sandboxed because the tested sandbox blocked IOReport and AppleSMC access. These private interfaces may break or disappear in future macOS versions. The current local build is not Developer ID signed or notarized for distribution.
 
-[Independent architecture and stability review](docs/STEP31_REVIEW.md) records
-production-path testing, minimal correctness/lifecycle fixes, and remaining
-limits. Reproduction tools are in [tests/README.md](tests/README.md); their
-compile-time observation hooks are excluded from the ordinary app.
+## License
 
-## Step 3.2 history
-
-History records the existing fast and slow telemetry snapshots and state changes without new hardware reads. One background SQLite writer batches samples about every 30 seconds and flushes on a normal Quit. The most recent uncommitted batch may be lost on an abnormal exit. [Schema v1](docs/HISTORY_SCHEMA.md) describes the location, units, quality states, and plain SQLite queries. [Step 3.2 report](docs/STEP32_HISTORY_LOGGING.md) records validation and observed overhead.
+No license has been selected or published yet. The repository does not currently grant an open-source license.
