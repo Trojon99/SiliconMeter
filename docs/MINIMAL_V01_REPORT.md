@@ -22,7 +22,7 @@ This report records the scope recovery, bilingual UI, Network candidate, and loc
 
 ## J–R. Minimal monitor
 
-**J. Menu bar.** One variable-width primary metric is selected from CPU, GPU, temperature, GPU power, and Network. Invalid or unavailable values show `—`; no recording or workload badge is added.
+**J. Menu bar.** One primary metric is selected from CPU, GPU, temperature, GPU power, and Network. Each metric/language pair has a fixed measured status-item width. Invalid or unavailable values show `—`; no recording or workload badge is added.
 
 **K. Popover.** Current CPU, GPU, Network, memory, and thermal readings appear with compact History status, database size, Open Data Folder, language choice, and Quit. There is no chart or analysis UI.
 
@@ -32,7 +32,7 @@ This report records the scope recovery, bilingual UI, Network candidate, and loc
 
 **N–O. Stability and resources.** The ordinary v3 app ran 900.3 seconds with one PID, 420 additional fast rows, 140 additional slow rows, 28 writer batches, and integrity `ok` at every 30-second check. External `ps` observations gave 0.303% mean CPU of one core; late RSS varied by 0.05 MiB around 93.7 MiB. It had no child process or network socket. The final v4 enabled app then ran 900.01 seconds with 428 fast rows, 143 slow rows, 29 writer batches, a 2.101-second median cadence, 0.368% CPU of one core after warmup, 53.31 MiB final RSS, and 0.22 MiB late RSS range. The different v3 RSS includes an opened popover; the A/B comparison below uses matched closed-popover conditions. v4 integrity was `ok` after graceful exit. UI smoke separately switched all five menu choices and checked live data, width, and popover containment.
 
-**P–Q. Changes and commits.** The product branch contains the UI/localization, v4 migration/history, native Network sampler, tests, and bilingual documentation in `0a2f4f2` (`feat: build bilingual minimal monitor with network telemetry candidate`). The archive commit `7adb5ed` is separate and is not an ancestor of the product branch. This report is committed separately.
+**P–Q. Changes and commits.** The product branch contains the UI/localization, v4 migration/history, native Network sampler, tests, and bilingual documentation in `0a2f4f2` (`feat: build bilingual minimal monitor with network telemetry candidate`). `cb5e29b` adds the fixed-width menu bar and AppKit boundary test. The archive commit `7adb5ed` is separate and is not an ancestor of the product branch. This report is committed separately.
 
 **R. Remaining limits.** IOReport/AppleSMC compatibility remains hardware and macOS dependent. Network physical-link filtering is conservative. Controlled download, upload, hardware interface transition, and VPN transfer were unavailable in this environment, so the Network acceptance gate cannot be fully closed yet. The Network code is a tested candidate on the development branch, not a validated release decision.
 
@@ -40,7 +40,7 @@ This report records the scope recovery, bilingual UI, Network candidate, and loc
 
 **S–T.** `app/Localization.swift` loads `en.lproj` and `zh-Hans.lproj` resources through one localizer. First launch follows the system language for Simplified Chinese and uses English otherwise. A manual choice applies immediately and is saved in `UserDefaults`, outside the telemetry database. Cross-process restart persistence passed in the normal user session.
 
-**U–V.** English and Chinese AppKit smoke tests passed for menu labels, Network/History/popover text, estimated/invalid meanings, live telemetry preservation, and control bounds. Long boundary titles use the variable-width status item. A separate offscreen layout test passed both languages in the 740-point popover.
+**U–V.** English and Chinese AppKit smoke tests passed for menu labels, Network/History/popover text, estimated/invalid meanings, live telemetry preservation, fixed status-item width, and control bounds. A separate offscreen layout test passed both languages in the 740-point popover.
 
 **W.** `README.md` and `README.zh-CN.md` link to each other and cover features, metrics, history, privacy, requirements, installation, source build, data location, limits, private API risk, and license with matching structure.
 
@@ -60,6 +60,21 @@ This report records the scope recovery, bilingual UI, Network candidate, and loc
 
 **AD. VPN and multiple interfaces.** Multiple independent eligible interfaces are summed in synthetic tests; no second physical link was available for a live transition. An active `utun` was present on the host but excluded by the filter; no controlled VPN transfer was available to measure double counting empirically.
 
+## AE. Menu-bar width stabilization
+
+`StatusTitleLayout` measures a maximum template with the real status-button font once per primary metric/language pair and caches all ten layouts. Selecting a mode or language applies its fixed `NSStatusItem.length`; right-aligned AppKit tab stops hold the numeric field, with separate fixed RX and TX slots for Network. Normal telemetry updates change only `attributedTitle` and its accessibility label. There are no padding-space runs, extra timers, samplers, observers, or polling. CPU/GPU percentages and temperature reserve three integer digits; GPU power uses one decimal consistently. Network promotes rounded unit boundaries and supports B/s through EB/s with a scientific fallback for unrealistic higher rates.
+
+The long Network A/B in AA predates this UI-only change; its collector and timer paths were not modified for AE.
+
+The real AppKit status-item test measured these fixed external widths in points:
+
+| Language | CPU | GPU | Temp | GPU Power | NET |
+|---|---:|---:|---:|---:|---:|
+| English | 85 | 86 | 95 | 146 | 258 |
+| 简体中文 | 85 | 86 | 87 | 134 | 258 |
+
+Across 72 boundary and unavailable values, each metric-language pair kept the exact same `statusItem.length` and button frame width; AppKit text layout kept both Network slot endpoints within one point. The sequence includes 0–100% CPU/GPU, 0–100°C temperature, 0.0–99.9W power, B/KB/MB/GB/TB network rates, mixed units, and available↔unavailable transitions. The complete graphical app smoke independently passed `fixed_width=true` while switching modes/languages and injecting representative live-value changes; a review-only counter confirmed no layout measurement during those value updates or when revisiting a cached pair.
+
 ## Evidence
 
 - `docs/results/minimal-v01-pre-network-regression.jsonl` and its summary: 900-second v3 ordinary-build observation.
@@ -68,6 +83,7 @@ This report records the scope recovery, bilingual UI, Network candidate, and loc
 - `docs/results/network-latency-disabled.json` and `docs/results/network-latency-enabled.json`: supplemental 60-tick collector timing in each phase.
 - `docs/results/migration-checks.json`: copy migrations and malformed/future-schema rejection.
 - `docs/results/real-db-v4-check.json`: read-only integrity and row-preservation comparison against both real backups.
+- `docs/results/status-width.json`: 72-case real AppKit status-item width and slot-alignment check.
 - `docs/results/network-process-observations.jsonl` and `docs/results/network-db-size.jsonl`: external process and database snapshots.
 - `tests/run-history-checks.py`, `tests/run-migration-checks.py`, `tests/run-network-checks.sh`, `tests/run-localization-checks.sh`, `app/ui-smoke.sh`, and `tests/run-popover-layout.sh`: focused repeatable checks.
 
