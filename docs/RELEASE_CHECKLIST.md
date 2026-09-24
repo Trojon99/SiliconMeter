@@ -1,6 +1,6 @@
 # v0.1.0 unsigned community release checklist
 
-This is preparation for a public GitHub release. Do not tag, push, or publish until the pending items are complete. Developer ID signing and Apple notarization are future optional distribution improvements, not v0.1 blockers.
+SiliconMeter v0.1.0 was published on GitHub on 2026-09-24. The `v0.1.0` tag is immutable; any later fix needs a new version. Developer ID signing and Apple notarization remain future optional distribution improvements.
 
 ## Product and source
 
@@ -14,17 +14,17 @@ This is preparation for a public GitHub release. Do not tag, push, or publish un
 
 - [x] Build `SiliconMeter-0.1.0-arm64.dmg` with SiliconMeter.app and an Applications shortcut.
 - [x] Integrate the approved SiliconMeter App icon, rebuild the App and DMG, then replace the earlier iconless artifact and checksum. The earlier DMG is not the final release asset.
-- [x] Run `hdiutil verify`, mount, compare the contained app byte-for-byte with the final candidate, copy to an Applications-like location, launch, and unmount.
-- [x] Confirm the exact DMG app launches from `/Applications` with no Dock icon, five metrics, History, retention, and bilingual UI.
-- [x] Complete the 20-minute exact-candidate smoke, including CPU/RSS, SQLite quick_check, no crash, child process, or observed IP socket. An untouched 120-second relaunch showed no obvious idle CPU/RSS regression against the frozen baseline.
+- [x] Run `hdiutil verify`, mount, compare the contained App byte-for-byte with the final icon-bearing candidate, check a temporary `/Applications` copy's icon, and unmount.
+- [x] Run the icon-bearing App copied from the DMG in an isolated temporary home; confirm launch, SQLite v4 integrity, and CPU/GPU/temperature/GPU-power/NET history. A separate UI smoke passed five metric choices, History, retention, bilingual UI, accessory mode, and Quit. The existing running `/Applications/SiliconMeter.app` was not replaced.
+- [x] Preserve the earlier iconless candidate's 20-minute performance evidence and 120-second idle relaunch as historical comparison; do not claim these durations for the new icon-bearing binary.
 - [x] Generate `SHA256SUMS.txt` from the final, unmodified DMG **after** all packaging work; `shasum -a 256 -c` passed.
-- [ ] Recheck the published download's SHA-256 against `SHA256SUMS.txt` after upload.
+- [x] Recheck the anonymously downloaded public DMG's SHA-256 against the published `SHA256SUMS.txt`, verify the DMG, and inspect the contained App.
 
 ## Documentation and public release
 
 - [x] English and Chinese READMEs describe the unsigned, non-notarized build, data path, compatibility limits, and Apple's manual Gatekeeper **Open Anyway** path.
 - [x] Prepare matched English and Chinese release notes in `docs/V01_RELEASE_NOTES.md`.
-- [ ] Confirm the intended GitHub repository and configure its remote. No remote is currently configured.
-- [ ] Review the final clean commit and artifact checksum, then create the intended `v0.1.0` tag, push, and publish the GitHub Release in a separate authorized step.
-- [ ] After publication, replace the READMEs' “public download pending” notice with the actual release link.
-- [ ] After publication, verify the actual GitHub download on a fresh Mac/account when available; the local build has no browser quarantine, so this local smoke does not prove the full Gatekeeper download path.
+- [x] Create and verify the public `Trojon99/SiliconMeter` repository and configure `origin`.
+- [x] Push only sanitized `main`, create and verify the immutable `v0.1.0` tag, and publish the non-prerelease GitHub Release with two assets.
+- [x] Replace both READMEs' pending-download notices with the GitHub Releases page link.
+- [ ] Test a fresh browser-downloaded copy's Gatekeeper **Open Anyway** path on a separate Mac/account. The public CLI download had no quarantine attribute, so that full flow remains manual-required.

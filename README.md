@@ -2,7 +2,7 @@ English | [简体中文](README.zh-CN.md)
 
 # SiliconMeter
 
-A lightweight Apple Silicon telemetry monitor and local history recorder for the macOS menu bar. Version **0.1.0** is a local release candidate; no public build has been released.
+A lightweight Apple Silicon telemetry monitor and local history recorder for the macOS menu bar. Version **0.1.0** is available on [GitHub Releases](https://github.com/Trojon99/SiliconMeter/releases).
 
 ## UI preview
 
@@ -40,7 +40,7 @@ Apple Silicon Mac with macOS 13 or newer, outside App Sandbox. **Tested on: Appl
 
 ## Installation
 
-SiliconMeter v0.1.0 is distributed as an unsigned, non-notarized open-source community build. It is not Apple verified. Source code is available for inspection and local builds. The public download is pending; when available, install it as follows:
+SiliconMeter v0.1.0 is distributed as an unsigned, non-notarized open-source community build. It is not Apple verified. Source code is available for inspection and local builds. Download it from [GitHub Releases](https://github.com/Trojon99/SiliconMeter/releases) and install it as follows:
 
 1. Download `SiliconMeter-0.1.0-arm64.dmg` from the project's GitHub Release.
 2. Open the DMG and drag **SiliconMeter.app** to **Applications**.

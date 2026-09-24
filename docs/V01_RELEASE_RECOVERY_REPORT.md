@@ -1,6 +1,6 @@
 # SiliconMeter v0.1.0 release recovery — 2026-09-24
 
-**Status: LOCAL CANDIDATE READY; NOT RELEASED.** The public history is sanitized, and the approved App icon is in the rebuilt unsigned App and replacement DMG. GitHub publication and public-download verification remain pending. Do not upload the earlier iconless DMG.
+**Status: RELEASED.** The public history is sanitized, and the approved App icon is in the rebuilt unsigned App and published DMG. The published download was independently verified. A fresh browser-download Gatekeeper test remains manual-required.
 
 ## A. Original blockers
 
@@ -24,11 +24,11 @@ All ten catalog slots have the declared pixel dimensions. `iconutil` accepted th
 
 ## E. Privacy audit
 
-After the icon commit, the sanitized `main` ancestry contained 27 reachable commits and 288 unique blobs. A bounded scan found no original username, absolute `/Users/<name>/` path, private-key block, GitHub token pattern, or common credential assignment, including in the PNG blobs. No database, backup, DMG, certificate, private key, or temporary output filename is tracked. Earlier `/private/tmp/` mentions are negative examples in audit prose, not private paths. Only `main` and the eventual release tag are intended for GitHub; the raw-history safety reference and other local branches are excluded.
+Before publication, the sanitized `main` ancestry contained 28 reachable commits and 291 unique blobs. A bounded scan found no original username, absolute `/Users/<name>/` path, private-key block, GitHub token pattern, or common credential assignment, including in the PNG blobs. No database, backup, DMG, certificate, private key, or temporary output filename is tracked. Earlier `/private/tmp/` mentions are negative examples in audit prose, not private paths. Only sanitized `main` and `v0.1.0` were pushed; the raw-history safety reference and other local branches remain local.
 
 ## F. GitHub channel
 
-`gh auth status` reports a valid Trojon99 login, and `gh api user` returns Trojon99. An authenticated repository lookup outside the shell sandbox returned HTTP 404 for `Trojon99/SiliconMeter`; no public or account-accessible repository was found. Sandboxed Git commands still could not resolve `github.com`, so GitHub writes must be rechecked in the ordinary network environment. No remote, tag, push, repository creation, or GitHub Release has been performed at the time of this report.
+The authenticated Trojon99 account created the empty public `Trojon99/SiliconMeter` repository without GitHub-initialized files. Its default branch is `main`; the About description and eight product topics were verified. `origin` uses a credential-free HTTPS URL. Only sanitized `main` was pushed, at release source commit `f67d7ea554010d16846c36b195ecd40200007ef2`. The annotated `v0.1.0` tag peels to that exact commit. The public non-prerelease GitHub Release is [SiliconMeter v0.1.0](https://github.com/Trojon99/SiliconMeter/releases/tag/v0.1.0).
 
 ## G. New unsigned App verification
 
@@ -40,18 +40,19 @@ The new `release/v0.1.0/SiliconMeter-0.1.0-arm64.dmg` contains the exact rebuilt
 
 ## I. New SHA-256
 
-The new local DMG SHA-256 is `b921eefb1f06fd12f920460c39ffc1a8be3a56574f6e3e5fbbf3f75b9256724e`. The regenerated `release/v0.1.0/SHA256SUMS.txt` agrees, and `shasum -a 256 -c` passed. This is a local artifact hash; a public-download hash does not exist yet. The old iconless DMG hash was `0284e97d2d0296fd788a3090bf06a06373a819763c2ef5672850beb0b8da3de2` and must not be listed for the new asset.
+The published DMG SHA-256 is `b921eefb1f06fd12f920460c39ffc1a8be3a56574f6e3e5fbbf3f75b9256724e`. The regenerated local and publicly downloaded `SHA256SUMS.txt` agree; both `shasum -a 256 -c` checks passed. The anonymously downloaded public DMG was bytewise identical to the local final asset, passed `hdiutil verify`, and contained the correct App identity, icon, architecture, and code seal. GitHub's asset digest reports the same SHA-256. The old iconless DMG hash was `0284e97d2d0296fd788a3090bf06a06373a819763c2ef5672850beb0b8da3de2` and must not be listed for the published asset.
 
 ## J. Files changed
 
 - Six historical files contain only the home-path substitution in the sanitized ancestry: `docs/V01_IDENTITY_MIGRATION.md`, `docs/V01_RELEASE_PREFLIGHT.md`, `docs/results/v01-polish-matched-new.json`, `docs/results/v01-polish-matched-old.json`, `experiments/results/step26-2026-09-23-summary.json`, and `experiments/results/step26-2026-09-23.jsonl`.
 - This report and the supersession notices in `docs/V01_UNSIGNED_RELEASE_CANDIDATE.md` and `docs/RELEASE_CHECKLIST.md` document the current release state.
 - `app/Assets.xcassets`, `app/Info.plist`, and `app/build.sh` add the formal icon to the production App. Both READMEs and `docs/V01_RELEASE_NOTES.md` mention the icon. The new DMG and checksum remain Git-ignored.
+- After publication, both READMEs link the GitHub Releases page and this report and `docs/RELEASE_CHECKLIST.md` record the public checks. `docs/V01_GITHUB_RELEASE_REPORT.md` is the final publication report.
 
 ## K. Commits
 
-The original 25-commit history is preserved by the local safety reference. The sanitized 25-commit ancestry entered `main` at `05240c611a52db2b37489ed78fd48dbe000aba24`; `0c6ef5d` records recovery and the then-pending icon source, and `bf7734c` adds the icon and bilingual notes. This report's final update is recorded by its own Git commit. No public commit or tag exists yet at the time of this report.
+The original 25-commit history is preserved by the local safety reference. The sanitized 25-commit ancestry entered `main` at `05240c611a52db2b37489ed78fd48dbe000aba24`; `0c6ef5d` records recovery, `bf7734c` adds the icon, and `f67d7ea` records candidate verification. `v0.1.0` remains on `f67d7ea`; the publication reports and README updates are later commits on `main`, without moving the tag.
 
 ## L. Remaining blockers
 
-Local release checks are complete. GitHub repository creation, setting `main` as default, pushing only sanitized `main`, creating and pushing the immutable `v0.1.0` tag, publishing the bilingual GitHub Release with the DMG and checksum, downloading the public asset, and verifying that downloaded copy remain. A real browser-download Gatekeeper flow and installed-App replacement were not exercised because the existing installed App was left running; mark Gatekeeper as manual-required if it cannot be tested safely after publication. Publication remains prohibited if GitHub state, artifact, or privacy checks change.
+**MANUAL GATEKEEPER TEST REQUIRED.** The anonymous public CLI download did not have `com.apple.quarantine`, so the real browser-download first-launch warning and **Open Anyway** path were not verified. The existing installed App was left running; the icon-bearing App was checked in a temporary `/Applications` directory and in isolated runtime homes rather than replacing that installation. The public-download exact candidate remained alive for 45 seconds, wrote SQLite v4 history with `quick_check=ok` and non-null samples for all five headline metric groups, then its isolated test process was terminated. No automatic updater, signing, notarization, or extra distribution channel was added.

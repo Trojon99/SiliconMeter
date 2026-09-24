@@ -2,7 +2,7 @@
 
 # SiliconMeter
 
-轻量、低功耗的 Apple Silicon 菜单栏系统监控与本地历史记录工具。**0.1.0** 是本地发布候选版本，尚未公开发布。
+轻量、低功耗的 Apple Silicon 菜单栏系统监控与本地历史记录工具。**0.1.0** 已在 [GitHub Releases](https://github.com/Trojon99/SiliconMeter/releases) 发布。
 
 ## 界面预览
 
@@ -40,7 +40,7 @@ macOS 13 或更新版本的 Apple Silicon Mac，且不在 App Sandbox 中运行�
 
 ## 安装
 
-SiliconMeter v0.1.0 当前以未签名、未公证的开源社区构建形式发布，未经 Apple 验证。源代码可供检查和本地构建。公开下载尚待发布；发布后按以下步骤安装：
+SiliconMeter v0.1.0 以未签名、未公证的开源社区构建形式发布，未经 Apple 验证。源代码可供检查和本地构建。从 [GitHub Releases](https://github.com/Trojon99/SiliconMeter/releases) 下载后按以下步骤安装：
 
 1. 从项目的 GitHub Release 下载 `SiliconMeter-0.1.0-arm64.dmg`。
 2. 打开 DMG，将 **SiliconMeter.app** 拖入**应用程序**文件夹。
