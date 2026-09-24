@@ -2,6 +2,58 @@ import Foundation
 import SQLite3
 import Darwin
 
+enum HistoryRetention: Int, CaseIterable {
+    case oneDay = 1, sevenDays = 7, thirtyDays = 30, forever = 0
+
+    var days: Int? { self == .forever ? nil : rawValue }
+    var labelKey: String {
+        switch self {
+        case .oneDay: return "1 Day"
+        case .sevenDays: return "7 Days"
+        case .thirtyDays: return "30 Days"
+        case .forever: return "Forever"
+        }
+    }
+    func isShorter(than other: Self) -> Bool {
+        (days ?? Int.max) < (other.days ?? Int.max)
+    }
+    func cutoffMilliseconds(now: Date) -> Int64? {
+        guard let days else { return nil }
+        return Int64((now.timeIntervalSince1970 * 1000).rounded()) - Int64(days) * 86_400_000
+    }
+}
+
+enum HistoryRetentionPreference {
+    static let key = "historyRetentionDays"
+    static let lastCleanupKey = "lastRetentionCleanupUTC"
+
+    static func loadOrInitialize(databaseURL: URL, defaults: UserDefaults = .standard,
+                                 fileManager: FileManager = .default) -> HistoryRetention {
+        if let saved = defaults.object(forKey: key) as? Int,
+           let retention = HistoryRetention(rawValue: saved) { return retention }
+        // Existence is checked before the logger opens SQLite, not inferred
+        // from row counts. An existing database always gets the safe default.
+        let chosen: HistoryRetention = fileManager.fileExists(atPath: databaseURL.path) ? .forever : .thirtyDays
+        defaults.set(chosen.rawValue, forKey: key)
+        return chosen
+    }
+
+    static func save(_ retention: HistoryRetention, defaults: UserDefaults = .standard) {
+        defaults.set(retention.rawValue, forKey: key)
+    }
+
+    static func select(_ requested: HistoryRetention, from current: HistoryRetention,
+                       defaults: UserDefaults = .standard, confirmShortening: () -> Bool) -> HistoryRetention {
+        guard requested != current else { return current }
+        guard !requested.isShorter(than: current) || confirmShortening() else { return current }
+        save(requested, defaults: defaults)
+        // A confirmed shorter policy must be retried on launch if the app
+        // exits before its immediate writer cleanup has finished.
+        if requested.isShorter(than: current) { defaults.removeObject(forKey: lastCleanupKey) }
+        return requested
+    }
+}
+
 // All SQLite state is confined to writer. The collector and main thread only enqueue values.
 final class HistoryLogger {
     static let schemaVersion = 4
@@ -53,15 +105,68 @@ final class HistoryLogger {
     private var active = false
     private var lastThermal: String?
     private var lastPressure: String?
+    private var retention: HistoryRetention
+    private let retentionDefaults: UserDefaults
+    private var cleanupGeneration = 0
+    private var cleanupJob: CleanupJob?
+    private let cleanupBatchSize = 5_000
+    private let maintenanceInterval: TimeInterval = 24 * 60 * 60
+#if RETENTION_TEST
+    var testBatchDidCommit: ((Int) -> Void)?
+    var testRowsDeletedBeforeCommit: ((Int) -> Void)?
+#endif
+
+    struct CleanupResult {
+        let deleted: [String: Int]
+        let transactions: Int
+        let scannedBatches: Int
+        let maxTransactionMs: Double
+        let elapsedSeconds: Double
+        let completed: Bool
+    }
+    private enum CleanupTable: Int, CaseIterable {
+        case fast, slow, events, batches, runs
+        var name: String {
+            switch self {
+            case .fast: return "fast_samples"
+            case .slow: return "slow_samples"
+            case .events: return "events"
+            case .batches: return "writer_batches"
+            case .runs: return "app_runs"
+            }
+        }
+        var sequenceColumn: String { self == .batches ? "batch_seq" : "seq" }
+    }
+    private struct CleanupRow {
+        let text: String?
+        let sequence: Int64
+        let timestamp: Int64
+    }
+    private struct CleanupJob {
+        let cutoff: Int64
+        let generation: Int
+        let started: Double
+        let completion: ((CleanupResult) -> Void)?
+        var table: CleanupTable = .fast
+        var textCursor: String? = nil
+        var sequenceCursor: Int64 = -1
+        var deleted: [String: Int] = [:]
+        var transactions = 0
+        var scannedBatches = 0
+        var maxTransactionMs = 0.0
+    }
 
     struct Status {
         let recording: Bool
         let sizeBytes: Int64
     }
 
-    init(databaseURL: URL = HistoryLogger.defaultURL, flushInterval: TimeInterval = HistoryLogger.defaultFlushInterval) {
+    init(databaseURL: URL = HistoryLogger.defaultURL, flushInterval: TimeInterval = HistoryLogger.defaultFlushInterval,
+         retention: HistoryRetention = .forever, retentionDefaults: UserDefaults = .standard) {
         url = databaseURL
         self.flushInterval = flushInterval
+        self.retention = retention
+        self.retentionDefaults = retentionDefaults
     }
 
     private static func ms(_ seconds: Double) -> Int64 { Int64((seconds * 1000).rounded()) }
@@ -241,7 +346,194 @@ final class HistoryLogger {
                 .integer(Self.ms(Date().timeIntervalSince1970)),
                 .integer(Self.ms(ProcessInfo.processInfo.systemUptime)),
                 .text("app_start"), .null, .null, .text(Quality.measured.rawValue)]))
+            startCleanupIfDue(now: Date(), force: false, completion: nil)
+            scheduleMaintenanceCheck()
         }
+    }
+
+    // The daily delayed writer task is the only retention scheduler. It is not
+    // attached to the 2-second collector or the sample/flush path.
+    private func scheduleMaintenanceCheck() {
+        guard active else { return }
+        let now = Date().timeIntervalSince1970
+        let last = retentionDefaults.double(forKey: HistoryRetentionPreference.lastCleanupKey)
+        let elapsed = now - last
+        let delay = last > 0 && elapsed >= 0 && elapsed < maintenanceInterval
+            ? maintenanceInterval - elapsed : maintenanceInterval
+        writer.asyncAfter(deadline: .now() + delay) { [weak self] in
+            guard let self, self.active else { return }
+            self.startCleanupIfDue(now: Date(), force: false, completion: nil)
+            self.scheduleMaintenanceCheck()
+        }
+    }
+
+    func changeRetention(to policy: HistoryRetention) {
+        writer.async { [self] in
+            retention = policy
+            cleanupGeneration += 1
+            cleanupJob = nil
+            if policy != .forever { startCleanupIfDue(now: Date(), force: true, completion: nil) }
+        }
+    }
+
+    // Test entry also permits an exact millisecond cutoff and completion wait.
+    func requestCleanup(_ policy: HistoryRetention, now: Date, force: Bool,
+                        completion: @escaping (CleanupResult) -> Void) {
+        writer.async { [self] in
+            retention = policy
+            cleanupGeneration += 1
+            cleanupJob = nil
+            startCleanupIfDue(now: now, force: force, completion: completion)
+        }
+    }
+
+    private func startCleanupIfDue(now: Date, force: Bool, completion: ((CleanupResult) -> Void)?) {
+        guard active, let cutoff = retention.cutoffMilliseconds(now: now) else {
+            completion?(CleanupResult(deleted: [:], transactions: 0, scannedBatches: 0,
+                                      maxTransactionMs: 0, elapsedSeconds: 0, completed: true))
+            return
+        }
+        let elapsed = now.timeIntervalSince1970 - retentionDefaults.double(forKey: HistoryRetentionPreference.lastCleanupKey)
+        if !force && elapsed >= 0 && elapsed < maintenanceInterval { return }
+        flush()
+        cleanupGeneration += 1
+        cleanupJob = CleanupJob(cutoff: cutoff, generation: cleanupGeneration,
+                                started: ProcessInfo.processInfo.systemUptime, completion: completion)
+        writer.async { [weak self] in self?.processCleanupBatch() }
+    }
+
+    private func selectCleanupRows(_ job: CleanupJob) -> [CleanupRow]? {
+        guard let db else { return nil }
+        let table = job.table
+        let sql: String
+        if table == .events {
+            sql = "SELECT NULL,id,utc_ms FROM events WHERE id>? ORDER BY id LIMIT ?"
+        } else if table == .runs {
+            sql = job.textCursor == nil
+                ? "SELECT run_id,0,start_utc_ms FROM app_runs ORDER BY run_id LIMIT ?"
+                : "SELECT run_id,0,start_utc_ms FROM app_runs WHERE run_id>? ORDER BY run_id LIMIT ?"
+        } else {
+            let column = table.sequenceColumn
+            sql = job.textCursor == nil
+                ? "SELECT run_id,\(column),utc_ms FROM \(table.name) ORDER BY run_id,\(column) LIMIT ?"
+                : "SELECT run_id,\(column),utc_ms FROM \(table.name) WHERE run_id>? OR (run_id=? AND \(column)>?) ORDER BY run_id,\(column) LIMIT ?"
+        }
+        var stmt: OpaquePointer?
+        guard sqlite3_prepare_v2(db, sql, -1, &stmt, nil) == SQLITE_OK else { return nil }
+        defer { sqlite3_finalize(stmt) }
+        if table == .events {
+            sqlite3_bind_int64(stmt, 1, job.sequenceCursor)
+            sqlite3_bind_int(stmt, 2, Int32(cleanupBatchSize))
+        } else if let cursor = job.textCursor {
+            _ = cursor.withCString { sqlite3_bind_text(stmt, 1, $0, -1, unsafeBitCast(-1, to: sqlite3_destructor_type.self)) }
+            if table == .runs { sqlite3_bind_int(stmt, 2, Int32(cleanupBatchSize)) }
+            else {
+                _ = cursor.withCString { sqlite3_bind_text(stmt, 2, $0, -1, unsafeBitCast(-1, to: sqlite3_destructor_type.self)) }
+                sqlite3_bind_int64(stmt, 3, job.sequenceCursor)
+                sqlite3_bind_int(stmt, 4, Int32(cleanupBatchSize))
+            }
+        } else { sqlite3_bind_int(stmt, 1, Int32(cleanupBatchSize)) }
+        var rows: [CleanupRow] = []
+        while true {
+            let step = sqlite3_step(stmt)
+            if step == SQLITE_DONE { return rows }
+            guard step == SQLITE_ROW else { return nil }
+            let text = sqlite3_column_text(stmt, 0).map { String(cString: $0) }
+            rows.append(CleanupRow(text: text, sequence: sqlite3_column_int64(stmt, 1),
+                                   timestamp: sqlite3_column_int64(stmt, 2)))
+        }
+    }
+
+    private func hasLegacyTrainingSessions() -> Bool {
+        scalarText("SELECT name FROM sqlite_master WHERE type='table' AND name='training_sessions'") != nil
+    }
+
+    private func deleteCleanupRows(_ rows: [CleanupRow], job: inout CleanupJob) -> Bool {
+        guard let db else { return false }
+        let candidates = rows.filter { $0.timestamp < job.cutoff }
+        guard !candidates.isEmpty else { return true }
+        let table = job.table
+        let sql: String
+        if table == .events {
+            sql = "DELETE FROM events WHERE id=?1 AND utc_ms<?2"
+        } else if table == .runs {
+            sql = "DELETE FROM app_runs WHERE run_id=?1 AND run_id<>?2 AND COALESCE(end_utc_ms,start_utc_ms)<?3 " +
+                  "AND NOT EXISTS (SELECT 1 FROM fast_samples WHERE run_id=?1) " +
+                  "AND NOT EXISTS (SELECT 1 FROM slow_samples WHERE run_id=?1) " +
+                  "AND NOT EXISTS (SELECT 1 FROM events WHERE run_id=?1) " +
+                  "AND NOT EXISTS (SELECT 1 FROM writer_batches WHERE run_id=?1)" +
+                  (hasLegacyTrainingSessions() ? " AND NOT EXISTS (SELECT 1 FROM training_sessions WHERE start_run_id=?1 OR end_run_id=?1)" : "")
+        } else {
+            sql = "DELETE FROM \(table.name) WHERE run_id=?1 AND \(table.sequenceColumn)=?2 AND utc_ms<?3"
+        }
+        let begun = ProcessInfo.processInfo.systemUptime
+        guard execute("BEGIN IMMEDIATE") else { return false }
+        var stmt: OpaquePointer?
+        guard sqlite3_prepare_v2(db, sql, -1, &stmt, nil) == SQLITE_OK else {
+            _ = execute("ROLLBACK"); return false
+        }
+        var deleted = 0
+        var okay = true
+        for row in candidates {
+            sqlite3_reset(stmt)
+            sqlite3_clear_bindings(stmt)
+            if let text = row.text {
+                _ = text.withCString { sqlite3_bind_text(stmt, 1, $0, -1, unsafeBitCast(-1, to: sqlite3_destructor_type.self)) }
+            } else { sqlite3_bind_int64(stmt, 1, row.sequence) }
+            if table == .runs {
+                _ = runID.withCString { sqlite3_bind_text(stmt, 2, $0, -1, unsafeBitCast(-1, to: sqlite3_destructor_type.self)) }
+                sqlite3_bind_int64(stmt, 3, job.cutoff)
+            } else if table == .events { sqlite3_bind_int64(stmt, 2, job.cutoff) }
+            else {
+                sqlite3_bind_int64(stmt, 2, row.sequence)
+                sqlite3_bind_int64(stmt, 3, job.cutoff)
+            }
+            if sqlite3_step(stmt) != SQLITE_DONE { okay = false; break }
+            deleted += Int(sqlite3_changes(db))
+#if RETENTION_TEST
+            testRowsDeletedBeforeCommit?(deleted)
+#endif
+        }
+        sqlite3_finalize(stmt)
+        guard okay, execute("COMMIT") else { _ = execute("ROLLBACK"); return false }
+        job.deleted[table.name, default: 0] += deleted
+        job.transactions += 1
+        job.maxTransactionMs = max(job.maxTransactionMs, (ProcessInfo.processInfo.systemUptime - begun) * 1000)
+        return true
+    }
+
+    private func finishCleanup(_ job: CleanupJob, completed: Bool) {
+        cleanupJob = nil
+        if completed { retentionDefaults.set(Date().timeIntervalSince1970, forKey: HistoryRetentionPreference.lastCleanupKey) }
+        else { fputs("History retention cleanup incomplete; will retry later\n", stderr) }
+        job.completion?(CleanupResult(deleted: job.deleted, transactions: job.transactions,
+                                      scannedBatches: job.scannedBatches,
+                                      maxTransactionMs: job.maxTransactionMs,
+                                      elapsedSeconds: ProcessInfo.processInfo.systemUptime - job.started,
+                                      completed: completed))
+    }
+
+    private func processCleanupBatch() {
+        guard active, var job = cleanupJob, job.generation == cleanupGeneration else { return }
+        guard let rows = selectCleanupRows(job) else { finishCleanup(job, completed: false); return }
+        if rows.isEmpty {
+            guard let next = CleanupTable(rawValue: job.table.rawValue + 1) else {
+                finishCleanup(job, completed: true); return
+            }
+            job.table = next
+            job.textCursor = nil
+            job.sequenceCursor = -1
+        } else {
+            job.scannedBatches += 1
+            guard deleteCleanupRows(rows, job: &job) else { finishCleanup(job, completed: false); return }
+#if RETENTION_TEST
+            if job.transactions > 0 { testBatchDidCommit?(job.transactions) }
+#endif
+            job.textCursor = rows.last?.text
+            job.sequenceCursor = rows.last!.sequence
+        }
+        cleanupJob = job
+        writer.async { [weak self] in self?.processCleanupBatch() }
     }
     func recordFast(_ snapshot: TelemetrySnapshot, seq: Int, time: Date, uptime: TimeInterval) {
         sample("fast_samples", fields: Self.fast, snapshot: snapshot, seq: seq, time: time, uptime: uptime)

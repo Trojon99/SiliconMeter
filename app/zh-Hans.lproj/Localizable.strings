@@ -37,6 +37,15 @@
 "Stale" = "已过期";
 "estimated" = "估算";
 "Database Size" = "数据库大小";
+"Retention" = "保留时间";
+"1 Day" = "1 天";
+"7 Days" = "7 天";
+"30 Days" = "30 天";
+"Forever" = "永久";
+"Delete Old History?" = "删除旧记录？";
+"History older than %@ will be permanently deleted.\nThis action cannot be undone." = "超过 %@ 的历史记录将被永久删除。\n此操作无法撤销。";
+"Cancel" = "取消";
+"Delete Old History" = "删除旧记录";
 "Open Data Folder" = "打开数据文件夹";
 "Language" = "语言";
 "Launch at Login" = "登录时启动";

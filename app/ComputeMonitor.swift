@@ -430,6 +430,8 @@ final class MonitorPopover: NSViewController {
     private let historyHeading = NSTextField(labelWithString: "")
     private let recording = NSTextField(labelWithString: "")
     private let databaseSize = NSTextField(labelWithString: "")
+    private let retentionLabel = NSTextField(labelWithString: "")
+    private let retentionPopup = NSPopUpButton()
     private let openFolder = NSButton(title: "", target: nil, action: nil)
     private let languageHeading = NSTextField(labelWithString: "")
     private let languages = NSPopUpButton()
@@ -440,11 +442,12 @@ final class MonitorPopover: NSViewController {
     private var loginItemChangeFailed = false
     var onMode: ((PrimaryMetric) -> Void)?
     var onLanguage: ((AppLanguage) -> Void)?
+    var onRetention: ((HistoryRetention) -> Void)?
     var onLaunchAtLogin: ((Bool) -> Void)?
     var onQuit: (() -> Void)?
 
     override func loadView() {
-        let root = NSView(frame: NSRect(x: 0, y: 0, width: 400, height: 740))
+        let root = NSView(frame: NSRect(x: 0, y: 0, width: 400, height: 770))
         let stack = NSStackView()
         stack.orientation = .vertical
         stack.alignment = .leading
@@ -476,6 +479,18 @@ final class MonitorPopover: NSViewController {
         stack.addArrangedSubview(historyHeading)
         stack.addArrangedSubview(recording)
         stack.addArrangedSubview(databaseSize)
+        let retentionRow = NSStackView()
+        retentionRow.orientation = .horizontal
+        retentionRow.spacing = 12
+        retentionRow.addArrangedSubview(retentionLabel)
+        for policy in HistoryRetention.allCases {
+            retentionPopup.addItem(withTitle: policy.labelKey)
+            retentionPopup.lastItem?.tag = policy.rawValue
+        }
+        retentionPopup.target = self
+        retentionPopup.action = #selector(changeRetention(_:))
+        retentionRow.addArrangedSubview(retentionPopup)
+        stack.addArrangedSubview(retentionRow)
         openFolder.target = self
         openFolder.action = #selector(openDataFolder)
         openFolder.bezelStyle = .rounded
@@ -496,7 +511,7 @@ final class MonitorPopover: NSViewController {
         quit.action = #selector(quitApp)
         quit.bezelStyle = .rounded
         stack.addArrangedSubview(quit)
-        preferredContentSize = NSSize(width: 400, height: 740)
+        preferredContentSize = NSSize(width: 400, height: 770)
         view = root
     }
 
@@ -511,6 +526,18 @@ final class MonitorPopover: NSViewController {
     }
     @objc private func toggleLaunchAtLogin(_ sender: NSButton) {
         onLaunchAtLogin?(sender.state == .on)
+    }
+    @objc private func changeRetention(_ sender: NSPopUpButton) {
+        guard let policy = HistoryRetention(rawValue: sender.selectedTag()) else { return }
+        onRetention?(policy)
+    }
+    func setRetention(_ policy: HistoryRetention) {
+        _ = view
+        retentionLabel.stringValue = Localizer.shared.text("Retention")
+        for option in HistoryRetention.allCases {
+            retentionPopup.itemArray.first(where: { $0.tag == option.rawValue })?.title = Localizer.shared.text(option.labelKey)
+        }
+        retentionPopup.selectItem(withTag: policy.rawValue)
     }
     func setLoginItemStatus(_ status: SMAppService.Status, failed: Bool = false) {
         loginItemStatus = status
@@ -532,12 +559,15 @@ final class MonitorPopover: NSViewController {
     }
 #endif
 #if STEP3_UI_SMOKE
+    func smokeRetention(label: String, selectedTitle: String) -> Bool {
+        retentionLabel.stringValue == label && retentionPopup.selectedItem?.title == selectedTitle
+    }
     func smokeSelectLanguage(_ language: AppLanguage) {
         languages.selectItem(at: language == .simplifiedChinese ? 1 : 0)
         selectLanguage(languages)
     }
     func smokeContains(_ value: String) -> Bool {
-        [heading, text, historyHeading, recording, databaseSize, languageHeading, quit].contains {
+        [heading, text, historyHeading, recording, databaseSize, retentionLabel, languageHeading, quit].contains {
             $0.stringValue.contains(value)
         } || openFolder.title.contains(value)
     }
@@ -569,7 +599,7 @@ final class MonitorPopover: NSViewController {
     }
     func smokeLayoutFits() -> Bool {
         view.layoutSubtreeIfNeeded()
-        return [heading, text, historyHeading, recording, databaseSize, openFolder,
+        return [heading, text, historyHeading, recording, databaseSize, retentionLabel, retentionPopup, openFolder,
                 languageHeading, languages, launchAtLogin, loginDetail, quit].allSatisfy { control in
             let frame = control.convert(control.bounds, to: view)
             return frame.minX >= 0 && frame.maxX <= view.bounds.width
@@ -609,6 +639,10 @@ final class MonitorPopover: NSViewController {
         historyHeading.stringValue = tr("History")
         recording.stringValue = "\(tr("Recording")): \(history?.recording == true ? tr("On") : tr("Unavailable"))"
         databaseSize.stringValue = "\(tr("Database Size")): \(history.map { ByteCountFormatter.string(fromByteCount: $0.sizeBytes, countStyle: .file) } ?? tr("Unavailable"))"
+        retentionLabel.stringValue = tr("Retention")
+        for policy in HistoryRetention.allCases {
+            retentionPopup.itemArray.first(where: { $0.tag == policy.rawValue })?.title = tr(policy.labelKey)
+        }
         openFolder.title = tr("Open Data Folder")
         languageHeading.stringValue = tr("Language")
         languages.item(at: 0)?.title = tr("English")
@@ -621,7 +655,8 @@ final class MonitorPopover: NSViewController {
 
 final class AppDelegate: NSObject, NSApplicationDelegate {
     private let service = TelemetryService()
-    private let history = HistoryLogger()
+    private let history: HistoryLogger
+    private var retentionPolicy: HistoryRetention
     private let statusItem = NSStatusBar.system.statusItem(withLength: 1)
     private let popover = NSPopover()
     private let content = MonitorPopover()
@@ -637,12 +672,19 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 #endif
     private var selected = PrimaryMetricPreference.load()
 
+    init(retention: HistoryRetention) {
+        retentionPolicy = retention
+        history = HistoryLogger(retention: retention)
+        super.init()
+    }
+
     func applicationDidFinishLaunching(_ notification: Notification) {
         service.history = history
         NSApp.setActivationPolicy(.accessory)
         popover.behavior = .transient
         popover.animates = false
         popover.contentViewController = content
+        content.setRetention(retentionPolicy)
         content.onMode = { [weak self] mode in
             guard let self else { return }
             self.selected = mode
@@ -653,6 +695,22 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             self.render(self.service.snapshot)
         }
         content.onQuit = { NSApp.terminate(nil) }
+        content.onRetention = { [weak self] requested in
+            guard let self else { return }
+            let chosen = HistoryRetentionPreference.select(requested, from: self.retentionPolicy) {
+                let tr = Localizer.shared.text
+                let alert = NSAlert()
+                alert.messageText = tr("Delete Old History?")
+                alert.informativeText = String(format: tr("History older than %@ will be permanently deleted.\nThis action cannot be undone."), tr(requested.labelKey))
+                alert.addButton(withTitle: tr("Cancel"))
+                alert.addButton(withTitle: tr("Delete Old History"))
+                return alert.runModal() == .alertSecondButtonReturn
+            }
+            self.content.setRetention(chosen)
+            guard chosen != self.retentionPolicy else { return }
+            self.retentionPolicy = chosen
+            self.history.changeRetention(to: chosen)
+        }
         content.onLaunchAtLogin = { [weak self] enabled in
             guard let self else { return }
             var failed = false
@@ -832,6 +890,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             title: "登录时启动", checked: true, detail: "请在系统设置中批准", enabled: true)
         let chinese = statusItem.button?.attributedTitle.string == statusLayout?.attributedTitle(in: service.snapshot).string
             && content.smokeContains("SiliconMeter") && !content.smokeContains("Compute Monitor")
+            && content.smokeRetention(label: "保留时间", selectedTitle: Localizer.shared.text(retentionPolicy.labelKey))
             && content.smokeContains("历史记录") && content.smokeContains("记录状态")
             && content.smokeContains("数据库大小") && content.smokeContains("打开数据文件夹")
             && PrimaryMetric.temperature.title(in: service.snapshot).hasPrefix("温度 ")
@@ -852,6 +911,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             && content.smokeLoginToggle()
         let english = statusItem.button?.attributedTitle.string == statusLayout?.attributedTitle(in: service.snapshot).string
             && content.smokeContains("SiliconMeter") && !content.smokeContains("Compute Monitor")
+            && content.smokeRetention(label: "Retention", selectedTitle: retentionPolicy.labelKey)
             && content.smokeContains("History") && content.smokeContains("Recording")
             && content.smokeContains("Database Size") && content.smokeContains("Open Data Folder")
             && PrimaryMetric.temperature.title(in: service.snapshot).hasPrefix("Temp ")
@@ -880,7 +940,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             let cpuLive = self.service.snapshot["total"]?.number != nil
             let gpuLive = self.service.snapshot["gpuActive"]?.number != nil
             let passed = opened && switched && fixedWidth && chinese && english && telemetryUnchanged && closed && accessory && cpuLive && gpuLive
-            print("UI_SMOKE opened=\(opened) switched=\(switched) fixed_width=\(fixedWidth) chinese=\(chinese) english=\(english) telemetry_unchanged=\(telemetryUnchanged) closed=\(closed) accessory=\(accessory) cpu=\(cpuLive) gpu=\(gpuLive) login_status=\(SMAppService.mainApp.status.rawValue) initial=\(initial) result=\(passed ? "PASS" : "FAIL")")
+            print("UI_SMOKE opened=\(opened) switched=\(switched) fixed_width=\(fixedWidth) chinese=\(chinese) english=\(english) telemetry_unchanged=\(telemetryUnchanged) closed=\(closed) accessory=\(accessory) cpu=\(cpuLive) gpu=\(gpuLive) retention=\(retentionPolicy.rawValue) login_status=\(SMAppService.mainApp.status.rawValue) initial=\(initial) result=\(passed ? "PASS" : "FAIL")")
             fflush(stdout)
             NSApp.terminate(nil)
         }
@@ -890,6 +950,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
 let app = NSApplication.shared
 guard IdentityMigration.prepareForLaunch() else { exit(EXIT_FAILURE) }
-let delegate = AppDelegate()
+let initialRetention = HistoryRetentionPreference.loadOrInitialize(databaseURL: HistoryLogger.defaultURL)
+let delegate = AppDelegate(retention: initialRetention)
 app.delegate = delegate
 app.run()

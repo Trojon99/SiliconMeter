@@ -37,6 +37,15 @@
 "Stale" = "Stale";
 "estimated" = "estimated";
 "Database Size" = "Database Size";
+"Retention" = "Retention";
+"1 Day" = "1 Day";
+"7 Days" = "7 Days";
+"30 Days" = "30 Days";
+"Forever" = "Forever";
+"Delete Old History?" = "Delete Old History?";
+"History older than %@ will be permanently deleted.\nThis action cannot be undone." = "History older than %@ will be permanently deleted.\nThis action cannot be undone.";
+"Cancel" = "Cancel";
+"Delete Old History" = "Delete Old History";
 "Open Data Folder" = "Open Data Folder";
 "Language" = "Language";
 "Launch at Login" = "Launch at Login";
