@@ -1,8 +1,8 @@
 [English](README.md) | 简体中文
 
-# Compute Monitor
+# SiliconMeter
 
-一个轻量的 Apple Silicon 遥测监控器，在 macOS 菜单栏显示实时指标，并在本地记录历史。**0.1.0** 是本地发布候选版本，尚未公开发布。
+轻量、低功耗的 Apple Silicon 菜单栏系统监控与本地历史记录工具。**0.1.0** 是本地发布候选版本，尚未公开发布。
 
 ## 界面预览
 
@@ -43,14 +43,18 @@ macOS 13 或更新版本的 Apple Silicon Mac，且不在 App Sandbox 中运行�
 
 ```sh
 sh app/build.sh
-open app/ComputeMonitor.app
+open app/SiliconMeter.app
 ```
 
 点击菜单栏图标可查看当前遥测、选择主要指标或语言、启用**登录时启动**、打开数据文件夹，或退出。App 以辅助应用方式运行，不显示 Dock 图标。“登录时启动”使用 macOS Service Management；当前仅临时签名的开发 bundle 可能显示为不可用，正确签名的发行构建仍需单独验证。定向检查见 [tests/README.md](tests/README.md)；[产品范围](docs/PRODUCT_SCOPE.md)定义 v0.1 的边界。
 
 ## 数据位置
 
-数据库位于 `~/Library/Application Support/Compute Monitor/telemetry.sqlite3`。App 运行时可能存在 `-wal` 和 `-shm` 附属文件。实时备份应使用 SQLite 备份 API。外部程序可直接只读查询数据库；App 不提供 HTTP 或 socket API。
+数据库位于 `~/Library/Application Support/SiliconMeter/telemetry.sqlite3`。App 运行时可能存在 `-wal` 和 `-shm` 附属文件。实时备份应使用 SQLite 备份 API。外部程序可直接只读查询数据库；App 不提供 HTTP 或 socket API。
+
+## 升级说明
+
+早期本地开发版本使用 `Compute Monitor` 数据目录。打开 SiliconMeter 前请先退出旧 App。首次启动时，若新目录不存在，SiliconMeter 会将旧目录整体迁移。若新旧目录都存在，则保留两者并使用 SiliconMeter 目录；请先查看本地日志，再手动处理冲突。
 
 ## 已知限制
 
@@ -62,4 +66,4 @@ IOReport 和 AppleSMC 私有接口的行为可能随系统或硬件更新而变�
 
 ## 许可证
 
-目前尚未选择或发布许可证；仓库当前不授予开源许可证。
+本项目采用 MIT License，详见 [LICENSE](LICENSE)。

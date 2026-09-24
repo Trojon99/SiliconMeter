@@ -1,5 +1,7 @@
 # v0.1.0 release preflight — 2026-09-24
 
+> Historical preflight snapshot at `a6e44ed`. Step 4.1 subsequently fixed the product identity as **SiliconMeter**, bundle ID `io.github.trojon99.siliconmeter`, version `0.1.0` (build `1`), and MIT License with copyright identity Trojon99. The old names and decision gates below describe the state at preflight time; see [the identity migration report](V01_IDENTITY_MIGRATION.md) for current state. The proposed GitHub repository name is **SiliconMeter**; no remote was configured in this step.
+
 **Decision state: READY FOR RELEASE DECISIONS.** This is a technical preflight, not a signed, notarized, packaged, or published release. The product scope remains Monitor + Menu Bar + Local SQLite History. No Step 2 or Step 2.6 experiment provenance was changed.
 
 ## A. Current Git state

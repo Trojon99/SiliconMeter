@@ -1,6 +1,6 @@
 # Minimal Monitor v0.1 product scope
 
-Compute Monitor is a lightweight Apple Silicon macOS menu-bar telemetry monitor and local history recorder.
+SiliconMeter is a lightweight Apple Silicon macOS menu-bar telemetry monitor and local history recorder.
 
 1. **Monitor:** One native collector publishes CPU, GPU, Network RX/TX, memory, and thermal telemetry to a shared snapshot.
 2. **Menu Bar:** One selected primary metric and a small popover show current readings.

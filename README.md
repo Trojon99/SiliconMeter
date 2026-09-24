@@ -1,6 +1,6 @@
 English | [简体中文](README.zh-CN.md)
 
-# Compute Monitor
+# SiliconMeter
 
 A lightweight Apple Silicon telemetry monitor and local history recorder for the macOS menu bar. Version **0.1.0** is a local release candidate; no public build has been released.
 
@@ -43,14 +43,18 @@ Install Apple Command Line Tools with Swift and Clang, then run:
 
 ```sh
 sh app/build.sh
-open app/ComputeMonitor.app
+open app/SiliconMeter.app
 ```
 
 Click the status item to view current telemetry, choose a primary metric or language, enable **Launch at Login**, open the data folder, or Quit. The app runs as an accessory without a Dock icon. Launch at Login uses macOS Service Management; the local ad-hoc signed development bundle may show it as unavailable, while a properly signed release build must be verified separately. Focused checks are documented in [tests/README.md](tests/README.md). [Product scope](docs/PRODUCT_SCOPE.md) defines the v0.1 boundary.
 
 ## Data location
 
-The database is `~/Library/Application Support/Compute Monitor/telemetry.sqlite3`. Its `-wal` and `-shm` sidecars may exist while the app runs. Use SQLite's backup API for a consistent live backup. Read-only external programs can query the database directly; the app does not provide an HTTP or socket API.
+The database is `~/Library/Application Support/SiliconMeter/telemetry.sqlite3`. Its `-wal` and `-shm` sidecars may exist while the app runs. Use SQLite's backup API for a consistent live backup. Read-only external programs can query the database directly; the app does not provide an HTTP or socket API.
+
+## Upgrade notes
+
+Early local development builds used a `Compute Monitor` data folder. Quit the older app before opening SiliconMeter. On first launch, SiliconMeter moves that folder to its new location if the new folder does not exist. If both folders exist, it keeps both untouched and uses the SiliconMeter folder; check the local log before resolving that conflict manually.
 
 ## Known limitations
 
@@ -62,4 +66,4 @@ The full telemetry build is intentionally non-App-Sandboxed because the tested s
 
 ## License
 
-No license has been selected or published yet. The repository does not currently grant an open-source license.
+MIT License. See [LICENSE](LICENSE).
