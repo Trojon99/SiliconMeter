@@ -2,6 +2,8 @@
 
 **Status: READY FOR GITHUB RELEASE PREP.** The local App and DMG candidate passed the checks below. GitHub destination and publication remain pending.
 
+**Superseded for publication:** The subsequent release requirement adds a formal App icon. The DMG and SHA-256 recorded here describe the earlier iconless candidate and must not be uploaded as the final v0.1.0 artifact. See `V01_RELEASE_RECOVERY_REPORT.md` for current status.
+
 ## A. Release strategy
 
 v0.1.0 is an **unsigned, non-notarized open-source community build** for a later public GitHub Release. The bundle has a local ad-hoc resource seal so macOS accepts and opens the complete App; it has no Developer ID identity, Team ID, secure distribution signature, notarization ticket, or Apple verification. Developer ID signing and notarization are future optional improvements. No repository remote, tag, push, or GitHub Release was created here.
