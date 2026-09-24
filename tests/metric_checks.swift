@@ -39,7 +39,7 @@ snapshot.merge([
 check(PrimaryMetric.cpu.title(in: snapshot) == "CPU 23%", "CPU label mismatch")
 check(PrimaryMetric.gpu.title(in: snapshot) == "GPU 91%", "GPU label mismatch")
 check(PrimaryMetric.temperature.title(in: snapshot) == "Temp 61°C", "temperature label mismatch")
-check(PrimaryMetric.gpuPower.title(in: snapshot) == "GPU Power 14W", "GPU power label mismatch")
+check(PrimaryMetric.gpuPower.title(in: snapshot) == "GPU Power 14.0W", "GPU power label mismatch")
 snapshot.merge([
     "total": ["status": "measured", "value": 1, "unit": "ratio"],
     "gpuActive": ["status": "measured", "value": 1, "unit": "ratio"],
@@ -58,15 +58,24 @@ snapshot.merge([
     "network_rx_bytes_per_sec": ["status": "measured", "value": 12_400_000.0, "unit": "B/s"],
     "network_tx_bytes_per_sec": ["status": "measured", "value": 1_300_000.0, "unit": "B/s"]
 ], at: Date())
-check(PrimaryMetric.network.title(in: snapshot) == "NET ↓12.4 ↑1.3 MB/s", "same-unit network title")
+check(PrimaryMetric.network.title(in: snapshot) == "NET ↓12.4 MB/s ↑1.3 MB/s", "same-unit network title")
 snapshot.merge(["network_tx_bytes_per_sec": ["status": "measured", "value": 420_000.0, "unit": "B/s"]], at: Date())
 check(PrimaryMetric.network.title(in: snapshot) == "NET ↓12.4 MB/s ↑420 KB/s", "mixed-unit network title")
 snapshot.merge(["network_rx_bytes_per_sec": ["status": "measured", "value": 0.0, "unit": "B/s"],
                 "network_tx_bytes_per_sec": ["status": "measured", "value": 0.0, "unit": "B/s"]], at: Date())
-check(PrimaryMetric.network.title(in: snapshot) == "NET ↓0 ↑0 B/s", "measured zero network title")
+check(PrimaryMetric.network.title(in: snapshot) == "NET ↓0 B/s ↑0 B/s", "measured zero network title")
 snapshot.merge(["network_rx_bytes_per_sec": ["status": "unavailable", "unit": "B/s"],
                 "network_tx_bytes_per_sec": ["status": "invalid", "unit": "B/s"]], at: Date())
 check(PrimaryMetric.network.title(in: snapshot) == "NET ↓— ↑—", "invalid network became zero")
+check(NetworkRateFormat.display(999) == "999 B/s", "byte boundary")
+check(NetworkRateFormat.display(0) == "0 B/s", "measured zero formatting")
+check(NetworkRateFormat.display(0.2) == "<1 B/s", "positive sub-byte rate became zero")
+check(NetworkRateFormat.display(999_900) == "999.9 KB/s", "kilobyte boundary")
+check(NetworkRateFormat.display(999_950) == "1.0 MB/s", "rounding must promote unit")
+check(NetworkRateFormat.display(1_000_000_000) == "1.0 GB/s", "gigabyte boundary")
+check(NetworkRateFormat.display(1_000_000_000_000) == "1.0 TB/s", "terabyte boundary")
+check(NetworkRateFormat.display(Double.greatestFiniteMagnitude).contains("e+308"), "extreme rate did not stay bounded")
+check(StatusPowerFormat.display(10) == "10.0W", "power decimals changed by integer value")
 
 var records: [[String: Any]] = []
 var updates = 0

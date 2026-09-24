@@ -125,8 +125,16 @@ translation resources, quality labels, immediate switching, and preferences
 across three separate processes. Run it in an ordinary-user shell with access
 to macOS preferences; the Codex filesystem sandbox can prevent `UserDefaults`
 from persisting across processes. `sh app/ui-smoke.sh` verifies both languages
-in an AppKit popover, live telemetry, five menu choices, dynamic status-item
+in an AppKit popover, live telemetry, five menu choices, fixed status-item
 width, and layout bounds. It needs an ordinary graphical user session.
+
+`sh tests/run-status-width.sh` creates an actual AppKit `NSStatusItem` and
+checks 72 boundary and unavailable values across all five modes in English and
+Simplified Chinese. For each metric-language pair it checks the item length,
+button frame, and right-aligned numeric slot endpoints. The full UI smoke also
+checks that value updates do not rebuild the measured layout. The width matrix is
+saved in `docs/results/status-width.json`. Mode or language changes may select
+a new cached width; telemetry updates must retain the selected width.
 
 With the ordinary app already launched, `python3 tests/run-minimal-regression.py`
 observes one PID for 900 seconds at 30-second intervals. It records CPU, RSS,

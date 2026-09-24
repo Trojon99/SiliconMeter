@@ -6,11 +6,12 @@ A lightweight Apple Silicon telemetry monitor and local history recorder for the
 
 ## UI preview
 
-Screenshots will be added with a future release. The status item shows one selected metric, such as `CPU 23%`, `GPU 91%`, `Temp 61°C`, `GPU Power 14W`, or `NET ↓12.4 ↑1.3 MB/s`.
+Screenshots will be added with a future release. The status item shows one selected metric, such as `CPU 23%`, `GPU 91%`, `Temp 61°C`, `GPU Power 14.0W`, or `NET ↓12.4 MB/s ↑1.3 MB/s`.
 
 ## Features
 
 - Live status item with five selectable metrics and a compact popover for current system telemetry.
+- A fixed menu-bar item width for each metric and language, so changing readings do not move neighboring status items.
 - Local SQLite history recorded continuously from the same shared snapshots, with a serial batched writer and WAL.
 - English and Simplified Chinese UI, with immediate switching and a locally saved language choice.
 - Ordinary-user operation without a helper, persistent child process, `powermetrics`, outgoing network connections, or telemetry upload.

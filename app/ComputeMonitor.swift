@@ -6,19 +6,49 @@ enum Quality: String {
 }
 
 enum NetworkRateFormat {
+    static let units = ["B/s", "KB/s", "MB/s", "GB/s", "TB/s", "PB/s", "EB/s"]
+    static let widestTemplate = "-1.0e+308 B/s"
     static func parts(_ bytesPerSecond: Double) -> (String, String) {
-        let scale: Double
-        let unit: String
-        if bytesPerSecond >= 1_000_000_000 { scale = 1_000_000_000; unit = "GB/s" }
-        else if bytesPerSecond >= 1_000_000 { scale = 1_000_000; unit = "MB/s" }
-        else if bytesPerSecond >= 1_000 { scale = 1_000; unit = "KB/s" }
-        else { scale = 1; unit = "B/s" }
-        let value = bytesPerSecond / scale
-        return (String(format: scale == 1 || value >= 100 ? "%.0f" : "%.1f", value), unit)
+        guard bytesPerSecond.isFinite, bytesPerSecond >= 0 else { return ("—", "B/s") }
+        if bytesPerSecond > 0, bytesPerSecond < 1 { return ("<1", "B/s") }
+        var value = bytesPerSecond
+        var unitIndex = 0
+        while value >= 1_000, unitIndex < units.count - 1 {
+            value /= 1_000
+            unitIndex += 1
+        }
+        // Promote before one-decimal rounding could print 1000.0 in the old unit.
+        if value >= (unitIndex == 0 ? 999.5 : 999.95), unitIndex < units.count - 1 {
+            value /= 1_000
+            unitIndex += 1
+        }
+        if unitIndex == units.count - 1, value >= 999.95 {
+            return (String(format: "%.1e", bytesPerSecond), "B/s")
+        }
+        let whole = value.rounded() == value
+        return (String(format: unitIndex == 0 || (value >= 100 && whole) ? "%.0f" : "%.1f", value), units[unitIndex])
     }
     static func display(_ bytesPerSecond: Double) -> String {
         let (value, unit) = parts(bytesPerSecond)
         return "\(value) \(unit)"
+    }
+}
+
+enum StatusPowerFormat {
+    static let widestTemplate = "999.9kW"
+    private static let units = ["W", "kW", "MW", "GW", "TW", "PW", "EW"]
+    static func display(_ watts: Double) -> String {
+        guard watts.isFinite else { return "—" }
+        var value = abs(watts)
+        var unitIndex = 0
+        while value >= 999.95, unitIndex < units.count - 1 {
+            value /= 1_000
+            unitIndex += 1
+        }
+        if unitIndex == units.count - 1, value >= 999.95 {
+            return String(format: "%.1eW", watts)
+        }
+        return String(format: "%.1f%@", watts < 0 ? -value : value, units[unitIndex])
     }
 }
 
@@ -113,31 +143,77 @@ enum PrimaryMetric: Int, CaseIterable {
         let tr = Localizer.shared.text
         switch self { case .cpu: return tr("CPU"); case .gpu: return tr("GPU"); case .temperature: return tr("Temperature"); case .gpuPower: return tr("GPU Power"); case .network: return tr("Network") }
     }
-    func title(in snapshot: TelemetrySnapshot) -> String {
-        let tr = Localizer.shared.text
+    func statusFields(in snapshot: TelemetrySnapshot) -> [String] {
         switch self {
         case .cpu:
-            guard let number = snapshot["total"]?.number else { return "\(tr("CPU")) —" }
-            return String(format: "%@ %.0f%%", tr("CPU"), number * 100)
+            return [snapshot["total"]?.number.map { String(format: "%.0f%%", $0 * 100) } ?? "—"]
         case .gpu:
-            guard let number = snapshot["gpuActive"]?.number else { return "\(tr("GPU")) —" }
-            return String(format: "%@ %.0f%%", tr("GPU"), number * 100)
+            return [snapshot["gpuActive"]?.number.map { String(format: "%.0f%%", $0 * 100) } ?? "—"]
         case .temperature:
-            guard let number = snapshot["cpuTemperature"]?.number else { return "\(tr("Temp")) —" }
-            return String(format: "%@ %.0f°C", tr("Temp"), number)
+            return [snapshot["cpuTemperature"]?.number.map { String(format: "%.0f°C", $0) } ?? "—"]
         case .gpuPower:
-            guard let number = snapshot["gpuPower"]?.number else { return "\(tr("GPU Power")) —" }
-            if number < 99.95, number.rounded() != number { return String(format: "%@ %.1fW", tr("GPU Power"), number) }
-            if number < 999.5 { return String(format: "%@ %.0fW", tr("GPU Power"), number) }
-            return String(format: "%@ %.0fkW", tr("GPU Power"), number / 1000)
+            return [snapshot["gpuPower"]?.number.map(StatusPowerFormat.display) ?? "—"]
         case .network:
-            let rx = snapshot["network_rx_bytes_per_sec"]?.number.map(NetworkRateFormat.parts)
-            let tx = snapshot["network_tx_bytes_per_sec"]?.number.map(NetworkRateFormat.parts)
-            if let rx, let tx, rx.1 == tx.1 { return "\(tr("NET")) ↓\(rx.0) ↑\(tx.0) \(rx.1)" }
-            let received = rx.map { "\($0.0) \($0.1)" } ?? "—"
-            let sent = tx.map { "\($0.0) \($0.1)" } ?? "—"
-            return "\(tr("NET")) ↓\(received) ↑\(sent)"
+            return [snapshot["network_rx_bytes_per_sec"]?.number.map(NetworkRateFormat.display) ?? "—",
+                    snapshot["network_tx_bytes_per_sec"]?.number.map(NetworkRateFormat.display) ?? "—"]
         }
+    }
+    var statusPrefix: String {
+        let tr = Localizer.shared.text
+        switch self {
+        case .cpu: return tr("CPU")
+        case .gpu: return tr("GPU")
+        case .temperature: return tr("Temp")
+        case .gpuPower: return tr("GPU Power")
+        case .network: return "\(tr("NET")) ↓"
+        }
+    }
+    func title(in snapshot: TelemetrySnapshot) -> String {
+        let fields = statusFields(in: snapshot)
+        if self == .network { return "\(statusPrefix)\(fields[0]) ↑\(fields[1])" }
+        return "\(statusPrefix) \(fields[0])"
+    }
+}
+
+// The tabs are right-aligned to fixed per-mode slots. All glyph measurement is
+// done when mode or language changes, never on the telemetry collection path.
+struct StatusTitleLayout {
+    let metric: PrimaryMetric
+    let length: CGFloat
+    private let prefix: String
+    private let attributes: [NSAttributedString.Key: Any]
+
+    init(metric: PrimaryMetric, font: NSFont) {
+        self.metric = metric
+        prefix = metric.statusPrefix
+        func width(_ text: String) -> CGFloat {
+            ceil((text as NSString).size(withAttributes: [.font: font]).width)
+        }
+        let slot: CGFloat
+        switch metric {
+        case .cpu, .gpu: slot = max(width("100%"), width("—"))
+        case .temperature: slot = max(width("100°C"), width("—"))
+        case .gpuPower: slot = max(width(StatusPowerFormat.widestTemplate), width("999.9W"))
+        case .network: slot = max(width(NetworkRateFormat.widestTemplate), width("999.9 MB/s"))
+        }
+        let prefixWidth = width(prefix)
+        let arrowWidth = metric == .network ? width(" ↑") : 0
+        let firstEnd = prefixWidth + 5 + slot + arrowWidth
+        let contentWidth = firstEnd + (metric == .network ? 5 + slot : 0)
+        length = ceil(contentWidth + 16) // NSStatusBarButton's fixed horizontal inset.
+        let paragraph = NSMutableParagraphStyle()
+        paragraph.alignment = .left
+        paragraph.tabStops = [NSTextTab(textAlignment: .right, location: firstEnd)] +
+            (metric == .network ? [NSTextTab(textAlignment: .right, location: contentWidth)] : [])
+        attributes = [.font: font, .paragraphStyle: paragraph]
+    }
+
+    func attributedTitle(in snapshot: TelemetrySnapshot) -> NSAttributedString {
+        let fields = metric.statusFields(in: snapshot)
+        let text = metric == .network
+            ? "\(prefix)\t\(fields[0]) ↑\t\(fields[1])"
+            : "\(prefix)\t\(fields[0])"
+        return NSAttributedString(string: text, attributes: attributes)
     }
 }
 
@@ -396,10 +472,16 @@ final class MonitorPopover: NSViewController {
 final class AppDelegate: NSObject, NSApplicationDelegate {
     private let service = TelemetryService()
     private let history = HistoryLogger()
-    private let statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
+    private let statusItem = NSStatusBar.system.statusItem(withLength: 1)
     private let popover = NSPopover()
     private let content = MonitorPopover()
     private var historyStatus: HistoryLogger.Status?
+    private var statusLayout: StatusTitleLayout?
+    private var statusLayouts: [String: StatusTitleLayout] = [:]
+    private var lastStatusText: String?
+#if STEP3_UI_SMOKE
+    private var statusLayoutMeasurements = 0
+#endif
 #if STEP31_REVIEW
     private let review = Step31Review()
 #endif
@@ -417,18 +499,22 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 #if !STEP31_REVIEW
             UserDefaults.standard.set(mode.rawValue, forKey: "primaryMetric")
 #endif
+            self.configureStatusLayout()
             self.render(self.service.snapshot)
         }
         content.onQuit = { NSApp.terminate(nil) }
         content.onLanguage = { [weak self] language in
             guard let self else { return }
             Localizer.shared.select(language)
+            self.configureStatusLayout()
             self.render(self.service.snapshot)
         }
-        statusItem.button?.title = selected.title(in: service.snapshot)
         statusItem.button?.font = .monospacedDigitSystemFont(ofSize: NSFont.systemFontSize, weight: .regular)
+        statusItem.button?.alignment = .left
         statusItem.button?.target = self
         statusItem.button?.action = #selector(togglePopover)
+        configureStatusLayout()
+        render(service.snapshot)
         service.onUpdate = { [weak self] snapshot in self?.render(snapshot) }
 #if STEP31_REVIEW
         service.reviewOnSample = { [weak self] record in
@@ -436,7 +522,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             self.review.observe(record, snapshot: self.service.snapshot,
                 isShown: { self.popover.isShown }, toggle: { self.togglePopover() },
                 select: { self.content.reviewSelect($0) }, selected: { self.selected },
-                title: { self.statusItem.button?.title ?? "" })
+                title: { self.selected.title(in: self.service.snapshot) })
         }
 #endif
         service.start()
@@ -446,9 +532,32 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     private func render(_ snapshot: TelemetrySnapshot) {
-        let title = selected.title(in: snapshot)
-        if statusItem.button?.title != title { statusItem.button?.title = title }
+        if let button = statusItem.button, let statusLayout {
+            let title = statusLayout.attributedTitle(in: snapshot)
+            if lastStatusText != title.string {
+                button.attributedTitle = title
+                button.setAccessibilityLabel(selected.title(in: snapshot))
+                lastStatusText = title.string
+            }
+        }
         if popover.isShown { content.update(snapshot, selected: selected, history: historyStatus) }
+    }
+
+    private func configureStatusLayout() {
+        guard let button = statusItem.button, let font = button.font else { return }
+        let key = "\(Localizer.shared.language.rawValue):\(selected.rawValue)"
+        if let cached = statusLayouts[key] {
+            statusLayout = cached
+        } else {
+            let measured = StatusTitleLayout(metric: selected, font: font)
+            statusLayouts[key] = measured
+            statusLayout = measured
+#if STEP3_UI_SMOKE
+            statusLayoutMeasurements += 1
+#endif
+        }
+        statusItem.length = statusLayout!.length
+        lastStatusText = nil
     }
 
     @objc private func togglePopover() {
@@ -472,32 +581,79 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
 #if STEP3_UI_SMOKE
+    private func smokeWidthStable() -> Bool {
+        guard let button = statusItem.button else { return false }
+        func snapshot(_ mode: PrimaryMetric, _ first: Double?, _ second: Double? = nil) -> TelemetrySnapshot {
+            var sample = service.snapshot
+            func raw(_ number: Double?, _ unit: String) -> [String: Any] {
+                var reading: [String: Any] = ["status": number == nil ? "unavailable" : "measured", "unit": unit, "source": "smoke"]
+                if let number { reading["value"] = number }
+                return reading
+            }
+            let values: [String: Any]
+            switch mode {
+            case .cpu: values = ["total": raw(first, "ratio")]
+            case .gpu: values = ["gpuActive": raw(first, "ratio")]
+            case .temperature: values = ["cpuTemperature": raw(first, "°C")]
+            case .gpuPower: values = ["gpuPower": raw(first, "W")]
+            case .network: values = ["network_rx_bytes_per_sec": raw(first, "B/s"),
+                                     "network_tx_bytes_per_sec": raw(second, "B/s")]
+            }
+            sample.merge(values as NSDictionary, at: Date())
+            return sample
+        }
+        for language in AppLanguage.allCases {
+            content.smokeSelectLanguage(language)
+            for mode in PrimaryMetric.allCases {
+                content.onMode?(mode)
+                let fixed = statusItem.length
+                let measurements = statusLayoutMeasurements
+                let values: [(Double?, Double?)]
+                switch mode {
+                case .cpu, .gpu: values = [(0,nil),(0.09,nil),(1,nil),(nil,nil)]
+                case .temperature: values = [(9,nil),(61,nil),(100,nil),(nil,nil)]
+                case .gpuPower: values = [(0,nil),(9.9,nil),(10,nil),(99.9,nil),(nil,nil)]
+                case .network: values = [(0,0),(999_900,999_900),(1_000_000_000,1_000_000_000),(nil,nil)]
+                }
+                for (first,second) in values {
+                    render(snapshot(mode,first,second))
+                    RunLoop.main.run(until: Date().addingTimeInterval(0.025))
+                    button.layoutSubtreeIfNeeded()
+                    if abs(statusItem.length-fixed) > 0.01 || abs(button.frame.width-fixed) > 0.5
+                        || statusLayoutMeasurements != measurements {
+                        return false
+                    }
+                }
+                render(service.snapshot)
+            }
+        }
+        let measurements = statusLayoutMeasurements
+        content.smokeSelectLanguage(.english)
+        content.onMode?(.cpu)
+        return statusLayoutMeasurements == measurements
+    }
+
     private func runUISmoke() {
-        let initial = statusItem.button?.title ?? ""
+        let initial = selected.title(in: service.snapshot)
         let priorLanguage = UserDefaults.standard.string(forKey: Localizer.preferenceKey)
         let priorPrimary = UserDefaults.standard.object(forKey: "primaryMetric")
+        let priorMode = selected
+        let priorActiveLanguage = Localizer.shared.language
         togglePopover()
         let opened = popover.isShown
         let switched = PrimaryMetric.allCases.allSatisfy { mode in
             content.onMode?(mode)
-            return selected == mode && statusItem.button?.title == mode.title(in: service.snapshot)
+            return selected == mode && statusItem.length > 0
+                && statusItem.button?.attributedTitle.string == statusLayout?.attributedTitle(in: service.snapshot).string
         }
-        let variableWidth = statusItem.length == NSStatusItem.variableLength
-        let boundaryFits = ["CPU 100%", "GPU 100%", "Temp 100°C", "GPU Power 99.9W", "温度 100°C", "GPU 功耗 99.9W", "NET ↓999.9 ↑999.9 MB/s", "NET ↓1.2 MB/s ↑420 KB/s"].allSatisfy { title in
-            guard let button = statusItem.button, let font = button.font else { return false }
-            button.title = title
-            RunLoop.main.run(until: Date().addingTimeInterval(0.1))
-            let textWidth = (title as NSString).size(withAttributes: [.font: font]).width
-            return button.bounds.width >= textWidth
-        }
-        let compactPowerFits = boundaryFits
+        let fixedWidth = statusItem.length != NSStatusItem.variableLength && smokeWidthStable()
         let cpuValue = service.snapshot["total"]?.number
         let gpuValue = service.snapshot["gpuActive"]?.number
         content.smokeSelectLanguage(.simplifiedChinese)
         var invalidSample = TelemetrySnapshot()
         invalidSample.merge(["gpuPower": ["status": "invalid", "unit": "W"]], at: Date())
         let estimate = Metric(["status": "estimated", "value": 14.0, "unit": "W", "source": "fixture"], at: Date())
-        let chinese = statusItem.button?.title == selected.title(in: service.snapshot)
+        let chinese = statusItem.button?.attributedTitle.string == statusLayout?.attributedTitle(in: service.snapshot).string
             && content.smokeContains("历史记录") && content.smokeContains("记录状态")
             && content.smokeContains("数据库大小") && content.smokeContains("打开数据文件夹")
             && PrimaryMetric.temperature.title(in: service.snapshot).hasPrefix("温度 ")
@@ -508,7 +664,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             && PrimaryMetric.network.title(in: service.snapshot).hasPrefix("NET ↓")
             && content.smokeLayoutFits()
         content.smokeSelectLanguage(.english)
-        let english = statusItem.button?.title == selected.title(in: service.snapshot)
+        let english = statusItem.button?.attributedTitle.string == statusLayout?.attributedTitle(in: service.snapshot).string
             && content.smokeContains("History") && content.smokeContains("Recording")
             && content.smokeContains("Database Size") && content.smokeContains("Open Data Folder")
             && PrimaryMetric.temperature.title(in: service.snapshot).hasPrefix("Temp ")
@@ -520,13 +676,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             && content.smokeLayoutFits()
         let telemetryUnchanged = service.snapshot["total"]?.number == cpuValue
             && service.snapshot["gpuActive"]?.number == gpuValue
-        if let priorLanguage, let language = AppLanguage(rawValue: priorLanguage) {
-            Localizer.shared.select(language)
-        } else {
-            UserDefaults.standard.removeObject(forKey: Localizer.preferenceKey)
-        }
+        Localizer.shared.select(priorActiveLanguage)
+        if priorLanguage == nil { UserDefaults.standard.removeObject(forKey: Localizer.preferenceKey) }
         if let priorPrimary { UserDefaults.standard.set(priorPrimary, forKey: "primaryMetric") }
         else { UserDefaults.standard.removeObject(forKey: "primaryMetric") }
+        selected = priorMode
+        configureStatusLayout()
         render(service.snapshot)
         togglePopover()
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { [weak self] in
@@ -535,8 +690,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             let accessory = NSApp.activationPolicy() == .accessory
             let cpuLive = self.service.snapshot["total"]?.number != nil
             let gpuLive = self.service.snapshot["gpuActive"]?.number != nil
-            let passed = opened && switched && variableWidth && boundaryFits && compactPowerFits && chinese && english && telemetryUnchanged && closed && accessory && cpuLive && gpuLive
-            print("UI_SMOKE opened=\(opened) switched=\(switched) variable_width=\(variableWidth) boundary_fits=\(boundaryFits) chinese=\(chinese) english=\(english) telemetry_unchanged=\(telemetryUnchanged) closed=\(closed) accessory=\(accessory) cpu=\(cpuLive) gpu=\(gpuLive) initial=\(initial) result=\(passed ? "PASS" : "FAIL")")
+            let passed = opened && switched && fixedWidth && chinese && english && telemetryUnchanged && closed && accessory && cpuLive && gpuLive
+            print("UI_SMOKE opened=\(opened) switched=\(switched) fixed_width=\(fixedWidth) chinese=\(chinese) english=\(english) telemetry_unchanged=\(telemetryUnchanged) closed=\(closed) accessory=\(accessory) cpu=\(cpuLive) gpu=\(gpuLive) initial=\(initial) result=\(passed ? "PASS" : "FAIL")")
             fflush(stdout)
             NSApp.terminate(nil)
         }
