@@ -11,5 +11,9 @@ swiftc -O -target arm64-apple-macos13.0 -module-cache-path "$CLANG_MODULE_CACHE_
 cp app/Info.plist app/SiliconMeter.app/Contents/Info.plist
 mkdir -p app/SiliconMeter.app/Contents/Resources
 cp -R app/en.lproj app/zh-Hans.lproj app/SiliconMeter.app/Contents/Resources/
+rm -rf .build/AppIcon.iconset
+mkdir -p .build/AppIcon.iconset
+cp app/Assets.xcassets/AppIcon.appiconset/icon_*.png .build/AppIcon.iconset/
+iconutil -c icns -o app/SiliconMeter.app/Contents/Resources/AppIcon.icns .build/AppIcon.iconset
 codesign --force --sign - app/SiliconMeter.app
 printf '%s\n' 'Built app/SiliconMeter.app'

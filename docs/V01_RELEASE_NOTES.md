@@ -7,6 +7,7 @@ Draft release notes for the future GitHub Release. The artifact has not been pub
 ### What's included
 
 - Menu-bar CPU, GPU, temperature, estimated GPU power, and network upload/download monitoring, with a compact popover.
+- A dedicated SiliconMeter App icon in Finder, Applications, and the DMG.
 - Local SQLite v4 history and configurable 1-day, 7-day, 30-day, or Forever retention.
 - English and Simplified Chinese interface, with saved language and primary-metric choices.
 
@@ -29,6 +30,7 @@ Draft release notes for the future GitHub Release. The artifact has not been pub
 ### 包含内容
 
 - 菜单栏显示 CPU、GPU、温度、估算的 GPU 功耗，以及网络上传/下载速率；弹出窗口展示当前指标。
+- Finder、“应用程序”和 DMG 中使用 SiliconMeter 正式 App 图标。
 - 本地 SQLite v4 历史记录，可选择保留 1 天、7 天、30 天或永久。
 - English 和简体中文界面，语言与主要指标选择保存在本机。
 

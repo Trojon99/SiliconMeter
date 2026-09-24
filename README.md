@@ -11,6 +11,7 @@ Screenshots will be added with a future release. The status item shows one selec
 ## Features
 
 - Live status item with five selectable metrics and a compact popover for current system telemetry.
+- A SiliconMeter App icon for Finder, Applications, and the DMG.
 - A fixed menu-bar item width for each metric and language, so changing readings do not move neighboring status items.
 - Local SQLite history recorded continuously from the same shared snapshots, with a serial batched writer, WAL, and configurable retention.
 - English and Simplified Chinese UI, with immediate switching and a locally saved language choice.
