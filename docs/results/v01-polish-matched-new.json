@@ -1,0 +1,110 @@
+{
+  "app_path": "~/Documents/ChatGPT/MAC\u6027\u80fd\u538b\u69a8\u52a9\u624b/app/ComputeMonitor.app/Contents/MacOS/ComputeMonitor",
+  "cpu_percent_one_core_after_warmup": 0.6241722619161701,
+  "cpu_time_s_after_warmup": 0.3745977083333334,
+  "duration_s": 90.07751725,
+  "method": "external libproc on a freshly relaunched ordinary App; popover left closed",
+  "observations": [
+    {
+      "cpu_s": 0.7277631666666666,
+      "elapsed_s": 0.048943375,
+      "rss_mib": 67.515625
+    },
+    {
+      "cpu_s": 0.760975875,
+      "elapsed_s": 5.066763083,
+      "rss_mib": 67.5625
+    },
+    {
+      "cpu_s": 0.7858435416666666,
+      "elapsed_s": 10.083267000000001,
+      "rss_mib": 67.609375
+    },
+    {
+      "cpu_s": 0.8205779583333332,
+      "elapsed_s": 15.081460791000001,
+      "rss_mib": 67.625
+    },
+    {
+      "cpu_s": 0.8478975,
+      "elapsed_s": 20.072127458,
+      "rss_mib": 67.65625
+    },
+    {
+      "cpu_s": 0.8798935416666666,
+      "elapsed_s": 25.062867791000002,
+      "rss_mib": 67.71875
+    },
+    {
+      "cpu_s": 0.9144817083333332,
+      "elapsed_s": 30.062401041,
+      "rss_mib": 67.75
+    },
+    {
+      "cpu_s": 0.9423608749999999,
+      "elapsed_s": 35.079256875,
+      "rss_mib": 67.78125
+    },
+    {
+      "cpu_s": 0.9759711666666666,
+      "elapsed_s": 40.0642225,
+      "rss_mib": 67.796875
+    },
+    {
+      "cpu_s": 1.0088295416666666,
+      "elapsed_s": 45.06879275,
+      "rss_mib": 67.84375
+    },
+    {
+      "cpu_s": 1.0335824583333333,
+      "elapsed_s": 50.078057416,
+      "rss_mib": 67.84375
+    },
+    {
+      "cpu_s": 1.0581373749999998,
+      "elapsed_s": 55.074352666,
+      "rss_mib": 67.84375
+    },
+    {
+      "cpu_s": 1.0928470833333332,
+      "elapsed_s": 60.077386541,
+      "rss_mib": 67.84375
+    },
+    {
+      "cpu_s": 1.1239852916666666,
+      "elapsed_s": 65.070421583,
+      "rss_mib": 67.84375
+    },
+    {
+      "cpu_s": 1.1735299166666666,
+      "elapsed_s": 70.076806791,
+      "rss_mib": 67.859375
+    },
+    {
+      "cpu_s": 1.202070875,
+      "elapsed_s": 75.055395708,
+      "rss_mib": 67.859375
+    },
+    {
+      "cpu_s": 1.2321992083333333,
+      "elapsed_s": 80.078501333,
+      "rss_mib": 67.859375
+    },
+    {
+      "cpu_s": 1.2762061249999999,
+      "elapsed_s": 85.0778675,
+      "rss_mib": 67.828125
+    },
+    {
+      "cpu_s": 1.2890794166666666,
+      "elapsed_s": 90.07751725,
+      "rss_mib": 67.84375
+    }
+  ],
+  "pid": 6879,
+  "rss_mib_final": 67.84375,
+  "rss_mib_mean_after_warmup": 67.83052884615384,
+  "rss_mib_peak_sampled": 67.859375,
+  "utc": "2026-09-24T06:29:49.225633+00:00",
+  "warmup_s": 30
+}

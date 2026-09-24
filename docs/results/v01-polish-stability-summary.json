@@ -1,0 +1,65 @@
+{
+  "binary_sha256": "4e67b687c59aac5be4653ffaab64350f5a89a86c778967a5bc56d68e6998199c",
+  "cpu_percent_one_core": 0.7114620974731648,
+  "cpu_time_s": 12.805463999999999,
+  "database_logical_growth_bytes": 344064,
+  "duration_s": 1799.88,
+  "ended_utc": "2026-09-24T06:12:48.468391+00:00",
+  "fast_cadence_s": {
+    "count": 854,
+    "max": 2.161,
+    "median": 2.105
+  },
+  "fast_rows_added": 855,
+  "observation_count": 121,
+  "phase_workload": "one external local SHA-256 CPU process for middle 600 seconds; no network or file input",
+  "phases": {
+    "idle": {
+      "cpu_percent_one_core": 0.8815563021474488,
+      "cpu_s": 5.156046499999999,
+      "duration_observed_s": 584.88,
+      "rss_mib_mean": 71.22109375,
+      "rss_mib_peak": 81.71875
+    },
+    "local_compute": {
+      "cpu_percent_one_core": 0.5928732122507119,
+      "cpu_s": 3.4683082916666654,
+      "duration_observed_s": 585.0000000000001,
+      "rss_mib_mean": 81.467578125,
+      "rss_mib_peak": 81.703125
+    },
+    "recovery": {
+      "cpu_percent_one_core": 0.6634182423479803,
+      "cpu_s": 3.980542625,
+      "duration_observed_s": 600.0050000000001,
+      "rss_mib_mean": 81.68559451219512,
+      "rss_mib_peak": 81.703125
+    }
+  },
+  "qualities": {
+    "fast_samples": {
+      "estimated": 855,
+      "invalid": 0,
+      "measured": 5128,
+      "stale": 0,
+      "unavailable": 2
+    },
+    "slow_samples": {
+      "estimated": 285,
+      "invalid": 0,
+      "measured": 3703,
+      "stale": 0,
+      "unavailable": 2
+    }
+  },
+  "result": "PASS",
+  "rss_mib_mean": 78.15418388429752,
+  "rss_mib_peak": 81.71875,
+  "run_id": "41F656B6-E4AF-4712-BF5C-2185F775E8F8",
+  "sampling_latency_note": "not directly observable from ordinary binary; fast cadence and separate collector fixture are reported",
+  "slow_rows_added": 285,
+  "sqlite_quick_check": "ok",
+  "started_utc": "2026-09-24T05:42:48.260424+00:00",
+  "timer_count_note": "runtime count unavailable; source retains one DispatchSourceTimer",
+  "writer_batches_added": 57
+}

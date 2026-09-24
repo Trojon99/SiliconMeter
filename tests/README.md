@@ -185,3 +185,33 @@ long A/B measurement to avoid contaminating the app CPU comparison.
 it runs 60 collector ticks per phase through the production sampling path,
 first disabled and then enabled. Its timing excludes AppKit and SQLite work,
 so it is kept separate from the 10/15-minute ordinary-binary CPU/RSS A/B.
+
+## v0.1 polish checks
+
+`sh tests/run-primary-metric-persistence.sh` verifies CPU, GPU, Temp, GPU Power,
+and NET preferences across separate processes in an isolated `UserDefaults`
+domain. `sh app/ui-smoke.sh` also checks the native Launch at Login checkbox's
+English/Chinese labels, enabled/pending/unavailable states, and on/off callback
+without modifying the user's login items. It prints the actual
+`SMAppService.mainApp.status` of the ad-hoc signed smoke bundle. Registration and
+system approval must be checked on a correctly signed distribution build.
+
+After building and launching one ordinary App, run
+`python3 -u tests/run-v01-polish-stability.py` in the ordinary graphical user
+session. It refuses to overwrite its evidence and observes the same App PID
+for 30 minutes: 10 minutes of normal background use, 10 minutes with one
+external local CPU hash workload, and 10 minutes of recovery. It reads CPU/RSS
+through libproc and SQLite read-only, checks child processes and network
+sockets at phase boundaries, and saves `docs/results/v01-polish-stability.jsonl`
+plus a summary JSON. The workload is a test-runner child, never an App child.
+The ordinary binary does not expose per-tick collector latency; use the
+separate review-only `sh tests/run-v01-polish-latency.sh` 60-tick collector
+fixture after the long observation and label its result as such. It writes
+`docs/results/v01-polish-collector-latency.json` without using the history
+writer. A `DispatchSourceTimer` is visible in source, while a
+reliable runtime timer count is unavailable.
+
+If popover/resource caching changes RSS during the 30-minute observation,
+gracefully relaunch the ordinary App with the popover closed and run
+`python3 tests/observe-v01-polish-fresh.py`. It records a separate 90-second
+external libproc comparison after a 30-second warmup and leaves the App running.

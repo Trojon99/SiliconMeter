@@ -2,7 +2,7 @@ English | [简体中文](README.zh-CN.md)
 
 # Compute Monitor
 
-A lightweight Apple Silicon telemetry monitor and local history recorder for the macOS menu bar.
+A lightweight Apple Silicon telemetry monitor and local history recorder for the macOS menu bar. Version **0.1.0** is a local release candidate; no public build has been released.
 
 ## UI preview
 
@@ -14,6 +14,7 @@ Screenshots will be added with a future release. The status item shows one selec
 - A fixed menu-bar item width for each metric and language, so changing readings do not move neighboring status items.
 - Local SQLite history recorded continuously from the same shared snapshots, with a serial batched writer and WAL.
 - English and Simplified Chinese UI, with immediate switching and a locally saved language choice.
+- A locally saved primary-metric choice and an optional native **Launch at Login** control.
 - Ordinary-user operation without a helper, persistent child process, `powermetrics`, outgoing network connections, or telemetry upload.
 
 ## Supported metrics
@@ -22,15 +23,15 @@ CPU total and validated P-core/E-core activity; GPU active residency, estimated 
 
 ## History logging
 
-The app records fast samples about every 2 seconds and slow samples about every 6 seconds. Network RX/TX share the fast timestamp, quality, and actual measurement-window fields. It batches writes about every 30 seconds and flushes on normal Quit. A crash can lose only the latest uncommitted batch. The popover shows recording status, database size, and an **Open Data Folder** button. Ordinary SQLite tools can read committed history; see [schema v4, units, and read-only queries](docs/HISTORY_SCHEMA.md). No retention or aggregation is implemented. A 15-minute v4 run observed about 0.698 MB/hour of durable growth, a short-run estimate; see the [verification report](docs/MINIMAL_V01_REPORT.md). Active WAL and SHM files add temporary disk use.
+The app records fast samples about every 2 seconds and slow samples about every 6 seconds. Network RX/TX share the fast timestamp, quality, and actual measurement-window fields. It batches writes about every 30 seconds and flushes on normal Quit. A crash can lose only the latest uncommitted batch. The popover shows recording status, database size, and an **Open Data Folder** button. Ordinary SQLite tools can read committed history; see [schema v4, units, and read-only queries](docs/HISTORY_SCHEMA.md). History database grows over time. The final 30-minute candidate increased SQLite logical size by 344,064 bytes, about 0.688 MB/hour. At that short-run rate, the projection is 0.688 MB in 1 hour, 16.52 MB in 24 hours, 115.61 MB in 7 days, and 495.45 MB in 30 days. A prior durable-file estimate was 0.698 MB/hour. These are estimates, not storage limits; active WAL and SHM files add temporary disk use. Use **Open Data Folder** to find the SQLite file. v0.1 does not delete, retain by age, or downsample history; retention is for a later version.
 
 ## Privacy
 
-Collection and history stay on this Mac. The app reads Network counters but does not make a network connection or run a speed test. There is no account, network service, cloud sync, analytics, or upload. The database stores system metrics and app-run metadata, without process attribution or workload labels. Language and primary-metric choices are local `UserDefaults` preferences, outside the telemetry database.
+All telemetry and history stay on this Mac. Network monitoring reads system interface counters and does not generate monitoring traffic or run a speed test. The app has no analytics, cloud service, telemetry upload, or per-process attribution, and it does not collect user file contents. The database stores system metrics and app-run metadata, without workload labels. Language and primary-metric choices are local `UserDefaults` preferences, outside the telemetry database.
 
 ## System requirements
 
-Apple Silicon Mac with macOS 13 or newer, outside App Sandbox. The current hardware and long-run evidence is for M1 Max on the documented macOS 27.0 setup; other chips and releases are not yet validated. No root privilege is required.
+Apple Silicon Mac with macOS 13 or newer, outside App Sandbox. **Tested on: Apple M1 Max, macOS 27.0 (build 26A428).** Other Apple Silicon chips and macOS releases are best effort; compatibility is not guaranteed. No root privilege is required.
 
 ## Installation
 
@@ -45,7 +46,7 @@ sh app/build.sh
 open app/ComputeMonitor.app
 ```
 
-Click the status item to view current telemetry, choose a primary metric or language, open the data folder, or Quit. The app runs as an accessory without a Dock icon. Focused checks are documented in [tests/README.md](tests/README.md). [Product scope](docs/PRODUCT_SCOPE.md) defines the v0.1 boundary.
+Click the status item to view current telemetry, choose a primary metric or language, enable **Launch at Login**, open the data folder, or Quit. The app runs as an accessory without a Dock icon. Launch at Login uses macOS Service Management; the local ad-hoc signed development bundle may show it as unavailable, while a properly signed release build must be verified separately. Focused checks are documented in [tests/README.md](tests/README.md). [Product scope](docs/PRODUCT_SCOPE.md) defines the v0.1 boundary.
 
 ## Data location
 

@@ -6,7 +6,7 @@ Compute Monitor is a lightweight Apple Silicon macOS menu-bar telemetry monitor 
 2. **Menu Bar:** One selected primary metric and a small popover show current readings.
 3. **Log:** One serial SQLite writer records the same snapshots as machine-readable local history.
 
-Design principles: lightweight, local-first, low overhead, generic, machine-readable, and long-running. The ordinary-user full telemetry build runs outside App Sandbox, without root, `powermetrics`, persistent subprocesses, network access, cloud services, analytics, or uploads.
+Design principles: lightweight, local-first, low overhead, generic, machine-readable, and long-running. The ordinary-user full telemetry build runs outside App Sandbox, without root, `powermetrics`, persistent subprocesses, generated monitoring traffic, cloud services, analytics, or uploads.
 
 Supported languages: **English** and **Simplified Chinese (zh-Hans)**. Localization belongs to the UI/product layer. It does not enter the telemetry collector or SQLite schema.
 
