@@ -2,7 +2,7 @@
 import AppKit
 
 let rows: [(String, String, Int)] = [
-    ("CPU 9%", "cpu", 1), ("CPU 16%", "cpu", 3), ("CPU 100%", "cpu", 5), ("CPU —", "cpu", 6),
+    ("CPU 9%", "cpu", 1), ("CPU 17%", "cpu", 4), ("CPU 100%", "cpu", 6), ("CPU —", "cpu", 7),
     ("GPU 9%", "gpu", 1), ("GPU 16%", "gpu", 2), ("GPU 100%", "gpu", 4), ("GPU —", "gpu", 5),
     ("Temp 9°C", "temperature", 1), ("Temp 61°C", "temperature", 2),
     ("Temp 100°C", "temperature", 4), ("Temp —", "temperature", 5),

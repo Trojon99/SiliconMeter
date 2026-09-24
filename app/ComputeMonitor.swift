@@ -189,7 +189,8 @@ struct StatusTitleLayout {
     private let maximumSlot: CGFloat
     private let slotWidths: [String: CGFloat]
     private let inset: CGFloat = 8
-    private let labelGap: CGFloat = 5
+    private let labelGap: CGFloat = 3
+    private let outerScalarGap: CGFloat = 5 // Preserve the existing fixed item width.
     private let networkLabelGap: CGFloat = 6
     private let arrowGap: CGFloat = 3
     private let networkGroupGap: CGFloat = 7
@@ -242,9 +243,11 @@ struct StatusTitleLayout {
         let contentWidth = metric == .network
             ? prefixWidth + networkLabelGap + downWidth + arrowGap + maximumSlot +
               networkGroupGap + upWidth + arrowGap + maximumSlot
-            : prefixWidth + labelGap + maximumSlot
+            : prefixWidth + outerScalarGap + maximumSlot
         length = ceil(contentWidth + 2 * inset)
     }
+
+    var scalarSlotWidth: CGFloat { maximumSlot }
 
     func slotWidth(for value: String) -> CGFloat {
         slotWidths[Self.shape(value)] ?? maximumSlot
@@ -252,8 +255,7 @@ struct StatusTitleLayout {
 
     func attributedTitle(in snapshot: TelemetrySnapshot) -> NSAttributedString {
         let fields = metric.statusFields(in: snapshot)
-        let firstSlot = (metric == .cpu || metric == .gpu || metric == .temperature) && fields[0] != "—"
-            ? maximumSlot : slotWidth(for: fields[0])
+        let firstSlot = metric == .network ? slotWidth(for: fields[0]) : maximumSlot
         let secondSlot = metric == .network ? slotWidth(for: fields[1]) : 0
         let groupWidth = metric == .network
             ? prefixWidth + networkLabelGap + downWidth + arrowGap + firstSlot +
@@ -275,8 +277,8 @@ struct StatusTitleLayout {
                 NSTextTab(textAlignment: .right, location: secondEnd)
             ]
         } else {
-            paragraph.tabStops = [NSTextTab(textAlignment: .right,
-                location: start + prefixWidth + labelGap + firstSlot)]
+            paragraph.tabStops = [NSTextTab(textAlignment: .left,
+                location: start + prefixWidth + labelGap)]
         }
         let text = metric == .network
             ? "\(prefix)\t↓\t\(fields[0])\t↑\t\(fields[1])"

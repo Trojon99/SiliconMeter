@@ -35,7 +35,7 @@ func sample(_ mode: PrimaryMetric, _ a: Double?, _ b: Double? = nil) -> Telemetr
 }
 func cases(_ mode: PrimaryMetric) -> [(Double?, Double?)] {
     switch mode {
-    case .cpu: return [0,0.09,0.10,0.16,0.99,1].map { ($0,nil) } + [(nil,nil)]
+    case .cpu: return [0,0.09,0.10,0.16,0.17,0.99,1].map { ($0,nil) } + [(nil,nil)]
     case .gpu: return [0,0.09,0.16,0.99,1].map { ($0,nil) } + [(nil,nil)]
     case .temperature: return [0,9,61,99,100].map { ($0,nil) } + [(nil,nil)]
     case .gpuPower:
@@ -75,6 +75,7 @@ func componentRects(_ title: NSAttributedString, mode: PrimaryMetric, fields: [S
 var widths: [String: [String: Double]] = [:]
 var gapRanges: [String: [String: [[Double]]]] = [:]
 var slotExamples: [String: [String: [String: Double]]] = [:]
+var scalarSlots: [String: [String: Double]] = [:]
 var checks = 0
 let visualDirectory = URL(fileURLWithPath: ".build/status-visual")
 try! FileManager.default.createDirectory(at: visualDirectory, withIntermediateDirectories: true)
@@ -83,13 +84,16 @@ for language in AppLanguage.allCases {
     var languageWidths: [String: Double] = [:]
     var languageGaps: [String: [[Double]]] = [:]
     var languageSlots: [String: [String: Double]] = [:]
+    var languageScalarSlots: [String: Double] = [:]
     for mode in PrimaryMetric.allCases {
         let layout = StatusTitleLayout(metric: mode, font: button.font!)
         item.length = layout.length
-        RunLoop.main.run(until: Date().addingTimeInterval(0.15))
+        RunLoop.main.run(until: Date().addingTimeInterval(0.4))
         var expectedFrame: CGFloat?
         var expectedNeighborX: CGFloat?
-        var expectedScalarEnd: CGFloat?
+        var expectedTargetX: CGFloat?
+        var expectedScalarStart: CGFloat?
+        var expectedScalarGap: CGFloat?
         var endsByShape: [String: [CGFloat]] = [:]
         var range: [[Double]] = []
         for (index, values) in cases(mode).enumerated() {
@@ -107,10 +111,18 @@ for language in AppLanguage.allCases {
             else { expectedFrame = frame }
             let neighborX = neighbor.button!.window!.convertToScreen(
                 neighbor.button!.convert(neighbor.button!.bounds, to: nil)).minX
-            if let expectedNeighborX {
+            let targetX = button.window!.convertToScreen(button.convert(button.bounds, to: nil)).minX
+            if let expectedNeighborX, let expectedTargetX {
                 require(abs(neighborX-expectedNeighborX) < 0.5,
-                    "neighboring menu item moved: \(language.rawValue) \(mode) \(fields) \(expectedNeighborX) -> \(neighborX)")
-            } else { expectedNeighborX = neighborX }
+                    "neighbor changed screen position: \(language.rawValue) \(mode) \(fields) " +
+                    "item \(expectedTargetX) -> \(targetX), neighbor \(expectedNeighborX) -> \(neighborX)")
+                require(abs((neighborX-targetX)-(expectedNeighborX-expectedTargetX)) < 0.5,
+                    "neighbor moved relative to item: \(language.rawValue) \(mode) \(fields) " +
+                    "item \(expectedTargetX) -> \(targetX), neighbor \(expectedNeighborX) -> \(neighborX)")
+            } else {
+                expectedNeighborX = neighborX
+                expectedTargetX = targetX
+            }
             let rects = componentRects(title, mode: mode, fields: fields)
             require(rects.first!.minX >= 0 && rects.last!.maxX <= frame, "text exceeded status item")
             let gaps = zip(rects, rects.dropFirst()).map { $1.minX - $0.maxX }
@@ -127,15 +139,16 @@ for language in AppLanguage.allCases {
                 require(gaps[2] >= 5 && gaps[2] <= 9, "RX/TX gap outside compact range: \(gaps)")
                 require(gaps[3] >= 1 && gaps[3] <= 5, "TX arrow/value gap outside compact range: \(gaps)")
             } else {
-                require(gaps[0] >= 3 && gaps[0] <= 24, "label/value gap outside compact range: \(gaps)")
+                require(gaps[0] >= 2 && gaps[0] <= 5, "label/value gap outside compact range: \(gaps)")
+                if let expectedScalarStart {
+                    require(abs(rects[1].minX-expectedScalarStart) < 1, "scalar value start shifted")
+                } else { expectedScalarStart = rects[1].minX }
+                if let expectedScalarGap {
+                    require(abs(gaps[0]-expectedScalarGap) < 1, "scalar label/value gap changed")
+                } else { expectedScalarGap = gaps[0] }
             }
             let shape = fields.map { String($0.map { $0 >= "0" && $0 <= "9" ? "8" : $0 }) }.joined(separator: "|")
             let ends = fields.count == 2 ? [rects[2].maxX, rects[4].maxX] : [rects[1].maxX]
-            if (mode == .cpu || mode == .gpu || mode == .temperature), fields[0] != "—" {
-                if let expectedScalarEnd {
-                    require(abs(ends[0]-expectedScalarEnd) < 1, "fixed scalar numeric slot shifted")
-                } else { expectedScalarEnd = ends[0] }
-            }
             if let previous = endsByShape[shape] {
                 require(zip(previous,ends).allSatisfy { abs($0-$1) < 1 }, "same-shape value alignment shifted")
             } else { endsByShape[shape] = ends }
@@ -151,24 +164,23 @@ for language in AppLanguage.allCases {
         let name = String(describing: mode)
         languageWidths[name] = Double(layout.length)
         languageGaps[name] = range
-        let templates: [String]
-        switch mode {
-        case .cpu, .gpu: templates = ["9%", "16%", "100%", "—"]
-        case .temperature: templates = ["9°C", "61°C", "100°C", "—"]
-        case .gpuPower: templates = ["9.4W", "14.0W", "99.9W", "—"]
-        case .network: templates = ["0 B/s", "3.4 KB/s", "56.1 KB/s", "999.9 KB/s", "999.9 MB/s", "1.0 GB/s", "—"]
+        if mode != .network { languageScalarSlots[name] = Double(layout.scalarSlotWidth) }
+        if mode == .network {
+            let templates = ["0 B/s", "3.4 KB/s", "56.1 KB/s", "999.9 KB/s", "999.9 MB/s", "1.0 GB/s", "—"]
+            languageSlots[name] = Dictionary(uniqueKeysWithValues: templates.map { ($0,Double(layout.slotWidth(for:$0))) })
         }
-        languageSlots[name] = Dictionary(uniqueKeysWithValues: templates.map { ($0,Double(layout.slotWidth(for:$0))) })
     }
     widths[language.rawValue] = languageWidths
     gapRanges[language.rawValue] = languageGaps
     slotExamples[language.rawValue] = languageSlots
+    scalarSlots[language.rawValue] = languageScalarSlots
 }
 NSStatusBar.system.removeStatusItem(item)
 NSStatusBar.system.removeStatusItem(neighbor)
 let output: [String: Any] = ["result":"PASS","checks":checks,"widths_pt":widths,
                              "gap_ranges_pt":gapRanges,"slot_widths_pt":slotExamples,
-                             "fixed_frame":true,"neighbor_stable":true,
+                             "fixed_scalar_slot_widths_pt":scalarSlots,
+                             "fixed_frame":true,"neighbor_stable":true,"neighbor_relative_stable":true,
                              "compact_component_gaps":true,"same_shape_alignment":true]
 let bytes = try! JSONSerialization.data(withJSONObject: output, options: [.sortedKeys])
 print(String(data: bytes, encoding: .utf8)!)

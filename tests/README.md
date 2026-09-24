@@ -128,11 +128,11 @@ from persisting across processes. `sh app/ui-smoke.sh` verifies both languages
 in an AppKit popover, live telemetry, five menu choices, fixed status-item
 width, and layout bounds. It needs an ordinary graphical user session.
 
-`sh tests/run-status-width.sh` creates actual AppKit status items and checks 82
+`sh tests/run-status-width.sh` creates actual AppKit status items and checks 84
 boundary and unavailable values across all five modes in English and Simplified
 Chinese. For each metric-language pair it checks fixed item/button width, a
-neighboring item's screen position, component gaps, and same-shape numeric
-alignment. It saves per-case button bitmaps under `.build/status-visual/` and
+neighboring item's screen position, component gaps, fixed scalar value starts,
+and same-shape numeric alignment. It saves per-case button bitmaps under `.build/status-visual/` and
 prints JSON; use `sh tests/run-status-width.sh > docs/results/status-width.json`
 to save the measurements. Run
 `swiftc -O -target arm64-apple-macos13.0 -module-cache-path "$PWD/.build/ModuleCache" -framework AppKit tests/make-status-visual.swift -o .build/make-status-visual`
