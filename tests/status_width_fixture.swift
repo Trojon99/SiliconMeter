@@ -47,7 +47,8 @@ func cases(_ mode: PrimaryMetric) -> [(Double?, Double?)] {
                 (1_000_000,1_000_000),(99_900_000,999_900_000),
                 (999_900_000,999_900_000),(1_000_000_000,1_000_000_000),
                 (1_000_000_000_000,1_000_000_000_000),(1_200_000,420_000),
-                (nil,nil),(Double.greatestFiniteMagnitude,Double.greatestFiniteMagnitude)]
+                (nil,nil),(Double.greatestFiniteMagnitude,Double.greatestFiniteMagnitude),
+                (52_800_000,727_600),(999_900_000,1_000_000_000)]
     }
 }
 func componentRects(_ title: NSAttributedString, mode: PrimaryMetric, fields: [String]) -> [CGRect] {
@@ -60,7 +61,7 @@ func componentRects(_ title: NSAttributedString, mode: PrimaryMetric, fields: [S
     manager.ensureLayout(for: container)
     let ns = title.string as NSString
     let components = mode == .network
-        ? [Localizer.shared.text("NET"), "↓", fields[0], "↑", fields[1]]
+        ? [Localizer.shared.text("NET"), "↑", fields[0], "↓", fields[1]]
         : [mode.statusPrefix, fields[0]]
     var searchStart = 0
     return components.map { text in

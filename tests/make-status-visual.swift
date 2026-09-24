@@ -8,10 +8,14 @@ let rows: [(String, String, Int)] = [
     ("Temp 100°C", "temperature", 4), ("Temp —", "temperature", 5),
     ("GPU Power 9.4W", "gpuPower", 1), ("GPU Power 14.0W", "gpuPower", 2),
     ("GPU Power 99.9W", "gpuPower", 3), ("GPU Power —", "gpuPower", 4),
-    ("NET 0 B/s / 0 B/s", "network", 0), ("NET 3.4 KB/s / 56.1 KB/s", "network", 4),
-    ("NET 999.9 KB/s / 1.0 MB/s", "network", 5),
-    ("NET 99.9 MB/s / 999.9 MB/s", "network", 8),
-    ("NET 1.0 GB/s / 1.0 GB/s", "network", 10), ("NET — / —", "network", 13)
+    ("NET ↑ 0 B/s ↓ 0 B/s", "network", 0),
+    ("NET ↑ 56.1 KB/s ↓ 3.4 KB/s", "network", 4),
+    ("NET ↑ 1.0 MB/s ↓ 999.9 KB/s", "network", 5),
+    ("NET ↑ 999.9 MB/s ↓ 99.9 MB/s", "network", 8),
+    ("NET ↑ 1.0 GB/s ↓ 1.0 GB/s", "network", 10),
+    ("NET ↑ — ↓ —", "network", 13),
+    ("NET ↑ 727.6 KB/s ↓ 52.8 MB/s", "network", 15),
+    ("NET ↑ 1.0 GB/s ↓ 999.9 MB/s", "network", 16)
 ]
 
 let directory = URL(fileURLWithPath: ".build/status-visual")

@@ -128,7 +128,7 @@ from persisting across processes. `sh app/ui-smoke.sh` verifies both languages
 in an AppKit popover, live telemetry, five menu choices, fixed status-item
 width, and layout bounds. It needs an ordinary graphical user session.
 
-`sh tests/run-status-width.sh` creates actual AppKit status items and checks 84
+`sh tests/run-status-width.sh` creates actual AppKit status items and checks 88
 boundary and unavailable values across all five modes in English and Simplified
 Chinese. For each metric-language pair it checks fixed item/button width, a
 neighboring item's screen position, component gaps, fixed scalar value starts,

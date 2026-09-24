@@ -154,8 +154,8 @@ enum PrimaryMetric: Int, CaseIterable {
         case .gpuPower:
             return [snapshot["gpuPower"]?.number.map(StatusPowerFormat.display) ?? "—"]
         case .network:
-            return [snapshot["network_rx_bytes_per_sec"]?.number.map(NetworkRateFormat.display) ?? "—",
-                    snapshot["network_tx_bytes_per_sec"]?.number.map(NetworkRateFormat.display) ?? "—"]
+            return [snapshot["network_tx_bytes_per_sec"]?.number.map(NetworkRateFormat.display) ?? "—",
+                    snapshot["network_rx_bytes_per_sec"]?.number.map(NetworkRateFormat.display) ?? "—"]
         }
     }
     var statusPrefix: String {
@@ -165,12 +165,12 @@ enum PrimaryMetric: Int, CaseIterable {
         case .gpu: return tr("GPU")
         case .temperature: return tr("Temp")
         case .gpuPower: return tr("GPU Power")
-        case .network: return "\(tr("NET")) ↓"
+        case .network: return "\(tr("NET")) ↑"
         }
     }
     func title(in snapshot: TelemetrySnapshot) -> String {
         let fields = statusFields(in: snapshot)
-        if self == .network { return "\(statusPrefix) \(fields[0]) ↑ \(fields[1])" }
+        if self == .network { return "\(statusPrefix) \(fields[0]) ↓ \(fields[1])" }
         return "\(statusPrefix) \(fields[0])"
     }
 }
@@ -241,8 +241,8 @@ struct StatusTitleLayout {
         slotWidths = widths
         maximumSlot = max(widths.values.max() ?? 0, width("—"))
         let contentWidth = metric == .network
-            ? prefixWidth + networkLabelGap + downWidth + arrowGap + maximumSlot +
-              networkGroupGap + upWidth + arrowGap + maximumSlot
+            ? prefixWidth + networkLabelGap + upWidth + arrowGap + maximumSlot +
+              networkGroupGap + downWidth + arrowGap + maximumSlot
             : prefixWidth + outerScalarGap + maximumSlot
         length = ceil(contentWidth + 2 * inset)
     }
@@ -258,22 +258,22 @@ struct StatusTitleLayout {
         let firstSlot = metric == .network ? slotWidth(for: fields[0]) : maximumSlot
         let secondSlot = metric == .network ? slotWidth(for: fields[1]) : 0
         let groupWidth = metric == .network
-            ? prefixWidth + networkLabelGap + downWidth + arrowGap + firstSlot +
-              networkGroupGap + upWidth + arrowGap + secondSlot
+            ? prefixWidth + networkLabelGap + upWidth + arrowGap + firstSlot +
+              networkGroupGap + downWidth + arrowGap + secondSlot
             : prefixWidth + labelGap + firstSlot
         let start = inset + max(0, (length - 2 * inset - groupWidth) / 2)
         let paragraph = NSMutableParagraphStyle()
         paragraph.alignment = .left
         paragraph.firstLineHeadIndent = start
         if metric == .network {
-            let downStart = start + prefixWidth + networkLabelGap
-            let firstEnd = downStart + downWidth + arrowGap + firstSlot
-            let upStart = firstEnd + networkGroupGap
-            let secondEnd = upStart + upWidth + arrowGap + secondSlot
+            let upStart = start + prefixWidth + networkLabelGap
+            let firstEnd = upStart + upWidth + arrowGap + firstSlot
+            let downStart = firstEnd + networkGroupGap
+            let secondEnd = downStart + downWidth + arrowGap + secondSlot
             paragraph.tabStops = [
-                NSTextTab(textAlignment: .left, location: downStart),
-                NSTextTab(textAlignment: .right, location: firstEnd),
                 NSTextTab(textAlignment: .left, location: upStart),
+                NSTextTab(textAlignment: .right, location: firstEnd),
+                NSTextTab(textAlignment: .left, location: downStart),
                 NSTextTab(textAlignment: .right, location: secondEnd)
             ]
         } else {
@@ -281,7 +281,7 @@ struct StatusTitleLayout {
                 location: start + prefixWidth + labelGap)]
         }
         let text = metric == .network
-            ? "\(prefix)\t↓\t\(fields[0])\t↑\t\(fields[1])"
+            ? "\(prefix)\t↑\t\(fields[0])\t↓\t\(fields[1])"
             : "\(prefix)\t\(fields[0])"
         return NSAttributedString(string: text, attributes: [.font: font, .paragraphStyle: paragraph])
     }
@@ -488,6 +488,14 @@ final class MonitorPopover: NSViewController {
             $0.stringValue.contains(value)
         } || openFolder.title.contains(value)
     }
+    func smokeNetworkOrder(upload: String, download: String) -> Bool {
+        let lines = text.stringValue.components(separatedBy: "\n")
+        guard let up = lines.firstIndex(of: "\(Localizer.shared.text("Upload")): \(upload)"),
+              let down = lines.firstIndex(of: "\(Localizer.shared.text("Download")): \(download)") else {
+            return false
+        }
+        return up < down
+    }
     func smokeLayoutFits() -> Bool {
         view.layoutSubtreeIfNeeded()
         return [heading, text, historyHeading, recording, databaseSize, openFolder,
@@ -510,8 +518,8 @@ final class MonitorPopover: NSViewController {
         let lines = [
             tr("CPU"), line("Total", "total"), line("P-core", "p"), line("E-core", "e"), "",
             tr("GPU"), line("Active", "gpuActive"), line("Weighted freq.", "gpuFrequency"), line("Power", "gpuPower"), "",
-            tr("Network"), line("Download", "network_rx_bytes_per_sec"),
-            line("Upload", "network_tx_bytes_per_sec"), "",
+            tr("Network"), line("Upload", "network_tx_bytes_per_sec"),
+            line("Download", "network_rx_bytes_per_sec"), "",
             tr("Memory"), line("Physical", "physical"), line("Free", "free"),
             line("Active", "active"), line("Inactive", "inactive"),
             line("Wired", "wired"), line("Compressed", "compressed"),
@@ -651,6 +659,17 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
 #if STEP3_UI_SMOKE
+    private func smokeNetworkOrder() -> Bool {
+        var fixture = TelemetrySnapshot()
+        fixture.merge(["network_rx_bytes_per_sec": ["status": "measured", "value": 52_800_000.0, "unit": "B/s"],
+                       "network_tx_bytes_per_sec": ["status": "measured", "value": 727_600.0, "unit": "B/s"]],
+                      at: Date())
+        content.update(fixture, selected: selected, history: historyStatus)
+        let ordered = content.smokeNetworkOrder(upload: "727.6 KB/s", download: "52.8 MB/s")
+        content.update(service.snapshot, selected: selected, history: historyStatus)
+        return ordered
+    }
+
     private func smokeWidthStable() -> Bool {
         guard let button = statusItem.button else { return false }
         func snapshot(_ mode: PrimaryMetric, _ first: Double?, _ second: Double? = nil) -> TelemetrySnapshot {
@@ -723,6 +742,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         var invalidSample = TelemetrySnapshot()
         invalidSample.merge(["gpuPower": ["status": "invalid", "unit": "W"]], at: Date())
         let estimate = Metric(["status": "estimated", "value": 14.0, "unit": "W", "source": "fixture"], at: Date())
+        let chineseNetworkOrder = smokeNetworkOrder()
         let chinese = statusItem.button?.attributedTitle.string == statusLayout?.attributedTitle(in: service.snapshot).string
             && content.smokeContains("历史记录") && content.smokeContains("记录状态")
             && content.smokeContains("数据库大小") && content.smokeContains("打开数据文件夹")
@@ -731,9 +751,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             && PrimaryMetric.gpuPower.title(in: invalidSample) == "GPU 功耗 —"
             && estimate.display.contains("估算")
             && content.smokeContains("网络") && content.smokeContains("下载") && content.smokeContains("上传")
-            && PrimaryMetric.network.title(in: service.snapshot).hasPrefix("NET ↓")
+            && chineseNetworkOrder
+            && PrimaryMetric.network.title(in: service.snapshot).hasPrefix("NET ↑")
             && content.smokeLayoutFits()
         content.smokeSelectLanguage(.english)
+        let englishNetworkOrder = smokeNetworkOrder()
         let english = statusItem.button?.attributedTitle.string == statusLayout?.attributedTitle(in: service.snapshot).string
             && content.smokeContains("History") && content.smokeContains("Recording")
             && content.smokeContains("Database Size") && content.smokeContains("Open Data Folder")
@@ -742,7 +764,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             && PrimaryMetric.gpuPower.title(in: invalidSample) == "GPU Power —"
             && estimate.display.contains("estimated")
             && content.smokeContains("Network") && content.smokeContains("Download") && content.smokeContains("Upload")
-            && PrimaryMetric.network.title(in: service.snapshot).hasPrefix("NET ↓")
+            && englishNetworkOrder
+            && PrimaryMetric.network.title(in: service.snapshot).hasPrefix("NET ↑")
             && content.smokeLayoutFits()
         let telemetryUnchanged = service.snapshot["total"]?.number == cpuValue
             && service.snapshot["gpuActive"]?.number == gpuValue
