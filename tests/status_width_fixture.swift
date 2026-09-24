@@ -5,6 +5,8 @@ let app = NSApplication.shared
 app.setActivationPolicy(.accessory)
 let item = NSStatusBar.system.statusItem(withLength: 1)
 let button = item.button!
+let neighbor = NSStatusBar.system.statusItem(withLength: 40)
+neighbor.button?.title = "N"
 button.font = .monospacedDigitSystemFont(ofSize: NSFont.systemFontSize, weight: .regular)
 button.alignment = .left
 
@@ -34,18 +36,21 @@ func sample(_ mode: PrimaryMetric, _ a: Double?, _ b: Double? = nil) -> Telemetr
 func cases(_ mode: PrimaryMetric) -> [(Double?, Double?)] {
     switch mode {
     case .cpu: return [0,0.09,0.10,0.16,0.99,1].map { ($0,nil) } + [(nil,nil)]
-    case .gpu: return [0,0.09,0.10,0.99,1].map { ($0,nil) } + [(nil,nil)]
+    case .gpu: return [0,0.09,0.16,0.99,1].map { ($0,nil) } + [(nil,nil)]
     case .temperature: return [0,9,61,99,100].map { ($0,nil) } + [(nil,nil)]
-    case .gpuPower: return [0,9.9,10,99.9].map { ($0,nil) } + [(nil,nil)]
+    case .gpuPower:
+        return [0,9.4,14,99.9].map { ($0,nil) } +
+            [(nil,nil),(Double.greatestFiniteMagnitude,nil),(-Double.greatestFiniteMagnitude,nil)]
     case .network:
-        return [(0,0),(9,9),(999,999),(1_000,1_000),(999_900,999_900),
-                (1_000_000,1_000_000),(99_900_000,9_900_000),
+        return [(0,0),(9,9),(999,999),(1_000,1_000),(3_400,56_100),
+                (999_900,1_000_000),(999_900,999_900),
+                (1_000_000,1_000_000),(99_900_000,999_900_000),
                 (999_900_000,999_900_000),(1_000_000_000,1_000_000_000),
                 (1_000_000_000_000,1_000_000_000_000),(1_200_000,420_000),
-                (nil,nil)]
+                (nil,nil),(Double.greatestFiniteMagnitude,Double.greatestFiniteMagnitude)]
     }
 }
-func fieldEnds(_ title: NSAttributedString, fields: [String]) -> (CGFloat, CGFloat) {
+func componentRects(_ title: NSAttributedString, mode: PrimaryMetric, fields: [String]) -> [CGRect] {
     let storage = NSTextStorage(attributedString: title)
     let manager = NSLayoutManager()
     let container = NSTextContainer(size: NSSize(width: 1000, height: 32))
@@ -54,27 +59,43 @@ func fieldEnds(_ title: NSAttributedString, fields: [String]) -> (CGFloat, CGFlo
     storage.addLayoutManager(manager)
     manager.ensureLayout(for: container)
     let ns = title.string as NSString
-    func end(_ text: String, backwards: Bool = false) -> CGFloat {
-        let range = ns.range(of: text, options: backwards ? .backwards : [])
+    let components = mode == .network
+        ? [Localizer.shared.text("NET"), "↓", fields[0], "↑", fields[1]]
+        : [mode.statusPrefix, fields[0]]
+    var searchStart = 0
+    return components.map { text in
+        let range = ns.range(of: text, range: NSRange(location: searchStart, length: ns.length-searchStart))
         require(range.location != NSNotFound, "field missing from attributed title")
+        searchStart = range.location + range.length
         let glyphs = manager.glyphRange(forCharacterRange: range, actualCharacterRange: nil)
-        return manager.boundingRect(forGlyphRange: glyphs, in: container).maxX
+        return manager.boundingRect(forGlyphRange: glyphs, in: container)
     }
-    return (end(fields[0]), fields.count == 2 ? end(fields[1], backwards: true) : 0)
 }
 
 var widths: [String: [String: Double]] = [:]
+var gapRanges: [String: [String: [[Double]]]] = [:]
+var slotExamples: [String: [String: [String: Double]]] = [:]
 var checks = 0
+let visualDirectory = URL(fileURLWithPath: ".build/status-visual")
+try! FileManager.default.createDirectory(at: visualDirectory, withIntermediateDirectories: true)
 for language in AppLanguage.allCases {
     Localizer.shared.select(language)
     var languageWidths: [String: Double] = [:]
+    var languageGaps: [String: [[Double]]] = [:]
+    var languageSlots: [String: [String: Double]] = [:]
     for mode in PrimaryMetric.allCases {
         let layout = StatusTitleLayout(metric: mode, font: button.font!)
         item.length = layout.length
+        RunLoop.main.run(until: Date().addingTimeInterval(0.15))
         var expectedFrame: CGFloat?
-        var expectedEnds: (CGFloat, CGFloat)?
-        for (a,b) in cases(mode) {
+        var expectedNeighborX: CGFloat?
+        var expectedScalarEnd: CGFloat?
+        var endsByShape: [String: [CGFloat]] = [:]
+        var range: [[Double]] = []
+        for (index, values) in cases(mode).enumerated() {
+            let (a,b) = values
             let snapshot = sample(mode,a,b)
+            let fields = mode.statusFields(in: snapshot)
             let title = layout.attributedTitle(in: snapshot)
             button.attributedTitle = title
             RunLoop.main.run(until: Date().addingTimeInterval(0.03))
@@ -84,21 +105,70 @@ for language in AppLanguage.allCases {
             require(abs(frame - layout.length) < 0.5, "button frame did not match fixed length")
             if let expectedFrame { require(abs(frame-expectedFrame) < 0.01, "status item frame jumped") }
             else { expectedFrame = frame }
-            let ends = fieldEnds(title, fields: mode.statusFields(in: snapshot))
-            require(ends.0 <= frame - 6, "first value exceeded status item")
-            if mode == .network { require(ends.1 <= frame - 6, "TX value exceeded status item") }
-            if let expectedEnds {
-                require(abs(ends.0-expectedEnds.0) < 1, "first value slot shifted")
-                if mode == .network { require(abs(ends.1-expectedEnds.1) < 1, "TX value slot shifted") }
-            } else { expectedEnds = ends }
+            let neighborX = neighbor.button!.window!.convertToScreen(
+                neighbor.button!.convert(neighbor.button!.bounds, to: nil)).minX
+            if let expectedNeighborX {
+                require(abs(neighborX-expectedNeighborX) < 0.5,
+                    "neighboring menu item moved: \(language.rawValue) \(mode) \(fields) \(expectedNeighborX) -> \(neighborX)")
+            } else { expectedNeighborX = neighborX }
+            let rects = componentRects(title, mode: mode, fields: fields)
+            require(rects.first!.minX >= 0 && rects.last!.maxX <= frame, "text exceeded status item")
+            let gaps = zip(rects, rects.dropFirst()).map { $1.minX - $0.maxX }
+            if range.isEmpty { range = gaps.map { [Double($0),Double($0)] } }
+            else {
+                for (i,gap) in gaps.enumerated() {
+                    range[i][0] = min(range[i][0],Double(gap))
+                    range[i][1] = max(range[i][1],Double(gap))
+                }
+            }
+            if mode == .network {
+                require(gaps[0] >= 4 && gaps[0] <= 8, "NET/arrow gap outside compact range: \(gaps)")
+                require(gaps[1] >= 1 && gaps[1] <= 5, "RX arrow/value gap outside compact range: \(gaps)")
+                require(gaps[2] >= 5 && gaps[2] <= 9, "RX/TX gap outside compact range: \(gaps)")
+                require(gaps[3] >= 1 && gaps[3] <= 5, "TX arrow/value gap outside compact range: \(gaps)")
+            } else {
+                require(gaps[0] >= 3 && gaps[0] <= 24, "label/value gap outside compact range: \(gaps)")
+            }
+            let shape = fields.map { String($0.map { $0 >= "0" && $0 <= "9" ? "8" : $0 }) }.joined(separator: "|")
+            let ends = fields.count == 2 ? [rects[2].maxX, rects[4].maxX] : [rects[1].maxX]
+            if (mode == .cpu || mode == .gpu || mode == .temperature), fields[0] != "—" {
+                if let expectedScalarEnd {
+                    require(abs(ends[0]-expectedScalarEnd) < 1, "fixed scalar numeric slot shifted")
+                } else { expectedScalarEnd = ends[0] }
+            }
+            if let previous = endsByShape[shape] {
+                require(zip(previous,ends).allSatisfy { abs($0-$1) < 1 }, "same-shape value alignment shifted")
+            } else { endsByShape[shape] = ends }
+            guard let bitmap = button.bitmapImageRepForCachingDisplay(in: button.bounds) else {
+                fatalError("status button bitmap unavailable")
+            }
+            button.cacheDisplay(in: button.bounds, to: bitmap)
+            let name = "\(language.rawValue)-\(String(describing: mode))-\(index).png"
+            try! bitmap.representation(using: .png, properties: [:])!
+                .write(to: visualDirectory.appendingPathComponent(name))
             checks += 1
         }
-        languageWidths[String(describing: mode)] = Double(layout.length)
+        let name = String(describing: mode)
+        languageWidths[name] = Double(layout.length)
+        languageGaps[name] = range
+        let templates: [String]
+        switch mode {
+        case .cpu, .gpu: templates = ["9%", "16%", "100%", "—"]
+        case .temperature: templates = ["9°C", "61°C", "100°C", "—"]
+        case .gpuPower: templates = ["9.4W", "14.0W", "99.9W", "—"]
+        case .network: templates = ["0 B/s", "3.4 KB/s", "56.1 KB/s", "999.9 KB/s", "999.9 MB/s", "1.0 GB/s", "—"]
+        }
+        languageSlots[name] = Dictionary(uniqueKeysWithValues: templates.map { ($0,Double(layout.slotWidth(for:$0))) })
     }
     widths[language.rawValue] = languageWidths
+    gapRanges[language.rawValue] = languageGaps
+    slotExamples[language.rawValue] = languageSlots
 }
 NSStatusBar.system.removeStatusItem(item)
+NSStatusBar.system.removeStatusItem(neighbor)
 let output: [String: Any] = ["result":"PASS","checks":checks,"widths_pt":widths,
-                             "fixed_frame":true,"right_aligned_slots":true]
+                             "gap_ranges_pt":gapRanges,"slot_widths_pt":slotExamples,
+                             "fixed_frame":true,"neighbor_stable":true,
+                             "compact_component_gaps":true,"same_shape_alignment":true]
 let bytes = try! JSONSerialization.data(withJSONObject: output, options: [.sortedKeys])
 print(String(data: bytes, encoding: .utf8)!)

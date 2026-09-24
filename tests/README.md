@@ -128,13 +128,18 @@ from persisting across processes. `sh app/ui-smoke.sh` verifies both languages
 in an AppKit popover, live telemetry, five menu choices, fixed status-item
 width, and layout bounds. It needs an ordinary graphical user session.
 
-`sh tests/run-status-width.sh` creates an actual AppKit `NSStatusItem` and
-checks 72 boundary and unavailable values across all five modes in English and
-Simplified Chinese. For each metric-language pair it checks the item length,
-button frame, and right-aligned numeric slot endpoints. The full UI smoke also
-checks that value updates do not rebuild the measured layout. The width matrix is
-saved in `docs/results/status-width.json`. Mode or language changes may select
-a new cached width; telemetry updates must retain the selected width.
+`sh tests/run-status-width.sh` creates actual AppKit status items and checks 82
+boundary and unavailable values across all five modes in English and Simplified
+Chinese. For each metric-language pair it checks fixed item/button width, a
+neighboring item's screen position, component gaps, and same-shape numeric
+alignment. It saves per-case button bitmaps under `.build/status-visual/` and
+prints JSON; use `sh tests/run-status-width.sh > docs/results/status-width.json`
+to save the measurements. Run
+`swiftc -O -target arm64-apple-macos13.0 -module-cache-path "$PWD/.build/ModuleCache" -framework AppKit tests/make-status-visual.swift -o .build/make-status-visual`
+and `.build/make-status-visual` to regenerate the inspected bilingual contact
+sheet at `docs/results/status-visual.png`. The full UI smoke also checks that
+value updates do not rebuild the measured layout. Mode or language changes may
+select a new cached width; telemetry updates retain the selected width.
 
 With the ordinary app already launched, `python3 tests/run-minimal-regression.py`
 observes one PID for 900 seconds at 30-second intervals. It records CPU, RSS,

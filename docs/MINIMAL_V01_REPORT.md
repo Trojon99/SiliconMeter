@@ -62,7 +62,11 @@ This report records the scope recovery, bilingual UI, Network candidate, and loc
 
 ## AE. Menu-bar width stabilization
 
-`StatusTitleLayout` measures a maximum template with the real status-button font once per primary metric/language pair and caches all ten layouts. Selecting a mode or language applies its fixed `NSStatusItem.length`; right-aligned AppKit tab stops hold the numeric field, with separate fixed RX and TX slots for Network. Normal telemetry updates change only `attributedTitle` and its accessibility label. There are no padding-space runs, extra timers, samplers, observers, or polling. CPU/GPU percentages and temperature reserve three integer digits; GPU power uses one decimal consistently. Network promotes rounded unit boundaries and supports B/s through EB/s with a scientific fallback for unrealistic higher rates.
+The first fixed-width layout removed the external menu-bar jump but right-aligned each value against a maximum slot. The Network maximum included the scientific-notation fallback, so unused slot width appeared *between* `↓`/`↑` and their readings. Short CPU values and unavailable states showed the same problem on a smaller scale.
+
+The corrected `StatusTitleLayout` still measures and caches ten metric/language layouts and applies a fixed `NSStatusItem.length` only on initialization, metric selection, or language selection. It places a compact group in the center of that fixed container. AppKit tabs separately position the label, arrows, and right-aligned numeric slots; the unused container width stays outside the group. CPU/GPU and temperature keep a fixed `100%`/`100°C` slot; unavailable uses a compact dash slot. GPU Power and Network select a premeasured slot by displayed digit-count/unit shape. This bounds internal movement at format transitions while keeping arrows next to actual values. Numeric text retains the system monospaced-digit font. Per-tick work is a cached width lookup, small coordinate arithmetic, and an attributed-title/accessibility update; there is no glyph/template measurement, timer, sampler, observer, polling, collector cadence change, network-backend change, or SQLite change on that path.
+
+Requested gaps were 5 pt for a scalar label/value and, for Network, 6 pt `NET→↓`, 3 pt arrow→value, 7 pt RX→`↑`, and 3 pt `↑`→TX. Real AppKit glyph geometry measured scalar visible gaps of 5.6–22.6 pt across both languages; the upper end is the intentional one/two missing digits inside a fixed `100%` or `100°C` slot. GPU Power measured 5.7–6.5 pt. Network measured 6.6 pt, 3.9–4.9 pt, 7.0 pt, and 3.9–4.8 pt respectively. The sampled slot widths were CPU/GPU 37 pt, temperature 40 pt, GPU Power 33 pt for `9.4W` and 41 pt for `14.0W`/`99.9W`; Network 31 pt for `0 B/s`, 52 pt for `3.4 KB/s`, 60 pt for `56.1 KB/s`, 68 pt for `999.9 KB/s`, 71 pt for `999.9 MB/s`, and 53 pt for `1.0 GB/s`. The unavailable dash slot is 12 pt. Network promotes rounded unit boundaries and supports B/s through EB/s with a scientific fallback for unrealistic higher rates.
 
 The long Network A/B in AA predates this UI-only change; its collector and timer paths were not modified for AE.
 
@@ -70,10 +74,10 @@ The real AppKit status-item test measured these fixed external widths in points:
 
 | Language | CPU | GPU | Temp | GPU Power | NET |
 |---|---:|---:|---:|---:|---:|
-| English | 85 | 86 | 95 | 146 | 258 |
-| 简体中文 | 85 | 86 | 87 | 134 | 258 |
+| English | 85 | 86 | 95 | 169 | 249 |
+| 简体中文 | 85 | 86 | 87 | 157 | 249 |
 
-Across 72 boundary and unavailable values, each metric-language pair kept the exact same `statusItem.length` and button frame width; AppKit text layout kept both Network slot endpoints within one point. The sequence includes 0–100% CPU/GPU, 0–100°C temperature, 0.0–99.9W power, B/KB/MB/GB/TB network rates, mixed units, and available↔unavailable transitions. The complete graphical app smoke independently passed `fixed_width=true` while switching modes/languages and injecting representative live-value changes; a review-only counter confirmed no layout measurement during those value updates or when revisiting a cached pair.
+Across 82 boundary, unavailable, and scientific-fallback values, each metric/language pair kept the exact same `statusItem.length` and button frame width; an adjacent real status item stayed at the same screen position on every value change. Same-shape values kept numeric slot endpoints within one point. The exact requested CPU, GPU, temperature, GPU Power, and Network examples were rendered through a real `NSStatusBarButton` in both languages and visually inspected in [the contact sheet](results/status-visual.png), including all unavailable states. The complete graphical app smoke passed `fixed_width=true`, `chinese=true`, and `english=true` while switching modes/languages and injecting representative live-value changes; its review-only counter confirmed no layout measurement during those value updates or when revisiting a cached pair.
 
 ## Evidence
 
@@ -83,7 +87,8 @@ Across 72 boundary and unavailable values, each metric-language pair kept the ex
 - `docs/results/network-latency-disabled.json` and `docs/results/network-latency-enabled.json`: supplemental 60-tick collector timing in each phase.
 - `docs/results/migration-checks.json`: copy migrations and malformed/future-schema rejection.
 - `docs/results/real-db-v4-check.json`: read-only integrity and row-preservation comparison against both real backups.
-- `docs/results/status-width.json`: 72-case real AppKit status-item width and slot-alignment check.
+- `docs/results/status-width.json`: 82-case real AppKit status-item width, neighboring-item stability, component gaps, and slot-width check.
+- `docs/results/status-visual.png`: inspected English/Chinese contact sheet from real AppKit status-button bitmap captures for every requested visual example.
 - `docs/results/network-process-observations.jsonl` and `docs/results/network-db-size.jsonl`: external process and database snapshots.
 - `tests/run-history-checks.py`, `tests/run-migration-checks.py`, `tests/run-network-checks.sh`, `tests/run-localization-checks.sh`, `app/ui-smoke.sh`, and `tests/run-popover-layout.sh`: focused repeatable checks.
 

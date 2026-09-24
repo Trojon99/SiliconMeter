@@ -6,7 +6,7 @@ A lightweight Apple Silicon telemetry monitor and local history recorder for the
 
 ## UI preview
 
-Screenshots will be added with a future release. The status item shows one selected metric, such as `CPU 23%`, `GPU 91%`, `Temp 61°C`, `GPU Power 14.0W`, or `NET ↓12.4 MB/s ↑1.3 MB/s`.
+Screenshots will be added with a future release. The status item shows one selected metric, such as `CPU 23%`, `GPU 91%`, `Temp 61°C`, `GPU Power 14.0W`, or `NET ↓ 12.4 MB/s ↑ 1.3 MB/s`.
 
 ## Features
 

@@ -170,50 +170,118 @@ enum PrimaryMetric: Int, CaseIterable {
     }
     func title(in snapshot: TelemetrySnapshot) -> String {
         let fields = statusFields(in: snapshot)
-        if self == .network { return "\(statusPrefix)\(fields[0]) ↑\(fields[1])" }
+        if self == .network { return "\(statusPrefix) \(fields[0]) ↑ \(fields[1])" }
         return "\(statusPrefix) \(fields[0])"
     }
 }
 
-// The tabs are right-aligned to fixed per-mode slots. All glyph measurement is
-// done when mode or language changes, never on the telemetry collection path.
+// Keep the status item fixed, but center a compact group inside it. Slot widths
+// are cached by displayed number shape (digit count/unit), so ordinary updates
+// only select measured widths and never measure text on the collection path.
 struct StatusTitleLayout {
     let metric: PrimaryMetric
     let length: CGFloat
     private let prefix: String
-    private let attributes: [NSAttributedString.Key: Any]
+    private let font: NSFont
+    private let prefixWidth: CGFloat
+    private let downWidth: CGFloat
+    private let upWidth: CGFloat
+    private let maximumSlot: CGFloat
+    private let slotWidths: [String: CGFloat]
+    private let inset: CGFloat = 8
+    private let labelGap: CGFloat = 5
+    private let networkLabelGap: CGFloat = 6
+    private let arrowGap: CGFloat = 3
+    private let networkGroupGap: CGFloat = 7
+
+    private static func shape(_ value: String) -> String {
+        String(value.map { $0 >= "0" && $0 <= "9" ? "8" : $0 })
+    }
 
     init(metric: PrimaryMetric, font: NSFont) {
         self.metric = metric
-        prefix = metric.statusPrefix
+        self.font = font
+        prefix = metric == .network ? Localizer.shared.text("NET") : metric.statusPrefix
         func width(_ text: String) -> CGFloat {
             ceil((text as NSString).size(withAttributes: [.font: font]).width)
         }
-        let slot: CGFloat
-        switch metric {
-        case .cpu, .gpu: slot = max(width("100%"), width("—"))
-        case .temperature: slot = max(width("100°C"), width("—"))
-        case .gpuPower: slot = max(width(StatusPowerFormat.widestTemplate), width("999.9W"))
-        case .network: slot = max(width(NetworkRateFormat.widestTemplate), width("999.9 MB/s"))
+        prefixWidth = width(prefix)
+        downWidth = width("↓")
+        upWidth = width("↑")
+        var widths: [String: CGFloat] = ["—": width("—")]
+        func add(_ template: String) {
+            widths[Self.shape(template)] = width(template)
         }
-        let prefixWidth = width(prefix)
-        let arrowWidth = metric == .network ? width(" ↑") : 0
-        let firstEnd = prefixWidth + 5 + slot + arrowWidth
-        let contentWidth = firstEnd + (metric == .network ? 5 + slot : 0)
-        length = ceil(contentWidth + 16) // NSStatusBarButton's fixed horizontal inset.
-        let paragraph = NSMutableParagraphStyle()
-        paragraph.alignment = .left
-        paragraph.tabStops = [NSTextTab(textAlignment: .right, location: firstEnd)] +
-            (metric == .network ? [NSTextTab(textAlignment: .right, location: contentWidth)] : [])
-        attributes = [.font: font, .paragraphStyle: paragraph]
+        switch metric {
+        case .cpu, .gpu:
+            add("100%")
+        case .temperature:
+            add("100°C")
+        case .gpuPower:
+            for unit in ["W", "kW", "MW", "GW", "TW", "PW", "EW"] {
+                for number in ["8.8", "88.8", "888.8", "-8.8", "-88.8", "-888.8"] {
+                    add(number + unit)
+                }
+            }
+            for exponent in ["8", "88", "888"] {
+                add("8.8e+\(exponent)W")
+                add("-8.8e+\(exponent)W")
+            }
+        case .network:
+            for unit in NetworkRateFormat.units {
+                for number in ["8", "88", "888", "8.8", "88.8", "888.8", "<8"] {
+                    add("\(number) \(unit)")
+                }
+            }
+            for exponent in ["8", "88", "888"] {
+                add("8.8e+\(exponent) B/s")
+            }
+        }
+        slotWidths = widths
+        maximumSlot = max(widths.values.max() ?? 0, width("—"))
+        let contentWidth = metric == .network
+            ? prefixWidth + networkLabelGap + downWidth + arrowGap + maximumSlot +
+              networkGroupGap + upWidth + arrowGap + maximumSlot
+            : prefixWidth + labelGap + maximumSlot
+        length = ceil(contentWidth + 2 * inset)
+    }
+
+    func slotWidth(for value: String) -> CGFloat {
+        slotWidths[Self.shape(value)] ?? maximumSlot
     }
 
     func attributedTitle(in snapshot: TelemetrySnapshot) -> NSAttributedString {
         let fields = metric.statusFields(in: snapshot)
+        let firstSlot = (metric == .cpu || metric == .gpu || metric == .temperature) && fields[0] != "—"
+            ? maximumSlot : slotWidth(for: fields[0])
+        let secondSlot = metric == .network ? slotWidth(for: fields[1]) : 0
+        let groupWidth = metric == .network
+            ? prefixWidth + networkLabelGap + downWidth + arrowGap + firstSlot +
+              networkGroupGap + upWidth + arrowGap + secondSlot
+            : prefixWidth + labelGap + firstSlot
+        let start = inset + max(0, (length - 2 * inset - groupWidth) / 2)
+        let paragraph = NSMutableParagraphStyle()
+        paragraph.alignment = .left
+        paragraph.firstLineHeadIndent = start
+        if metric == .network {
+            let downStart = start + prefixWidth + networkLabelGap
+            let firstEnd = downStart + downWidth + arrowGap + firstSlot
+            let upStart = firstEnd + networkGroupGap
+            let secondEnd = upStart + upWidth + arrowGap + secondSlot
+            paragraph.tabStops = [
+                NSTextTab(textAlignment: .left, location: downStart),
+                NSTextTab(textAlignment: .right, location: firstEnd),
+                NSTextTab(textAlignment: .left, location: upStart),
+                NSTextTab(textAlignment: .right, location: secondEnd)
+            ]
+        } else {
+            paragraph.tabStops = [NSTextTab(textAlignment: .right,
+                location: start + prefixWidth + labelGap + firstSlot)]
+        }
         let text = metric == .network
-            ? "\(prefix)\t\(fields[0]) ↑\t\(fields[1])"
+            ? "\(prefix)\t↓\t\(fields[0])\t↑\t\(fields[1])"
             : "\(prefix)\t\(fields[0])"
-        return NSAttributedString(string: text, attributes: attributes)
+        return NSAttributedString(string: text, attributes: [.font: font, .paragraphStyle: paragraph])
     }
 }
 

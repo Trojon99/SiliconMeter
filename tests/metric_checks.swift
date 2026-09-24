@@ -58,15 +58,15 @@ snapshot.merge([
     "network_rx_bytes_per_sec": ["status": "measured", "value": 12_400_000.0, "unit": "B/s"],
     "network_tx_bytes_per_sec": ["status": "measured", "value": 1_300_000.0, "unit": "B/s"]
 ], at: Date())
-check(PrimaryMetric.network.title(in: snapshot) == "NET ↓12.4 MB/s ↑1.3 MB/s", "same-unit network title")
+check(PrimaryMetric.network.title(in: snapshot) == "NET ↓ 12.4 MB/s ↑ 1.3 MB/s", "same-unit network title")
 snapshot.merge(["network_tx_bytes_per_sec": ["status": "measured", "value": 420_000.0, "unit": "B/s"]], at: Date())
-check(PrimaryMetric.network.title(in: snapshot) == "NET ↓12.4 MB/s ↑420 KB/s", "mixed-unit network title")
+check(PrimaryMetric.network.title(in: snapshot) == "NET ↓ 12.4 MB/s ↑ 420 KB/s", "mixed-unit network title")
 snapshot.merge(["network_rx_bytes_per_sec": ["status": "measured", "value": 0.0, "unit": "B/s"],
                 "network_tx_bytes_per_sec": ["status": "measured", "value": 0.0, "unit": "B/s"]], at: Date())
-check(PrimaryMetric.network.title(in: snapshot) == "NET ↓0 B/s ↑0 B/s", "measured zero network title")
+check(PrimaryMetric.network.title(in: snapshot) == "NET ↓ 0 B/s ↑ 0 B/s", "measured zero network title")
 snapshot.merge(["network_rx_bytes_per_sec": ["status": "unavailable", "unit": "B/s"],
                 "network_tx_bytes_per_sec": ["status": "invalid", "unit": "B/s"]], at: Date())
-check(PrimaryMetric.network.title(in: snapshot) == "NET ↓— ↑—", "invalid network became zero")
+check(PrimaryMetric.network.title(in: snapshot) == "NET ↓ — ↑ —", "invalid network became zero")
 check(NetworkRateFormat.display(999) == "999 B/s", "byte boundary")
 check(NetworkRateFormat.display(0) == "0 B/s", "measured zero formatting")
 check(NetworkRateFormat.display(0.2) == "<1 B/s", "positive sub-byte rate became zero")
