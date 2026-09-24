@@ -4,7 +4,7 @@ SiliconMeter is a lightweight Apple Silicon macOS menu-bar telemetry monitor and
 
 1. **Monitor:** One native collector publishes CPU, GPU, Network RX/TX, memory, and thermal telemetry to a shared snapshot.
 2. **Menu Bar:** One selected primary metric and a small popover show current readings.
-3. **Log:** One serial SQLite writer records the same snapshots as machine-readable local history.
+3. **Log:** One serial SQLite writer records the same snapshots as machine-readable local history, with configurable rolling retention (1, 7, or 30 days, or Forever).
 
 Design principles: lightweight, local-first, low overhead, generic, machine-readable, and long-running. The ordinary-user full telemetry build runs outside App Sandbox, without root, `powermetrics`, persistent subprocesses, generated monitoring traffic, cloud services, analytics, or uploads.
 

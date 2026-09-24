@@ -180,7 +180,7 @@ or changes the app's collector or database writer.
 
 `sh tests/run-popover-layout.sh` instantiates only the popover in a separate
 AppKit test bundle, without starting the collector or logger. It verifies that
-all control bounds fit in the 740-point popover for both supported languages.
+all control bounds fit in the 770-point popover for both supported languages.
 
 `sh tests/run-network-checks.sh` exercises native interface filtering, separate
 RX/TX deltas, aggregation, zero, reset, appearance/disappearance, link changes,
@@ -231,3 +231,29 @@ If popover/resource caching changes RSS during the 30-minute observation,
 gracefully relaunch the ordinary App with the popover closed and run
 `python3 tests/observe-v01-polish-fresh.py`. It records a separate 90-second
 external libproc comparison after a 30-second warmup and leaves the App running.
+
+## Step 4.2 history retention checks
+
+```sh
+sh app/build.sh
+sh app/ui-smoke.sh --build-only
+python3 tests/run-retention-checks.py
+python3 tests/run-retention-app-checks.py
+python3 tests/measure-retention-steady.py docs/results/retention-steady-comparison.json
+```
+
+The first Python runner uses temporary SQLite v4 databases and the production
+history writer. It checks the fixed UTC 1/7/30-day cutoffs, the exact millisecond
+boundary, Forever, confirmation and Cancel preference behavior, legacy foreign
+keys, crash recovery, concurrent writes, integrity, and a 160,000-row cleanup.
+It reports transaction length, main-thread heartbeat gaps, CPU/RSS, file size,
+freelist, and WAL size. The AppKit runner needs an ordinary graphical macOS
+session. It uses temporary homes and unique test-only bundle IDs to keep
+`cfprefsd` from reusing the live SiliconMeter preference domain. It verifies
+fresh and existing database defaults, relaunch persistence, Cancel, and
+confirmed cleanup with the actual AppKit app. The performance runner builds
+the pre-retention commit and measures ordinary optimized apps for 65 seconds
+each in separate test homes. It reports CPU, RSS, thread count, sample counts,
+recording cadence, and committed batch counts. Sample gaps measure recording
+cadence, not collector function latency; no production hook was added for this
+feature.

@@ -1,0 +1,41 @@
+{
+  "after": {
+    "binary_sha256": "039743e06438e9d957ea55561590825cb0c813dbe45cd97280309a14000f587b",
+    "cpu_percent_one_core": 0.40639504697235934,
+    "cpu_s": 0.15479366666666666,
+    "db": {
+      "fast_gap_median_ms": 2102.0,
+      "fast_rows": 19,
+      "flush_count": 2,
+      "slow_rows": 6
+    },
+    "rss_first_mib": 63.09375,
+    "rss_last_mib": 63.453125,
+    "rss_max_mib": 63.453125,
+    "stable_duration_s": 38.08945700000001,
+    "threads_median": 6.0,
+    "warmup_s": 25
+  },
+  "baseline_revision": "820a89f",
+  "before": {
+    "binary_sha256": "fd5ba2bcca6013da0e9366c606f3df2a382da0955347d204b57917db96d673b3",
+    "cpu_percent_one_core": 0.47200696695064254,
+    "cpu_s": 0.17973924999999996,
+    "db": {
+      "fast_gap_median_ms": 2103.0,
+      "fast_rows": 19,
+      "flush_count": 2,
+      "slow_rows": 6
+    },
+    "rss_first_mib": 58.421875,
+    "rss_last_mib": 59.921875,
+    "rss_max_mib": 59.921875,
+    "stable_duration_s": 38.07978750000001,
+    "threads_median": 6.0,
+    "warmup_s": 25
+  },
+  "cpu_percent_point_delta": -0.0656119199782832,
+  "method": "ordinary optimized AppKit binaries, unique test bundle IDs and homes, external libproc every 2 seconds; consecutive 65-second runs with 25-second warmup; fast-sample gap is cadence, not collector latency",
+  "rss_last_mib_delta": 3.53125,
+  "utc": "2026-09-24T08:10:45.002460+00:00"
+}

@@ -12,7 +12,7 @@ Screenshots will be added with a future release. The status item shows one selec
 
 - Live status item with five selectable metrics and a compact popover for current system telemetry.
 - A fixed menu-bar item width for each metric and language, so changing readings do not move neighboring status items.
-- Local SQLite history recorded continuously from the same shared snapshots, with a serial batched writer and WAL.
+- Local SQLite history recorded continuously from the same shared snapshots, with a serial batched writer, WAL, and configurable retention.
 - English and Simplified Chinese UI, with immediate switching and a locally saved language choice.
 - A locally saved primary-metric choice and an optional native **Launch at Login** control.
 - Ordinary-user operation without a helper, persistent child process, `powermetrics`, outgoing network connections, or telemetry upload.
@@ -23,11 +23,15 @@ CPU total and validated P-core/E-core activity; GPU active residency, estimated 
 
 ## History logging
 
-The app records fast samples about every 2 seconds and slow samples about every 6 seconds. Network RX/TX share the fast timestamp, quality, and actual measurement-window fields. It batches writes about every 30 seconds and flushes on normal Quit. A crash can lose only the latest uncommitted batch. The popover shows recording status, database size, and an **Open Data Folder** button. Ordinary SQLite tools can read committed history; see [schema v4, units, and read-only queries](docs/HISTORY_SCHEMA.md). History database grows over time. The final 30-minute candidate increased SQLite logical size by 344,064 bytes, about 0.688 MB/hour. At that short-run rate, the projection is 0.688 MB in 1 hour, 16.52 MB in 24 hours, 115.61 MB in 7 days, and 495.45 MB in 30 days. A prior durable-file estimate was 0.698 MB/hour. These are estimates, not storage limits; active WAL and SHM files add temporary disk use. Use **Open Data Folder** to find the SQLite file. v0.1 does not delete, retain by age, or downsample history; retention is for a later version.
+The app records fast samples about every 2 seconds and slow samples about every 6 seconds. Network RX/TX share the fast timestamp, quality, and actual measurement-window fields. It batches writes about every 30 seconds and flushes on normal Quit. A crash can lose only the latest uncommitted batch. The popover shows recording status, database size, retention, and an **Open Data Folder** button. Ordinary SQLite tools can read committed history; see [schema v4, units, and read-only queries](docs/HISTORY_SCHEMA.md). History can grow between cleanups. Before retention, the final 30-minute candidate increased SQLite logical size by 344,064 bytes, about 0.688 MB/hour. At that short-run rate, the projection is 0.688 MB in 1 hour, 16.52 MB in 24 hours, 115.61 MB in 7 days, and 495.45 MB in 30 days. A prior durable-file estimate was 0.698 MB/hour. These are estimates, not storage limits; active WAL and SHM files add temporary disk use. Use **Open Data Folder** to find the SQLite file. v0.1 does not downsample history.
+
+## History Retention
+
+Choose **1 Day** (rolling 24 hours), **7 Days**, **30 Days**, or **Forever** in History. A fresh installation defaults to **30 Days**. If an existing database has no retention setting, it defaults to **Forever** so earlier history is not silently deleted. Shortening retention asks for confirmation before old rows are permanently removed; Cancel keeps the prior choice. Extending retention does not restore rows already deleted. Cleanup runs in the background and does not automatically run `VACUUM`. The displayed database size may not shrink immediately after deletion because SQLite reuses freed pages for later writes.
 
 ## Privacy
 
-All telemetry and history stay on this Mac. Network monitoring reads system interface counters and does not generate monitoring traffic or run a speed test. The app has no analytics, cloud service, telemetry upload, or per-process attribution, and it does not collect user file contents. The database stores system metrics and app-run metadata, without workload labels. Language and primary-metric choices are local `UserDefaults` preferences, outside the telemetry database.
+All telemetry and history stay on this Mac. Network monitoring reads system interface counters and does not generate monitoring traffic or run a speed test. The app has no analytics, cloud service, telemetry upload, or per-process attribution, and it does not collect user file contents. The database stores system metrics and app-run metadata, without workload labels. Language, primary-metric, and retention choices are local `UserDefaults` preferences, outside the telemetry database.
 
 ## System requirements
 
@@ -58,7 +62,7 @@ Early local development builds used a `Compute Monitor` data folder. Quit the ol
 
 ## Known limitations
 
-Private IOReport and AppleSMC behavior can change with macOS or hardware updates; unavailable capabilities remain visibly unavailable. GPU power and weighted frequency are estimates, not externally calibrated measurements. Network selection is conservative: unusual physical links without Ethernet type or a reported link rate may be omitted; VPN tunnel traffic is not separately counted. There is no in-app chart, data retention policy, process attribution, workload analysis, or automatic tuning. Workloads such as local LLMs, compilation, and rendering are external use cases for the generic history. A preexisting v2 database may retain an unused legacy experimental table to preserve its data; fresh and v1-upgraded v4 databases do not create it.
+Private IOReport and AppleSMC behavior can change with macOS or hardware updates; unavailable capabilities remain visibly unavailable. GPU power and weighted frequency are estimates, not externally calibrated measurements. Network selection is conservative: unusual physical links without Ethernet type or a reported link rate may be omitted; VPN tunnel traffic is not separately counted. There is no in-app chart, process attribution, workload analysis, or automatic tuning. Workloads such as local LLMs, compilation, and rendering are external use cases for the generic history. A preexisting v2 database may retain an unused legacy experimental table to preserve its data; fresh and v1-upgraded v4 databases do not create it.
 
 ## Private API compatibility risk
 

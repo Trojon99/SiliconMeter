@@ -9,6 +9,9 @@ This is a preparation checklist, not a record of a public release. Do not tag, p
 - [ ] Verify the final release commit, clean Git working tree, and `0.1.0` / build `1` in the app bundle and both READMEs.
 - [ ] Run the English and Simplified Chinese UI smoke, including all five menu metrics, popover, History, Open Data Folder, Language, Launch at Login, and Quit.
 - [ ] Verify SQLite v4 integrity, live recording, UTC/quality semantics, and the documented local data location.
+- [ ] Verify retention preference persistence and localized 1/7/30-day/Forever choices on the signed candidate.
+- [ ] Verify fresh-install default 30 Days and existing-database-without-preference safe default Forever; no silent deletion of old history.
+- [ ] Verify destructive shortening confirmation and Cancel semantics, rolling UTC cutoff boundaries, batched cleanup, current-run/FK safety, and no automatic `VACUUM`.
 
 ## Distribution build
 
