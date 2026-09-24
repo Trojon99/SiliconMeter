@@ -362,11 +362,11 @@ static uint32_t fourcc(const char *key) {
         network.status == NetworkRateStale ? @"stale" : @"unavailable";
     NSString *reason = _network ? @"no_valid_external_interface_or_baseline" : @"test_disabled";
     result[@"network_rx_bytes_per_sec"] = network.status == NetworkRateMeasured
-        ? reading(@(network.receivedBytesPerSecond), @"B/s", status, @"NET_RT_IFLIST2", network.windowSeconds, nil)
-        : missing(status, @"NET_RT_IFLIST2", reason);
+        ? reading(@(network.receivedBytesPerSecond), @"B/s", status, @"IFMIB_IFDATA", network.windowSeconds, nil)
+        : missing(status, @"IFMIB_IFDATA", reason);
     result[@"network_tx_bytes_per_sec"] = network.status == NetworkRateMeasured
-        ? reading(@(network.sentBytesPerSecond), @"B/s", status, @"NET_RT_IFLIST2", network.windowSeconds, nil)
-        : missing(status, @"NET_RT_IFLIST2", reason);
+        ? reading(@(network.sentBytesPerSecond), @"B/s", status, @"IFMIB_IFDATA", network.windowSeconds, nil)
+        : missing(status, @"IFMIB_IFDATA", reason);
     return result;
 }
 

@@ -141,6 +141,20 @@ sheet at `docs/results/status-visual.png`. The full UI smoke also checks that
 value updates do not rebuild the measured layout. Mode or language changes may
 select a new cached width; telemetry updates retain the selected width.
 
+For the bounded real Network direction check, compile the test-only native
+probe with `clang -O2 -Wall -Wextra -mmacosx-version-min=13.0 -fobjc-arc -fblocks
+tests/network_direction_probe.m app/NetworkSampler.m -framework Foundation -o
+.build/network-direction-probe`. With the ordinary App running, inspect
+`.build/network-direction-probe --inventory`, confirm the default route, then
+run `python3 tests/run-network-direction.py` in baseline, download, cooldown,
+upload, and recovery order. Each phase requires `--seconds N --interface en0`.
+Use `--no-bind` only if `networkQuality -I en0` fails; the runner checks the
+reference `interface_name` against the sampler's selected interface. The two
+transfer phases use `networkQuality -u/-d -M N -c` for test traffic only.
+`python3 tests/analyze-network-direction.py` reads committed App SQLite rows
+without writing to the database and creates `docs/results/network-direction-summary.json`.
+The ordinary App does not start or depend on any test tool.
+
 With the ordinary app already launched, `python3 tests/run-minimal-regression.py`
 observes one PID for 900 seconds at 30-second intervals. It records CPU, RSS,
 SQLite counts, integrity, child processes, and network sockets in

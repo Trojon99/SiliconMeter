@@ -50,6 +50,15 @@ int main(void) {
         CHECK(NetworkAccumulatorUpdate(&state, pair, 2, 70).status == NetworkRateStale);
         CHECK(NetworkAccumulatorUpdate(&state, NULL, 0, 72).status == NetworkRateUnavailable);
         CHECK(NetworkAccumulatorUpdate(&state, pair, 2, 74).status == NetworkRateUnavailable);
+        NetworkAccumulator wide = {0};
+        NetworkCounter crossing[] = {counter("en0", 14, UINT64_C(4294967000),
+                                             UINT64_C(4294967000), 1)};
+        CHECK(NetworkAccumulatorUpdate(&wide, crossing, 1, 80).status == NetworkRateUnavailable);
+        crossing[0].receivedBytes = UINT64_C(4294969000);
+        crossing[0].sentBytes = UINT64_C(4294968000);
+        measured = NetworkAccumulatorUpdate(&wide, crossing, 1, 82);
+        CHECK(measured.status == NetworkRateMeasured && measured.receivedBytesPerSecond == 1000 &&
+              measured.sentBytesPerSecond == 500); // Full 64-bit counters cross 4 GiB without reset.
         NetworkSampler *sampler = [NetworkSampler new];
         NetworkRate first = [sampler sample];
         [NSThread sleepForTimeInterval:2.1];

@@ -1,0 +1,186 @@
+{
+  "app_run_id": "7BEDAA20-55EE-4196-9EFF-924AAD36378A",
+  "app_run_start_utc_ms": 1790227010297,
+  "command": [
+    "/usr/bin/networkQuality",
+    "-u",
+    "-M",
+    "10",
+    "-c"
+  ],
+  "duration_s": 6.140920792,
+  "end_utc_ms": 1790227105389,
+  "interface": "en0",
+  "network_quality_returncode": 0,
+  "observations": [
+    {
+      "interfaces": [
+        {
+          "baudrate": 748800000,
+          "flags": 34915,
+          "index": 14,
+          "link_change_s": 1790218295,
+          "link_change_us": 0,
+          "name": "en0",
+          "route_rx_bytes": 3151657984,
+          "route_tx_bytes": 3473954816,
+          "rx_bytes": 50396298538,
+          "selected": true,
+          "tx_bytes": 3473954988,
+          "type": 6
+        }
+      ],
+      "monotonic_s": 243703.814001,
+      "utc_ms": 1790227099242
+    },
+    {
+      "interfaces": [
+        {
+          "baudrate": 748800000,
+          "flags": 34915,
+          "index": 14,
+          "link_change_s": 1790218295,
+          "link_change_us": 0,
+          "name": "en0",
+          "route_rx_bytes": 3151657984,
+          "route_tx_bytes": 3473954816,
+          "rx_bytes": 50396298538,
+          "selected": true,
+          "tx_bytes": 3473954988,
+          "type": 6
+        }
+      ],
+      "monotonic_s": 243703.82802,
+      "utc_ms": 1790227099256
+    },
+    {
+      "interfaces": [
+        {
+          "baudrate": 748800000,
+          "flags": 34915,
+          "index": 14,
+          "link_change_s": 1790218295,
+          "link_change_us": 0,
+          "name": "en0",
+          "route_rx_bytes": 3194429440,
+          "route_tx_bytes": 3474063360,
+          "rx_bytes": 50439164339,
+          "selected": true,
+          "tx_bytes": 3474063846,
+          "type": 6
+        }
+      ],
+      "monotonic_s": 243704.845487,
+      "utc_ms": 1790227100274
+    },
+    {
+      "interfaces": [
+        {
+          "baudrate": 748800000,
+          "flags": 34915,
+          "index": 14,
+          "link_change_s": 1790218295,
+          "link_change_us": 0,
+          "name": "en0",
+          "route_rx_bytes": 3264900096,
+          "route_tx_bytes": 3474274304,
+          "rx_bytes": 50509649904,
+          "selected": true,
+          "tx_bytes": 3474275530,
+          "type": 6
+        }
+      ],
+      "monotonic_s": 243705.871839,
+      "utc_ms": 1790227101300
+    },
+    {
+      "interfaces": [
+        {
+          "baudrate": 748800000,
+          "flags": 34915,
+          "index": 14,
+          "link_change_s": 1790218295,
+          "link_change_us": 0,
+          "name": "en0",
+          "route_rx_bytes": 3339015168,
+          "route_tx_bytes": 3474560000,
+          "rx_bytes": 50583656197,
+          "selected": true,
+          "tx_bytes": 3474560161,
+          "type": 6
+        }
+      ],
+      "monotonic_s": 243706.898373,
+      "utc_ms": 1790227102327
+    },
+    {
+      "interfaces": [
+        {
+          "baudrate": 748800000,
+          "flags": 34915,
+          "index": 14,
+          "link_change_s": 1790218295,
+          "link_change_us": 0,
+          "name": "en0",
+          "route_rx_bytes": 3410521088,
+          "route_tx_bytes": 3474908160,
+          "rx_bytes": 50655303404,
+          "selected": true,
+          "tx_bytes": 3474909392,
+          "type": 6
+        }
+      ],
+      "monotonic_s": 243707.919478,
+      "utc_ms": 1790227103348
+    },
+    {
+      "interfaces": [
+        {
+          "baudrate": 748800000,
+          "flags": 34915,
+          "index": 14,
+          "link_change_s": 1790218295,
+          "link_change_us": 0,
+          "name": "en0",
+          "route_rx_bytes": 3483640832,
+          "route_tx_bytes": 3475288064,
+          "rx_bytes": 50728281117,
+          "selected": true,
+          "tx_bytes": 3475288302,
+          "type": 6
+        }
+      ],
+      "monotonic_s": 243708.93403,
+      "utc_ms": 1790227104362
+    },
+    {
+      "interfaces": [
+        {
+          "baudrate": 748800000,
+          "flags": 34915,
+          "index": 14,
+          "link_change_s": 1790218295,
+          "link_change_us": 0,
+          "name": "en0",
+          "route_rx_bytes": 3548269568,
+          "route_tx_bytes": 3475682304,
+          "rx_bytes": 50792910282,
+          "selected": true,
+          "tx_bytes": 3475682855,
+          "type": 6
+        }
+      ],
+      "monotonic_s": 243709.955118,
+      "utc_ms": 1790227105384
+    }
+  ],
+  "phase": "download",
+  "reference": {
+    "dl_bytes_transferred": 371747841,
+    "dl_phase_duration": 5.230779051780701,
+    "dl_throughput": 535134400,
+    "interface_name": "en0",
+    "test_endpoint": "ausyd2-edge-fx-004.aaplimg.com"
+  },
+  "start_utc_ms": 1790227099248
+}

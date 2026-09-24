@@ -1,4 +1,5 @@
 #import "NetworkSampler.h"
+#import <net/if_mib.h>
 #import <net/if_types.h>
 #import <net/route.h>
 #import <sys/socket.h>
@@ -133,13 +134,27 @@ NetworkRate NetworkAccumulatorUpdate(NetworkAccumulator *state, const NetworkCou
                 if (NetworkInterfaceEligible(name, item.ifm_data.ifi_type,
                                              item.ifm_flags, item.ifm_data.ifi_baudrate)) {
                     if (count == NetworkMaximumInterfaces) { valid = NO; break; }
+                    // RTM_IFINFO2 truncates byte counts at 32 bits on this macOS build.
+                    // Read the same interface's full if_data64 counters via ifmib.
+                    int dataMib[6] = { CTL_NET, PF_LINK, NETLINK_GENERIC,
+                                       IFMIB_IFDATA, item.ifm_index, IFDATA_GENERAL };
+                    struct ifmibdata data = {0};
+                    size_t dataLength = sizeof(data);
+                    if (sysctl(dataMib, 6, &data, &dataLength, NULL, 0) != 0 ||
+                        dataLength != sizeof(data) ||
+                        strncmp(data.ifmd_name, name, sizeof(data.ifmd_name)) != 0 ||
+                        !NetworkInterfaceEligible(name, data.ifmd_data.ifi_type,
+                                                  data.ifmd_flags, data.ifmd_data.ifi_baudrate)) {
+                        valid = NO;
+                        break;
+                    }
                     NetworkCounter *counter = &counters[count++];
                     memcpy(counter->name, name, IF_NAMESIZE);
                     counter->index = item.ifm_index;
-                    counter->receivedBytes = item.ifm_data.ifi_ibytes;
-                    counter->sentBytes = item.ifm_data.ifi_obytes;
-                    counter->linkChangeSeconds = item.ifm_data.ifi_lastchange.tv_sec;
-                    counter->linkChangeMicroseconds = item.ifm_data.ifi_lastchange.tv_usec;
+                    counter->receivedBytes = data.ifmd_data.ifi_ibytes;
+                    counter->sentBytes = data.ifmd_data.ifi_obytes;
+                    counter->linkChangeSeconds = data.ifmd_data.ifi_lastchange.tv_sec;
+                    counter->linkChangeMicroseconds = data.ifmd_data.ifi_lastchange.tv_usec;
                 }
             }
         }

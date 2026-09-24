@@ -1,0 +1,1234 @@
+{
+  "app_run_id": "7BEDAA20-55EE-4196-9EFF-924AAD36378A",
+  "app_run_start_utc_ms": 1790227010297,
+  "command": null,
+  "duration_s": 60.020072750000004,
+  "end_utc_ms": 1790227079482,
+  "interface": "en0",
+  "network_quality_returncode": null,
+  "observations": [
+    {
+      "interfaces": [
+        {
+          "baudrate": 748800000,
+          "flags": 34915,
+          "index": 14,
+          "link_change_s": 1790218295,
+          "link_change_us": 0,
+          "name": "en0",
+          "route_rx_bytes": 3144860672,
+          "route_tx_bytes": 3472909312,
+          "rx_bytes": 50389501622,
+          "selected": true,
+          "tx_bytes": 3472910208,
+          "type": 6
+        }
+      ],
+      "monotonic_s": 243624.023163,
+      "utc_ms": 1790227019452
+    },
+    {
+      "interfaces": [
+        {
+          "baudrate": 748800000,
+          "flags": 34915,
+          "index": 14,
+          "link_change_s": 1790218295,
+          "link_change_us": 0,
+          "name": "en0",
+          "route_rx_bytes": 3144860672,
+          "route_tx_bytes": 3472909312,
+          "rx_bytes": 50389501622,
+          "selected": true,
+          "tx_bytes": 3472910208,
+          "type": 6
+        }
+      ],
+      "monotonic_s": 243624.038564,
+      "utc_ms": 1790227019467
+    },
+    {
+      "interfaces": [
+        {
+          "baudrate": 748800000,
+          "flags": 34915,
+          "index": 14,
+          "link_change_s": 1790218295,
+          "link_change_us": 0,
+          "name": "en0",
+          "route_rx_bytes": 3145425920,
+          "route_tx_bytes": 3472928768,
+          "rx_bytes": 50390066223,
+          "selected": true,
+          "tx_bytes": 3472929100,
+          "type": 6
+        }
+      ],
+      "monotonic_s": 243625.068919,
+      "utc_ms": 1790227020497
+    },
+    {
+      "interfaces": [
+        {
+          "baudrate": 748800000,
+          "flags": 34915,
+          "index": 14,
+          "link_change_s": 1790218295,
+          "link_change_us": 0,
+          "name": "en0",
+          "route_rx_bytes": 3145468928,
+          "route_tx_bytes": 3472929792,
+          "rx_bytes": 50390110111,
+          "selected": true,
+          "tx_bytes": 3472930442,
+          "type": 6
+        }
+      ],
+      "monotonic_s": 243626.112,
+      "utc_ms": 1790227021540
+    },
+    {
+      "interfaces": [
+        {
+          "baudrate": 748800000,
+          "flags": 34915,
+          "index": 14,
+          "link_change_s": 1790218295,
+          "link_change_us": 0,
+          "name": "en0",
+          "route_rx_bytes": 3145470976,
+          "route_tx_bytes": 3472929792,
+          "rx_bytes": 50390111600,
+          "selected": true,
+          "tx_bytes": 3472930699,
+          "type": 6
+        }
+      ],
+      "monotonic_s": 243627.151872,
+      "utc_ms": 1790227022580
+    },
+    {
+      "interfaces": [
+        {
+          "baudrate": 748800000,
+          "flags": 34915,
+          "index": 14,
+          "link_change_s": 1790218295,
+          "link_change_us": 0,
+          "name": "en0",
+          "route_rx_bytes": 3145475072,
+          "route_tx_bytes": 3472930816,
+          "rx_bytes": 50390115934,
+          "selected": true,
+          "tx_bytes": 3472931033,
+          "type": 6
+        }
+      ],
+      "monotonic_s": 243628.174594,
+      "utc_ms": 1790227023603
+    },
+    {
+      "interfaces": [
+        {
+          "baudrate": 748800000,
+          "flags": 34915,
+          "index": 14,
+          "link_change_s": 1790218295,
+          "link_change_us": 0,
+          "name": "en0",
+          "route_rx_bytes": 3145481216,
+          "route_tx_bytes": 3472944128,
+          "rx_bytes": 50390121781,
+          "selected": true,
+          "tx_bytes": 3472944598,
+          "type": 6
+        }
+      ],
+      "monotonic_s": 243629.207606,
+      "utc_ms": 1790227024636
+    },
+    {
+      "interfaces": [
+        {
+          "baudrate": 748800000,
+          "flags": 34915,
+          "index": 14,
+          "link_change_s": 1790218295,
+          "link_change_us": 0,
+          "name": "en0",
+          "route_rx_bytes": 3145485312,
+          "route_tx_bytes": 3472946176,
+          "rx_bytes": 50390125849,
+          "selected": true,
+          "tx_bytes": 3472946435,
+          "type": 6
+        }
+      ],
+      "monotonic_s": 243630.231168,
+      "utc_ms": 1790227025660
+    },
+    {
+      "interfaces": [
+        {
+          "baudrate": 748800000,
+          "flags": 34915,
+          "index": 14,
+          "link_change_s": 1790218295,
+          "link_change_us": 0,
+          "name": "en0",
+          "route_rx_bytes": 3145493504,
+          "route_tx_bytes": 3472949248,
+          "rx_bytes": 50390134005,
+          "selected": true,
+          "tx_bytes": 3472950274,
+          "type": 6
+        }
+      ],
+      "monotonic_s": 243631.255359,
+      "utc_ms": 1790227026684
+    },
+    {
+      "interfaces": [
+        {
+          "baudrate": 748800000,
+          "flags": 34915,
+          "index": 14,
+          "link_change_s": 1790218295,
+          "link_change_us": 0,
+          "name": "en0",
+          "route_rx_bytes": 3145499648,
+          "route_tx_bytes": 3472952320,
+          "rx_bytes": 50390140020,
+          "selected": true,
+          "tx_bytes": 3472953130,
+          "type": 6
+        }
+      ],
+      "monotonic_s": 243632.27121,
+      "utc_ms": 1790227027700
+    },
+    {
+      "interfaces": [
+        {
+          "baudrate": 748800000,
+          "flags": 34915,
+          "index": 14,
+          "link_change_s": 1790218295,
+          "link_change_us": 0,
+          "name": "en0",
+          "route_rx_bytes": 3145536512,
+          "route_tx_bytes": 3472960512,
+          "rx_bytes": 50390177626,
+          "selected": true,
+          "tx_bytes": 3472960708,
+          "type": 6
+        }
+      ],
+      "monotonic_s": 243633.299719,
+      "utc_ms": 1790227028728
+    },
+    {
+      "interfaces": [
+        {
+          "baudrate": 748800000,
+          "flags": 34915,
+          "index": 14,
+          "link_change_s": 1790218295,
+          "link_change_us": 0,
+          "name": "en0",
+          "route_rx_bytes": 3145560064,
+          "route_tx_bytes": 3472973824,
+          "rx_bytes": 50390201192,
+          "selected": true,
+          "tx_bytes": 3472974110,
+          "type": 6
+        }
+      ],
+      "monotonic_s": 243634.331536,
+      "utc_ms": 1790227029760
+    },
+    {
+      "interfaces": [
+        {
+          "baudrate": 748800000,
+          "flags": 34915,
+          "index": 14,
+          "link_change_s": 1790218295,
+          "link_change_us": 0,
+          "name": "en0",
+          "route_rx_bytes": 3145626624,
+          "route_tx_bytes": 3472982016,
+          "rx_bytes": 50390267513,
+          "selected": true,
+          "tx_bytes": 3472982673,
+          "type": 6
+        }
+      ],
+      "monotonic_s": 243635.363225,
+      "utc_ms": 1790227030792
+    },
+    {
+      "interfaces": [
+        {
+          "baudrate": 748800000,
+          "flags": 34915,
+          "index": 14,
+          "link_change_s": 1790218295,
+          "link_change_us": 0,
+          "name": "en0",
+          "route_rx_bytes": 3145629696,
+          "route_tx_bytes": 3472987136,
+          "rx_bytes": 50390270726,
+          "selected": true,
+          "tx_bytes": 3472988036,
+          "type": 6
+        }
+      ],
+      "monotonic_s": 243636.391045,
+      "utc_ms": 1790227031819
+    },
+    {
+      "interfaces": [
+        {
+          "baudrate": 748800000,
+          "flags": 34915,
+          "index": 14,
+          "link_change_s": 1790218295,
+          "link_change_us": 0,
+          "name": "en0",
+          "route_rx_bytes": 3145645056,
+          "route_tx_bytes": 3473413120,
+          "rx_bytes": 50390285760,
+          "selected": true,
+          "tx_bytes": 3473414104,
+          "type": 6
+        }
+      ],
+      "monotonic_s": 243637.429422,
+      "utc_ms": 1790227032858
+    },
+    {
+      "interfaces": [
+        {
+          "baudrate": 748800000,
+          "flags": 34915,
+          "index": 14,
+          "link_change_s": 1790218295,
+          "link_change_us": 0,
+          "name": "en0",
+          "route_rx_bytes": 3145670656,
+          "route_tx_bytes": 3473424384,
+          "rx_bytes": 50390311052,
+          "selected": true,
+          "tx_bytes": 3473425247,
+          "type": 6
+        }
+      ],
+      "monotonic_s": 243638.452259,
+      "utc_ms": 1790227033881
+    },
+    {
+      "interfaces": [
+        {
+          "baudrate": 748800000,
+          "flags": 34915,
+          "index": 14,
+          "link_change_s": 1790218295,
+          "link_change_us": 0,
+          "name": "en0",
+          "route_rx_bytes": 3145670656,
+          "route_tx_bytes": 3473424384,
+          "rx_bytes": 50390311052,
+          "selected": true,
+          "tx_bytes": 3473425301,
+          "type": 6
+        }
+      ],
+      "monotonic_s": 243639.479574,
+      "utc_ms": 1790227034908
+    },
+    {
+      "interfaces": [
+        {
+          "baudrate": 748800000,
+          "flags": 34915,
+          "index": 14,
+          "link_change_s": 1790218295,
+          "link_change_us": 0,
+          "name": "en0",
+          "route_rx_bytes": 3145670656,
+          "route_tx_bytes": 3473424384,
+          "rx_bytes": 50390311122,
+          "selected": true,
+          "tx_bytes": 3473425372,
+          "type": 6
+        }
+      ],
+      "monotonic_s": 243640.514416,
+      "utc_ms": 1790227035943
+    },
+    {
+      "interfaces": [
+        {
+          "baudrate": 748800000,
+          "flags": 34915,
+          "index": 14,
+          "link_change_s": 1790218295,
+          "link_change_us": 0,
+          "name": "en0",
+          "route_rx_bytes": 3145681920,
+          "route_tx_bytes": 3473435648,
+          "rx_bytes": 50390322775,
+          "selected": true,
+          "tx_bytes": 3473436330,
+          "type": 6
+        }
+      ],
+      "monotonic_s": 243641.541663,
+      "utc_ms": 1790227036970
+    },
+    {
+      "interfaces": [
+        {
+          "baudrate": 748800000,
+          "flags": 34915,
+          "index": 14,
+          "link_change_s": 1790218295,
+          "link_change_us": 0,
+          "name": "en0",
+          "route_rx_bytes": 3145681920,
+          "route_tx_bytes": 3473435648,
+          "rx_bytes": 50390323001,
+          "selected": true,
+          "tx_bytes": 3473436494,
+          "type": 6
+        }
+      ],
+      "monotonic_s": 243642.565987,
+      "utc_ms": 1790227037994
+    },
+    {
+      "interfaces": [
+        {
+          "baudrate": 748800000,
+          "flags": 34915,
+          "index": 14,
+          "link_change_s": 1790218295,
+          "link_change_us": 0,
+          "name": "en0",
+          "route_rx_bytes": 3145682944,
+          "route_tx_bytes": 3473436672,
+          "rx_bytes": 50390323327,
+          "selected": true,
+          "tx_bytes": 3473436804,
+          "type": 6
+        }
+      ],
+      "monotonic_s": 243643.600418,
+      "utc_ms": 1790227039029
+    },
+    {
+      "interfaces": [
+        {
+          "baudrate": 748800000,
+          "flags": 34915,
+          "index": 14,
+          "link_change_s": 1790218295,
+          "link_change_us": 0,
+          "name": "en0",
+          "route_rx_bytes": 3145682944,
+          "route_tx_bytes": 3473436672,
+          "rx_bytes": 50390323657,
+          "selected": true,
+          "tx_bytes": 3473437074,
+          "type": 6
+        }
+      ],
+      "monotonic_s": 243644.634445,
+      "utc_ms": 1790227040063
+    },
+    {
+      "interfaces": [
+        {
+          "baudrate": 748800000,
+          "flags": 34915,
+          "index": 14,
+          "link_change_s": 1790218295,
+          "link_change_us": 0,
+          "name": "en0",
+          "route_rx_bytes": 3145687040,
+          "route_tx_bytes": 3473437696,
+          "rx_bytes": 50390327685,
+          "selected": true,
+          "tx_bytes": 3473438245,
+          "type": 6
+        }
+      ],
+      "monotonic_s": 243645.666023,
+      "utc_ms": 1790227041094
+    },
+    {
+      "interfaces": [
+        {
+          "baudrate": 748800000,
+          "flags": 34915,
+          "index": 14,
+          "link_change_s": 1790218295,
+          "link_change_us": 0,
+          "name": "en0",
+          "route_rx_bytes": 3145688064,
+          "route_tx_bytes": 3473437696,
+          "rx_bytes": 50390328973,
+          "selected": true,
+          "tx_bytes": 3473438365,
+          "type": 6
+        }
+      ],
+      "monotonic_s": 243646.692232,
+      "utc_ms": 1790227042121
+    },
+    {
+      "interfaces": [
+        {
+          "baudrate": 748800000,
+          "flags": 34915,
+          "index": 14,
+          "link_change_s": 1790218295,
+          "link_change_us": 0,
+          "name": "en0",
+          "route_rx_bytes": 3145692160,
+          "route_tx_bytes": 3473461248,
+          "rx_bytes": 50390332670,
+          "selected": true,
+          "tx_bytes": 3473461449,
+          "type": 6
+        }
+      ],
+      "monotonic_s": 243647.719725,
+      "utc_ms": 1790227043148
+    },
+    {
+      "interfaces": [
+        {
+          "baudrate": 748800000,
+          "flags": 34915,
+          "index": 14,
+          "link_change_s": 1790218295,
+          "link_change_us": 0,
+          "name": "en0",
+          "route_rx_bytes": 3145693184,
+          "route_tx_bytes": 3473483776,
+          "rx_bytes": 50390333726,
+          "selected": true,
+          "tx_bytes": 3473484143,
+          "type": 6
+        }
+      ],
+      "monotonic_s": 243648.750128,
+      "utc_ms": 1790227044179
+    },
+    {
+      "interfaces": [
+        {
+          "baudrate": 748800000,
+          "flags": 34915,
+          "index": 14,
+          "link_change_s": 1790218295,
+          "link_change_us": 0,
+          "name": "en0",
+          "route_rx_bytes": 3145694208,
+          "route_tx_bytes": 3473483776,
+          "rx_bytes": 50390334475,
+          "selected": true,
+          "tx_bytes": 3473484383,
+          "type": 6
+        }
+      ],
+      "monotonic_s": 243649.780376,
+      "utc_ms": 1790227045209
+    },
+    {
+      "interfaces": [
+        {
+          "baudrate": 748800000,
+          "flags": 34915,
+          "index": 14,
+          "link_change_s": 1790218295,
+          "link_change_us": 0,
+          "name": "en0",
+          "route_rx_bytes": 3145695232,
+          "route_tx_bytes": 3473484800,
+          "rx_bytes": 50390336500,
+          "selected": true,
+          "tx_bytes": 3473485564,
+          "type": 6
+        }
+      ],
+      "monotonic_s": 243650.803747,
+      "utc_ms": 1790227046232
+    },
+    {
+      "interfaces": [
+        {
+          "baudrate": 748800000,
+          "flags": 34915,
+          "index": 14,
+          "link_change_s": 1790218295,
+          "link_change_us": 0,
+          "name": "en0",
+          "route_rx_bytes": 3145697280,
+          "route_tx_bytes": 3473485824,
+          "rx_bytes": 50390337869,
+          "selected": true,
+          "tx_bytes": 3473486176,
+          "type": 6
+        }
+      ],
+      "monotonic_s": 243651.82527,
+      "utc_ms": 1790227047254
+    },
+    {
+      "interfaces": [
+        {
+          "baudrate": 748800000,
+          "flags": 34915,
+          "index": 14,
+          "link_change_s": 1790218295,
+          "link_change_us": 0,
+          "name": "en0",
+          "route_rx_bytes": 3145701376,
+          "route_tx_bytes": 3473514496,
+          "rx_bytes": 50390342042,
+          "selected": true,
+          "tx_bytes": 3473514814,
+          "type": 6
+        }
+      ],
+      "monotonic_s": 243652.846566,
+      "utc_ms": 1790227048275
+    },
+    {
+      "interfaces": [
+        {
+          "baudrate": 748800000,
+          "flags": 34915,
+          "index": 14,
+          "link_change_s": 1790218295,
+          "link_change_us": 0,
+          "name": "en0",
+          "route_rx_bytes": 3145712640,
+          "route_tx_bytes": 3473531904,
+          "rx_bytes": 50390352932,
+          "selected": true,
+          "tx_bytes": 3473532058,
+          "type": 6
+        }
+      ],
+      "monotonic_s": 243653.867546,
+      "utc_ms": 1790227049296
+    },
+    {
+      "interfaces": [
+        {
+          "baudrate": 748800000,
+          "flags": 34915,
+          "index": 14,
+          "link_change_s": 1790218295,
+          "link_change_us": 0,
+          "name": "en0",
+          "route_rx_bytes": 3145712640,
+          "route_tx_bytes": 3473531904,
+          "rx_bytes": 50390353862,
+          "selected": true,
+          "tx_bytes": 3473532813,
+          "type": 6
+        }
+      ],
+      "monotonic_s": 243654.890918,
+      "utc_ms": 1790227050319
+    },
+    {
+      "interfaces": [
+        {
+          "baudrate": 748800000,
+          "flags": 34915,
+          "index": 14,
+          "link_change_s": 1790218295,
+          "link_change_us": 0,
+          "name": "en0",
+          "route_rx_bytes": 3145715712,
+          "route_tx_bytes": 3473548288,
+          "rx_bytes": 50390356153,
+          "selected": true,
+          "tx_bytes": 3473548864,
+          "type": 6
+        }
+      ],
+      "monotonic_s": 243655.907395,
+      "utc_ms": 1790227051336
+    },
+    {
+      "interfaces": [
+        {
+          "baudrate": 748800000,
+          "flags": 34915,
+          "index": 14,
+          "link_change_s": 1790218295,
+          "link_change_us": 0,
+          "name": "en0",
+          "route_rx_bytes": 3146471424,
+          "route_tx_bytes": 3473567744,
+          "rx_bytes": 50391112684,
+          "selected": true,
+          "tx_bytes": 3473568649,
+          "type": 6
+        }
+      ],
+      "monotonic_s": 243656.921525,
+      "utc_ms": 1790227052350
+    },
+    {
+      "interfaces": [
+        {
+          "baudrate": 748800000,
+          "flags": 34915,
+          "index": 14,
+          "link_change_s": 1790218295,
+          "link_change_us": 0,
+          "name": "en0",
+          "route_rx_bytes": 3151181824,
+          "route_tx_bytes": 3473594368,
+          "rx_bytes": 50395822304,
+          "selected": true,
+          "tx_bytes": 3473595121,
+          "type": 6
+        }
+      ],
+      "monotonic_s": 243657.941449,
+      "utc_ms": 1790227053370
+    },
+    {
+      "interfaces": [
+        {
+          "baudrate": 748800000,
+          "flags": 34915,
+          "index": 14,
+          "link_change_s": 1790218295,
+          "link_change_us": 0,
+          "name": "en0",
+          "route_rx_bytes": 3151182848,
+          "route_tx_bytes": 3473595392,
+          "rx_bytes": 50395823931,
+          "selected": true,
+          "tx_bytes": 3473596081,
+          "type": 6
+        }
+      ],
+      "monotonic_s": 243658.958382,
+      "utc_ms": 1790227054387
+    },
+    {
+      "interfaces": [
+        {
+          "baudrate": 748800000,
+          "flags": 34915,
+          "index": 14,
+          "link_change_s": 1790218295,
+          "link_change_us": 0,
+          "name": "en0",
+          "route_rx_bytes": 3151183872,
+          "route_tx_bytes": 3473596416,
+          "rx_bytes": 50395824899,
+          "selected": true,
+          "tx_bytes": 3473596958,
+          "type": 6
+        }
+      ],
+      "monotonic_s": 243659.979757,
+      "utc_ms": 1790227055408
+    },
+    {
+      "interfaces": [
+        {
+          "baudrate": 748800000,
+          "flags": 34915,
+          "index": 14,
+          "link_change_s": 1790218295,
+          "link_change_us": 0,
+          "name": "en0",
+          "route_rx_bytes": 3151185920,
+          "route_tx_bytes": 3473619968,
+          "rx_bytes": 50395826930,
+          "selected": true,
+          "tx_bytes": 3473620667,
+          "type": 6
+        }
+      ],
+      "monotonic_s": 243661.001964,
+      "utc_ms": 1790227056430
+    },
+    {
+      "interfaces": [
+        {
+          "baudrate": 748800000,
+          "flags": 34915,
+          "index": 14,
+          "link_change_s": 1790218295,
+          "link_change_us": 0,
+          "name": "en0",
+          "route_rx_bytes": 3151190016,
+          "route_tx_bytes": 3473620992,
+          "rx_bytes": 50395830493,
+          "selected": true,
+          "tx_bytes": 3473621845,
+          "type": 6
+        }
+      ],
+      "monotonic_s": 243662.020605,
+      "utc_ms": 1790227057449
+    },
+    {
+      "interfaces": [
+        {
+          "baudrate": 748800000,
+          "flags": 34915,
+          "index": 14,
+          "link_change_s": 1790218295,
+          "link_change_us": 0,
+          "name": "en0",
+          "route_rx_bytes": 3151191040,
+          "route_tx_bytes": 3473622016,
+          "rx_bytes": 50395831355,
+          "selected": true,
+          "tx_bytes": 3473622594,
+          "type": 6
+        }
+      ],
+      "monotonic_s": 243663.039927,
+      "utc_ms": 1790227058468
+    },
+    {
+      "interfaces": [
+        {
+          "baudrate": 748800000,
+          "flags": 34915,
+          "index": 14,
+          "link_change_s": 1790218295,
+          "link_change_us": 0,
+          "name": "en0",
+          "route_rx_bytes": 3151236096,
+          "route_tx_bytes": 3473625088,
+          "rx_bytes": 50395876667,
+          "selected": true,
+          "tx_bytes": 3473625598,
+          "type": 6
+        }
+      ],
+      "monotonic_s": 243664.070845,
+      "utc_ms": 1790227059499
+    },
+    {
+      "interfaces": [
+        {
+          "baudrate": 748800000,
+          "flags": 34915,
+          "index": 14,
+          "link_change_s": 1790218295,
+          "link_change_us": 0,
+          "name": "en0",
+          "route_rx_bytes": 3151238144,
+          "route_tx_bytes": 3473626112,
+          "rx_bytes": 50395878487,
+          "selected": true,
+          "tx_bytes": 3473626904,
+          "type": 6
+        }
+      ],
+      "monotonic_s": 243665.090317,
+      "utc_ms": 1790227060519
+    },
+    {
+      "interfaces": [
+        {
+          "baudrate": 748800000,
+          "flags": 34915,
+          "index": 14,
+          "link_change_s": 1790218295,
+          "link_change_us": 0,
+          "name": "en0",
+          "route_rx_bytes": 3151275008,
+          "route_tx_bytes": 3473634304,
+          "rx_bytes": 50395915359,
+          "selected": true,
+          "tx_bytes": 3473635180,
+          "type": 6
+        }
+      ],
+      "monotonic_s": 243666.120671,
+      "utc_ms": 1790227061549
+    },
+    {
+      "interfaces": [
+        {
+          "baudrate": 748800000,
+          "flags": 34915,
+          "index": 14,
+          "link_change_s": 1790218295,
+          "link_change_us": 0,
+          "name": "en0",
+          "route_rx_bytes": 3151278080,
+          "route_tx_bytes": 3473646592,
+          "rx_bytes": 50395918854,
+          "selected": true,
+          "tx_bytes": 3473647101,
+          "type": 6
+        }
+      ],
+      "monotonic_s": 243667.151408,
+      "utc_ms": 1790227062580
+    },
+    {
+      "interfaces": [
+        {
+          "baudrate": 748800000,
+          "flags": 34915,
+          "index": 14,
+          "link_change_s": 1790218295,
+          "link_change_us": 0,
+          "name": "en0",
+          "route_rx_bytes": 3151279104,
+          "route_tx_bytes": 3473647616,
+          "rx_bytes": 50395919840,
+          "selected": true,
+          "tx_bytes": 3473648054,
+          "type": 6
+        }
+      ],
+      "monotonic_s": 243668.169639,
+      "utc_ms": 1790227063598
+    },
+    {
+      "interfaces": [
+        {
+          "baudrate": 748800000,
+          "flags": 34915,
+          "index": 14,
+          "link_change_s": 1790218295,
+          "link_change_us": 0,
+          "name": "en0",
+          "route_rx_bytes": 3151280128,
+          "route_tx_bytes": 3473648640,
+          "rx_bytes": 50395920582,
+          "selected": true,
+          "tx_bytes": 3473648774,
+          "type": 6
+        }
+      ],
+      "monotonic_s": 243669.207542,
+      "utc_ms": 1790227064636
+    },
+    {
+      "interfaces": [
+        {
+          "baudrate": 748800000,
+          "flags": 34915,
+          "index": 14,
+          "link_change_s": 1790218295,
+          "link_change_us": 0,
+          "name": "en0",
+          "route_rx_bytes": 3151305728,
+          "route_tx_bytes": 3473659904,
+          "rx_bytes": 50395946519,
+          "selected": true,
+          "tx_bytes": 3473660803,
+          "type": 6
+        }
+      ],
+      "monotonic_s": 243670.23984,
+      "utc_ms": 1790227065668
+    },
+    {
+      "interfaces": [
+        {
+          "baudrate": 748800000,
+          "flags": 34915,
+          "index": 14,
+          "link_change_s": 1790218295,
+          "link_change_us": 0,
+          "name": "en0",
+          "route_rx_bytes": 3151306752,
+          "route_tx_bytes": 3473660928,
+          "rx_bytes": 50395947216,
+          "selected": true,
+          "tx_bytes": 3473661396,
+          "type": 6
+        }
+      ],
+      "monotonic_s": 243671.262658,
+      "utc_ms": 1790227066691
+    },
+    {
+      "interfaces": [
+        {
+          "baudrate": 748800000,
+          "flags": 34915,
+          "index": 14,
+          "link_change_s": 1790218295,
+          "link_change_us": 0,
+          "name": "en0",
+          "route_rx_bytes": 3151307776,
+          "route_tx_bytes": 3473660928,
+          "rx_bytes": 50395948096,
+          "selected": true,
+          "tx_bytes": 3473661888,
+          "type": 6
+        }
+      ],
+      "monotonic_s": 243672.281897,
+      "utc_ms": 1790227067710
+    },
+    {
+      "interfaces": [
+        {
+          "baudrate": 748800000,
+          "flags": 34915,
+          "index": 14,
+          "link_change_s": 1790218295,
+          "link_change_us": 0,
+          "name": "en0",
+          "route_rx_bytes": 3151308800,
+          "route_tx_bytes": 3473661952,
+          "rx_bytes": 50395949496,
+          "selected": true,
+          "tx_bytes": 3473662660,
+          "type": 6
+        }
+      ],
+      "monotonic_s": 243673.306508,
+      "utc_ms": 1790227068735
+    },
+    {
+      "interfaces": [
+        {
+          "baudrate": 748800000,
+          "flags": 34915,
+          "index": 14,
+          "link_change_s": 1790218295,
+          "link_change_us": 0,
+          "name": "en0",
+          "route_rx_bytes": 3151308800,
+          "route_tx_bytes": 3473661952,
+          "rx_bytes": 50395949562,
+          "selected": true,
+          "tx_bytes": 3473662768,
+          "type": 6
+        }
+      ],
+      "monotonic_s": 243674.32854,
+      "utc_ms": 1790227069757
+    },
+    {
+      "interfaces": [
+        {
+          "baudrate": 748800000,
+          "flags": 34915,
+          "index": 14,
+          "link_change_s": 1790218295,
+          "link_change_us": 0,
+          "name": "en0",
+          "route_rx_bytes": 3151310848,
+          "route_tx_bytes": 3473662976,
+          "rx_bytes": 50395951823,
+          "selected": true,
+          "tx_bytes": 3473663998,
+          "type": 6
+        }
+      ],
+      "monotonic_s": 243675.359205,
+      "utc_ms": 1790227070788
+    },
+    {
+      "interfaces": [
+        {
+          "baudrate": 748800000,
+          "flags": 34915,
+          "index": 14,
+          "link_change_s": 1790218295,
+          "link_change_us": 0,
+          "name": "en0",
+          "route_rx_bytes": 3151312896,
+          "route_tx_bytes": 3473664000,
+          "rx_bytes": 50395953444,
+          "selected": true,
+          "tx_bytes": 3473664393,
+          "type": 6
+        }
+      ],
+      "monotonic_s": 243676.384427,
+      "utc_ms": 1790227071813
+    },
+    {
+      "interfaces": [
+        {
+          "baudrate": 748800000,
+          "flags": 34915,
+          "index": 14,
+          "link_change_s": 1790218295,
+          "link_change_us": 0,
+          "name": "en0",
+          "route_rx_bytes": 3151321088,
+          "route_tx_bytes": 3473713152,
+          "rx_bytes": 50395962142,
+          "selected": true,
+          "tx_bytes": 3473713393,
+          "type": 6
+        }
+      ],
+      "monotonic_s": 243677.407579,
+      "utc_ms": 1790227072836
+    },
+    {
+      "interfaces": [
+        {
+          "baudrate": 748800000,
+          "flags": 34915,
+          "index": 14,
+          "link_change_s": 1790218295,
+          "link_change_us": 0,
+          "name": "en0",
+          "route_rx_bytes": 3151321088,
+          "route_tx_bytes": 3473713152,
+          "rx_bytes": 50395962268,
+          "selected": true,
+          "tx_bytes": 3473713501,
+          "type": 6
+        }
+      ],
+      "monotonic_s": 243678.432001,
+      "utc_ms": 1790227073860
+    },
+    {
+      "interfaces": [
+        {
+          "baudrate": 748800000,
+          "flags": 34915,
+          "index": 14,
+          "link_change_s": 1790218295,
+          "link_change_us": 0,
+          "name": "en0",
+          "route_rx_bytes": 3151322112,
+          "route_tx_bytes": 3473713152,
+          "rx_bytes": 50395962522,
+          "selected": true,
+          "tx_bytes": 3473713621,
+          "type": 6
+        }
+      ],
+      "monotonic_s": 243679.461899,
+      "utc_ms": 1790227074890
+    },
+    {
+      "interfaces": [
+        {
+          "baudrate": 748800000,
+          "flags": 34915,
+          "index": 14,
+          "link_change_s": 1790218295,
+          "link_change_us": 0,
+          "name": "en0",
+          "route_rx_bytes": 3151324160,
+          "route_tx_bytes": 3473725440,
+          "rx_bytes": 50395964618,
+          "selected": true,
+          "tx_bytes": 3473726201,
+          "type": 6
+        }
+      ],
+      "monotonic_s": 243680.496549,
+      "utc_ms": 1790227075925
+    },
+    {
+      "interfaces": [
+        {
+          "baudrate": 748800000,
+          "flags": 34915,
+          "index": 14,
+          "link_change_s": 1790218295,
+          "link_change_us": 0,
+          "name": "en0",
+          "route_rx_bytes": 3151331328,
+          "route_tx_bytes": 3473733632,
+          "rx_bytes": 50395972600,
+          "selected": true,
+          "tx_bytes": 3473733925,
+          "type": 6
+        }
+      ],
+      "monotonic_s": 243681.521804,
+      "utc_ms": 1790227076950
+    },
+    {
+      "interfaces": [
+        {
+          "baudrate": 748800000,
+          "flags": 34915,
+          "index": 14,
+          "link_change_s": 1790218295,
+          "link_change_us": 0,
+          "name": "en0",
+          "route_rx_bytes": 3151336448,
+          "route_tx_bytes": 3473751040,
+          "rx_bytes": 50395976787,
+          "selected": true,
+          "tx_bytes": 3473751603,
+          "type": 6
+        }
+      ],
+      "monotonic_s": 243682.544281,
+      "utc_ms": 1790227077973
+    },
+    {
+      "interfaces": [
+        {
+          "baudrate": 748800000,
+          "flags": 34915,
+          "index": 14,
+          "link_change_s": 1790218295,
+          "link_change_us": 0,
+          "name": "en0",
+          "route_rx_bytes": 3151381504,
+          "route_tx_bytes": 3473753088,
+          "rx_bytes": 50396021981,
+          "selected": true,
+          "tx_bytes": 3473753303,
+          "type": 6
+        }
+      ],
+      "monotonic_s": 243683.577008,
+      "utc_ms": 1790227079005
+    },
+    {
+      "interfaces": [
+        {
+          "baudrate": 748800000,
+          "flags": 34915,
+          "index": 14,
+          "link_change_s": 1790218295,
+          "link_change_us": 0,
+          "name": "en0",
+          "route_rx_bytes": 3151381504,
+          "route_tx_bytes": 3473753088,
+          "rx_bytes": 50396022047,
+          "selected": true,
+          "tx_bytes": 3473753303,
+          "type": 6
+        }
+      ],
+      "monotonic_s": 243684.045024,
+      "utc_ms": 1790227079473
+    }
+  ],
+  "phase": "baseline",
+  "reference": null,
+  "start_utc_ms": 1790227019462
+}

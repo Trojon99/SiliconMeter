@@ -1,0 +1,266 @@
+{
+  "app_run_id": "7BEDAA20-55EE-4196-9EFF-924AAD36378A",
+  "app_run_start_utc_ms": 1790227010297,
+  "command": [
+    "/usr/bin/networkQuality",
+    "-d",
+    "-M",
+    "10",
+    "-c"
+  ],
+  "duration_s": 10.283713166,
+  "end_utc_ms": 1790227165086,
+  "interface": "en0",
+  "network_quality_returncode": 0,
+  "observations": [
+    {
+      "interfaces": [
+        {
+          "baudrate": 748800000,
+          "flags": 34915,
+          "index": 14,
+          "link_change_s": 1790218295,
+          "link_change_us": 0,
+          "name": "en0",
+          "route_rx_bytes": 3549163520,
+          "route_tx_bytes": 3477106688,
+          "rx_bytes": 50793804529,
+          "selected": true,
+          "tx_bytes": 3477106695,
+          "type": 6
+        }
+      ],
+      "monotonic_s": 243759.369646,
+      "utc_ms": 1790227154798
+    },
+    {
+      "interfaces": [
+        {
+          "baudrate": 748800000,
+          "flags": 34915,
+          "index": 14,
+          "link_change_s": 1790218295,
+          "link_change_us": 0,
+          "name": "en0",
+          "route_rx_bytes": 3549163520,
+          "route_tx_bytes": 3477106688,
+          "rx_bytes": 50793804529,
+          "selected": true,
+          "tx_bytes": 3477106695,
+          "type": 6
+        }
+      ],
+      "monotonic_s": 243759.381251,
+      "utc_ms": 1790227154810
+    },
+    {
+      "interfaces": [
+        {
+          "baudrate": 748800000,
+          "flags": 34915,
+          "index": 14,
+          "link_change_s": 1790218295,
+          "link_change_us": 0,
+          "name": "en0",
+          "route_rx_bytes": 3549330432,
+          "route_tx_bytes": 3481546752,
+          "rx_bytes": 50793971398,
+          "selected": true,
+          "tx_bytes": 3481547294,
+          "type": 6
+        }
+      ],
+      "monotonic_s": 243760.402882,
+      "utc_ms": 1790227155831
+    },
+    {
+      "interfaces": [
+        {
+          "baudrate": 748800000,
+          "flags": 34915,
+          "index": 14,
+          "link_change_s": 1790218295,
+          "link_change_us": 0,
+          "name": "en0",
+          "route_rx_bytes": 3549584384,
+          "route_tx_bytes": 3487572992,
+          "rx_bytes": 50794225721,
+          "selected": true,
+          "tx_bytes": 3487585338,
+          "type": 6
+        }
+      ],
+      "monotonic_s": 243761.431266,
+      "utc_ms": 1790227156860
+    },
+    {
+      "interfaces": [
+        {
+          "baudrate": 748800000,
+          "flags": 34915,
+          "index": 14,
+          "link_change_s": 1790218295,
+          "link_change_us": 0,
+          "name": "en0",
+          "route_rx_bytes": 3549859840,
+          "route_tx_bytes": 3493164032,
+          "rx_bytes": 50794501138,
+          "selected": true,
+          "tx_bytes": 3493164930,
+          "type": 6
+        }
+      ],
+      "monotonic_s": 243762.463418,
+      "utc_ms": 1790227157892
+    },
+    {
+      "interfaces": [
+        {
+          "baudrate": 748800000,
+          "flags": 34915,
+          "index": 14,
+          "link_change_s": 1790218295,
+          "link_change_us": 0,
+          "name": "en0",
+          "route_rx_bytes": 3550200832,
+          "route_tx_bytes": 3499680768,
+          "rx_bytes": 50794841843,
+          "selected": true,
+          "tx_bytes": 3499687302,
+          "type": 6
+        }
+      ],
+      "monotonic_s": 243763.489213,
+      "utc_ms": 1790227158918
+    },
+    {
+      "interfaces": [
+        {
+          "baudrate": 748800000,
+          "flags": 34915,
+          "index": 14,
+          "link_change_s": 1790218295,
+          "link_change_us": 0,
+          "name": "en0",
+          "route_rx_bytes": 3550461952,
+          "route_tx_bytes": 3504316416,
+          "rx_bytes": 50795103259,
+          "selected": true,
+          "tx_bytes": 3504325877,
+          "type": 6
+        }
+      ],
+      "monotonic_s": 243764.519956,
+      "utc_ms": 1790227159948
+    },
+    {
+      "interfaces": [
+        {
+          "baudrate": 748800000,
+          "flags": 34915,
+          "index": 14,
+          "link_change_s": 1790218295,
+          "link_change_us": 0,
+          "name": "en0",
+          "route_rx_bytes": 3550715904,
+          "route_tx_bytes": 3510231040,
+          "rx_bytes": 50795356438,
+          "selected": true,
+          "tx_bytes": 3510237155,
+          "type": 6
+        }
+      ],
+      "monotonic_s": 243765.545816,
+      "utc_ms": 1790227160974
+    },
+    {
+      "interfaces": [
+        {
+          "baudrate": 748800000,
+          "flags": 34915,
+          "index": 14,
+          "link_change_s": 1790218295,
+          "link_change_us": 0,
+          "name": "en0",
+          "route_rx_bytes": 3550967808,
+          "route_tx_bytes": 3514721280,
+          "rx_bytes": 50795609008,
+          "selected": true,
+          "tx_bytes": 3514727806,
+          "type": 6
+        }
+      ],
+      "monotonic_s": 243766.573198,
+      "utc_ms": 1790227162002
+    },
+    {
+      "interfaces": [
+        {
+          "baudrate": 748800000,
+          "flags": 34915,
+          "index": 14,
+          "link_change_s": 1790218295,
+          "link_change_us": 0,
+          "name": "en0",
+          "route_rx_bytes": 3551249408,
+          "route_tx_bytes": 3519802368,
+          "rx_bytes": 50795889868,
+          "selected": true,
+          "tx_bytes": 3519805797,
+          "type": 6
+        }
+      ],
+      "monotonic_s": 243767.602281,
+      "utc_ms": 1790227163031
+    },
+    {
+      "interfaces": [
+        {
+          "baudrate": 748800000,
+          "flags": 34915,
+          "index": 14,
+          "link_change_s": 1790218295,
+          "link_change_us": 0,
+          "name": "en0",
+          "route_rx_bytes": 3551513600,
+          "route_tx_bytes": 3525186560,
+          "rx_bytes": 50796155397,
+          "selected": true,
+          "tx_bytes": 3525193471,
+          "type": 6
+        }
+      ],
+      "monotonic_s": 243768.621696,
+      "utc_ms": 1790227164050
+    },
+    {
+      "interfaces": [
+        {
+          "baudrate": 748800000,
+          "flags": 34915,
+          "index": 14,
+          "link_change_s": 1790218295,
+          "link_change_us": 0,
+          "name": "en0",
+          "route_rx_bytes": 3551734784,
+          "route_tx_bytes": 3530487808,
+          "rx_bytes": 50796375611,
+          "selected": true,
+          "tx_bytes": 3530488016,
+          "type": 6
+        }
+      ],
+      "monotonic_s": 243769.64664,
+      "utc_ms": 1790227165075
+    }
+  ],
+  "phase": "upload",
+  "reference": {
+    "interface_name": "en0",
+    "test_endpoint": "ausyd2-edge-fx-011.aaplimg.com",
+    "ul_bytes_transferred": 54657022,
+    "ul_phase_duration": 9.89480996131897,
+    "ul_throughput": 59576744
+  },
+  "start_utc_ms": 1790227154802
+}

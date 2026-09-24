@@ -1,0 +1,186 @@
+{
+  "app_run_id": "7BEDAA20-55EE-4196-9EFF-924AAD36378A",
+  "interface": "en0",
+  "phases": {
+    "baseline": {
+      "app_sqlite": {
+        "first_utc_ms": 1790227020445,
+        "last_utc_ms": 1790227079425,
+        "rows": 29,
+        "rx": {
+          "average_bytes_per_sec": 107250.2470218006,
+          "peak_bytes_per_sec": 2561644.8268283135
+        },
+        "tx": {
+          "average_bytes_per_sec": 14121.624543793318,
+          "peak_bytes_per_sec": 204269.20919145845
+        },
+        "window_s_max": 2.1149330000043847,
+        "window_s_min": 2.1006709999928717
+      },
+      "duration_s": 60.020072750000004,
+      "end_utc_ms": 1790227079482,
+      "native": {
+        "rx": {
+          "average_bytes_per_sec": 108634.16914049805,
+          "peak_interval_bytes_per_sec": 4617618.567690137,
+          "total_bytes": 6520425
+        },
+        "tx": {
+          "average_bytes_per_sec": 14046.46550363024,
+          "peak_interval_bytes_per_sec": 410321.1068852301,
+          "total_bytes": 843095
+        }
+      },
+      "reference": null,
+      "start_utc_ms": 1790227019462
+    },
+    "cooldown": {
+      "app_sqlite": {
+        "first_utc_ms": 1790227115223,
+        "last_utc_ms": 1790227144757,
+        "rows": 15,
+        "rx": {
+          "average_bytes_per_sec": 11398.16730224006,
+          "peak_bytes_per_sec": 32036.780370874698
+        },
+        "tx": {
+          "average_bytes_per_sec": 13258.086989621292,
+          "peak_bytes_per_sec": 108759.63340108357
+        },
+        "window_s_max": 2.1592280000040773,
+        "window_s_min": 2.0999540000048
+      },
+      "duration_s": 30.034773292,
+      "end_utc_ms": 1790227144891,
+      "native": {
+        "rx": {
+          "average_bytes_per_sec": 11449.514488194796,
+          "peak_interval_bytes_per_sec": 62133.76807060416,
+          "total_bytes": 343832
+        },
+        "tx": {
+          "average_bytes_per_sec": 13616.994240040462,
+          "peak_interval_bytes_per_sec": 223215.66375401677,
+          "total_bytes": 408922
+        }
+      },
+      "reference": null,
+      "start_utc_ms": 1790227114856
+    },
+    "download": {
+      "app_sqlite": {
+        "first_utc_ms": 1790227100495,
+        "last_utc_ms": 1790227104706,
+        "rows": 3,
+        "rx": {
+          "average_bytes_per_sec": 56547222.30786859,
+          "peak_bytes_per_sec": 71438438.28504378
+        },
+        "tx": {
+          "average_bytes_per_sec": 237545.23361440617,
+          "peak_bytes_per_sec": 378708.9265237135
+        },
+        "window_s_max": 2.113591000001179,
+        "window_s_min": 2.1014369999757037
+      },
+      "duration_s": 6.140920792,
+      "end_utc_ms": 1790227105389,
+      "native": {
+        "rx": {
+          "average_bytes_per_sec": 64582997.52286777,
+          "peak_interval_bytes_per_sec": 72093367.58421926,
+          "total_bytes": 396611744
+        },
+        "tx": {
+          "average_bytes_per_sec": 281360.3779237686,
+          "peak_interval_bytes_per_sec": 386404.50186142186,
+          "total_bytes": 1727867
+        }
+      },
+      "reference": {
+        "dl_bytes_transferred": 371747841,
+        "dl_phase_duration": 5.230779051780701,
+        "dl_throughput": 535134400,
+        "interface_name": "en0",
+        "test_endpoint": "ausyd2-edge-fx-004.aaplimg.com"
+      },
+      "start_utc_ms": 1790227099248
+    },
+    "recovery": {
+      "app_sqlite": {
+        "first_utc_ms": 1790227176369,
+        "last_utc_ms": 1790227203738,
+        "rows": 14,
+        "rx": {
+          "average_bytes_per_sec": 6989.588091599289,
+          "peak_bytes_per_sec": 23018.840086429173
+        },
+        "tx": {
+          "average_bytes_per_sec": 7946.740753830484,
+          "peak_bytes_per_sec": 25743.561623581427
+        },
+        "window_s_max": 2.1118290000013076,
+        "window_s_min": 2.101105000008829
+      },
+      "duration_s": 30.024027959,
+      "end_utc_ms": 1790227204844,
+      "native": {
+        "rx": {
+          "average_bytes_per_sec": 6857.127212258808,
+          "peak_interval_bytes_per_sec": 44435.72937724718,
+          "total_bytes": 205875
+        },
+        "tx": {
+          "average_bytes_per_sec": 8171.230901548227,
+          "peak_interval_bytes_per_sec": 48097.903610268404,
+          "total_bytes": 245329
+        }
+      },
+      "reference": null,
+      "start_utc_ms": 1790227174820
+    },
+    "upload": {
+      "app_sqlite": {
+        "first_utc_ms": 1790227155307,
+        "last_utc_ms": 1790227163722,
+        "rows": 5,
+        "rx": {
+          "average_bytes_per_sec": 217950.827044588,
+          "peak_bytes_per_sec": 280849.99060305307
+        },
+        "tx": {
+          "average_bytes_per_sec": 4491704.143089101,
+          "peak_bytes_per_sec": 5890398.70377213
+        },
+        "window_s_max": 2.108758999995189,
+        "window_s_min": 2.1014349999895785
+      },
+      "duration_s": 10.283713166,
+      "end_utc_ms": 1790227165086,
+      "native": {
+        "rx": {
+          "average_bytes_per_sec": 250178.40820026584,
+          "peak_interval_bytes_per_sec": 332137.5128577913,
+          "total_bytes": 2571082
+        },
+        "tx": {
+          "average_bytes_per_sec": 5194254.370497488,
+          "peak_interval_bytes_per_sec": 6358358.15151905,
+          "total_bytes": 53381321
+        }
+      },
+      "reference": {
+        "interface_name": "en0",
+        "test_endpoint": "ausyd2-edge-fx-011.aaplimg.com",
+        "ul_bytes_transferred": 54657022,
+        "ul_phase_duration": 9.89480996131897,
+        "ul_throughput": 59576744
+      },
+      "start_utc_ms": 1790227154802
+    }
+  },
+  "result": "PASS",
+  "sqlite_quick_check": "ok",
+  "sqlite_user_version": 4
+}
