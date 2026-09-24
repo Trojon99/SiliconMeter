@@ -13,7 +13,7 @@ This is preparation for a public GitHub release. Do not tag, push, or publish un
 ## Artifact and installation
 
 - [x] Build `SiliconMeter-0.1.0-arm64.dmg` with SiliconMeter.app and an Applications shortcut.
-- [ ] Integrate the approved SiliconMeter App icon, rebuild the App and DMG, then replace the earlier iconless artifact and checksum. The earlier DMG is not the final release asset.
+- [x] Integrate the approved SiliconMeter App icon, rebuild the App and DMG, then replace the earlier iconless artifact and checksum. The earlier DMG is not the final release asset.
 - [x] Run `hdiutil verify`, mount, compare the contained app byte-for-byte with the final candidate, copy to an Applications-like location, launch, and unmount.
 - [x] Confirm the exact DMG app launches from `/Applications` with no Dock icon, five metrics, History, retention, and bilingual UI.
 - [x] Complete the 20-minute exact-candidate smoke, including CPU/RSS, SQLite quick_check, no crash, child process, or observed IP socket. An untouched 120-second relaunch showed no obvious idle CPU/RSS regression against the frozen baseline.

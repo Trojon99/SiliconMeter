@@ -1,6 +1,6 @@
 # SiliconMeter v0.1.0
 
-Draft release notes for the future GitHub Release. The artifact has not been published.
+English and Simplified Chinese release notes for the unsigned community build.
 
 ## English
 
