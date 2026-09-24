@@ -1,21 +1,5 @@
 import AppKit
 import Foundation
-import ServiceManagement
-
-enum LoginItemPresentation {
-    static func isChecked(_ status: SMAppService.Status) -> Bool {
-        status == .enabled || status == .requiresApproval
-    }
-    static func detailKey(_ status: SMAppService.Status, failed: Bool) -> String? {
-        if failed { return "Could not change login setting" }
-        switch status {
-        case .requiresApproval: return "Approve in System Settings"
-        case .notFound: return "Unavailable in this build"
-        case .notRegistered, .enabled: return nil
-        @unknown default: return "Unavailable in this build"
-        }
-    }
-}
 
 enum Quality: String {
     case measured, estimated, unavailable, invalid, stale
@@ -435,15 +419,10 @@ final class MonitorPopover: NSViewController {
     private let openFolder = NSButton(title: "", target: nil, action: nil)
     private let languageHeading = NSTextField(labelWithString: "")
     private let languages = NSPopUpButton()
-    private let launchAtLogin = NSButton(checkboxWithTitle: "", target: nil, action: nil)
-    private let loginDetail = NSTextField(labelWithString: "")
     private let quit = NSButton(title: "", target: nil, action: nil)
-    private var loginItemStatus: SMAppService.Status = .notRegistered
-    private var loginItemChangeFailed = false
     var onMode: ((PrimaryMetric) -> Void)?
     var onLanguage: ((AppLanguage) -> Void)?
     var onRetention: ((HistoryRetention) -> Void)?
-    var onLaunchAtLogin: ((Bool) -> Void)?
     var onQuit: (() -> Void)?
 
     override func loadView() {
@@ -501,12 +480,6 @@ final class MonitorPopover: NSViewController {
         languages.target = self
         languages.action = #selector(selectLanguage(_:))
         stack.addArrangedSubview(languages)
-        launchAtLogin.target = self
-        launchAtLogin.action = #selector(toggleLaunchAtLogin(_:))
-        stack.addArrangedSubview(launchAtLogin)
-        loginDetail.font = .systemFont(ofSize: 10)
-        loginDetail.textColor = .secondaryLabelColor
-        stack.addArrangedSubview(loginDetail)
         quit.target = self
         quit.action = #selector(quitApp)
         quit.bezelStyle = .rounded
@@ -524,9 +497,6 @@ final class MonitorPopover: NSViewController {
     @objc private func selectLanguage(_ sender: NSPopUpButton) {
         onLanguage?(sender.indexOfSelectedItem == 1 ? .simplifiedChinese : .english)
     }
-    @objc private func toggleLaunchAtLogin(_ sender: NSButton) {
-        onLaunchAtLogin?(sender.state == .on)
-    }
     @objc private func changeRetention(_ sender: NSPopUpButton) {
         guard let policy = HistoryRetention(rawValue: sender.selectedTag()) else { return }
         onRetention?(policy)
@@ -539,20 +509,6 @@ final class MonitorPopover: NSViewController {
         }
         retentionPopup.selectItem(withTag: policy.rawValue)
     }
-    func setLoginItemStatus(_ status: SMAppService.Status, failed: Bool = false) {
-        loginItemStatus = status
-        loginItemChangeFailed = failed
-        updateLoginItem()
-    }
-    private func updateLoginItem() {
-        launchAtLogin.title = Localizer.shared.text("Launch at Login")
-        launchAtLogin.state = LoginItemPresentation.isChecked(loginItemStatus) ? .on : .off
-        launchAtLogin.isEnabled = loginItemStatus != .notFound
-        let detail = LoginItemPresentation.detailKey(loginItemStatus, failed: loginItemChangeFailed)
-        loginDetail.stringValue = detail.map(Localizer.shared.text) ?? ""
-        loginDetail.isHidden = detail == nil
-    }
-
 #if STEP31_REVIEW
     func reviewSelect(_ mode: PrimaryMetric) {
         (modeButtons.arrangedSubviews[mode.rawValue] as? NSButton)?.performClick(nil)
@@ -571,24 +527,6 @@ final class MonitorPopover: NSViewController {
             $0.stringValue.contains(value)
         } || openFolder.title.contains(value)
     }
-    func smokeLoginItem(status: SMAppService.Status, title: String,
-                        checked: Bool, detail: String?, enabled: Bool) -> Bool {
-        setLoginItemStatus(status)
-        return launchAtLogin.title == title && (launchAtLogin.state == .on) == checked
-            && launchAtLogin.isEnabled == enabled && loginDetail.stringValue == (detail ?? "")
-            && loginDetail.isHidden == (detail == nil)
-    }
-    func smokeLoginToggle() -> Bool {
-        let previous = onLaunchAtLogin
-        var values: [Bool] = []
-        onLaunchAtLogin = { values.append($0) }
-        setLoginItemStatus(.notRegistered)
-        launchAtLogin.performClick(nil)
-        setLoginItemStatus(.enabled)
-        launchAtLogin.performClick(nil)
-        onLaunchAtLogin = previous
-        return values == [true, false]
-    }
     func smokeNetworkOrder(upload: String, download: String) -> Bool {
         let lines = text.stringValue.components(separatedBy: "\n")
         guard let up = lines.firstIndex(of: "\(Localizer.shared.text("Upload")): \(upload)"),
@@ -600,7 +538,7 @@ final class MonitorPopover: NSViewController {
     func smokeLayoutFits() -> Bool {
         view.layoutSubtreeIfNeeded()
         return [heading, text, historyHeading, recording, databaseSize, retentionLabel, retentionPopup, openFolder,
-                languageHeading, languages, launchAtLogin, loginDetail, quit].allSatisfy { control in
+                languageHeading, languages, quit].allSatisfy { control in
             let frame = control.convert(control.bounds, to: view)
             return frame.minX >= 0 && frame.maxX <= view.bounds.width
                 && frame.minY >= 0 && frame.maxY <= view.bounds.height
@@ -648,7 +586,6 @@ final class MonitorPopover: NSViewController {
         languages.item(at: 0)?.title = tr("English")
         languages.item(at: 1)?.title = tr("Simplified Chinese")
         languages.selectItem(at: Localizer.shared.language == .simplifiedChinese ? 1 : 0)
-        updateLoginItem()
         quit.title = tr("Quit")
     }
 }
@@ -711,18 +648,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             self.retentionPolicy = chosen
             self.history.changeRetention(to: chosen)
         }
-        content.onLaunchAtLogin = { [weak self] enabled in
-            guard let self else { return }
-            var failed = false
-            do {
-                if enabled { try SMAppService.mainApp.register() }
-                else { try SMAppService.mainApp.unregister() }
-            } catch {
-                failed = true
-                NSLog("Launch at Login change failed: %@", error.localizedDescription)
-            }
-            self.content.setLoginItemStatus(SMAppService.mainApp.status, failed: failed)
-        }
         content.onLanguage = { [weak self] language in
             guard let self else { return }
             Localizer.shared.select(language)
@@ -784,7 +709,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         guard let button = statusItem.button else { return }
         if popover.isShown { popover.close() }
         else {
-            content.setLoginItemStatus(SMAppService.mainApp.status)
             content.update(service.snapshot, selected: selected, history: historyStatus)
             NSApp.activate(ignoringOtherApps: true)
             popover.show(relativeTo: button.bounds, of: button, preferredEdge: .minY)
@@ -886,8 +810,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         invalidSample.merge(["gpuPower": ["status": "invalid", "unit": "W"]], at: Date())
         let estimate = Metric(["status": "estimated", "value": 14.0, "unit": "W", "source": "fixture"], at: Date())
         let chineseNetworkOrder = smokeNetworkOrder()
-        let chineseLogin = content.smokeLoginItem(status: .requiresApproval,
-            title: "登录时启动", checked: true, detail: "请在系统设置中批准", enabled: true)
         let chinese = statusItem.button?.attributedTitle.string == statusLayout?.attributedTitle(in: service.snapshot).string
             && content.smokeContains("SiliconMeter") && !content.smokeContains("Compute Monitor")
             && content.smokeRetention(label: "保留时间", selectedTitle: Localizer.shared.text(retentionPolicy.labelKey))
@@ -898,17 +820,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             && PrimaryMetric.gpuPower.title(in: invalidSample) == "GPU 功耗 —"
             && estimate.display.contains("估算")
             && content.smokeContains("网络") && content.smokeContains("下载") && content.smokeContains("上传")
-            && chineseNetworkOrder && chineseLogin
+            && chineseNetworkOrder
             && PrimaryMetric.network.title(in: service.snapshot).hasPrefix("NET ↑")
             && content.smokeLayoutFits()
         content.smokeSelectLanguage(.english)
         let englishNetworkOrder = smokeNetworkOrder()
-        let englishLogin = content.smokeLoginItem(status: .notRegistered,
-            title: "Launch at Login", checked: false, detail: nil, enabled: true)
-            && content.smokeLoginItem(status: .notFound,
-                title: "Launch at Login", checked: false,
-                detail: "Unavailable in this build", enabled: false)
-            && content.smokeLoginToggle()
         let english = statusItem.button?.attributedTitle.string == statusLayout?.attributedTitle(in: service.snapshot).string
             && content.smokeContains("SiliconMeter") && !content.smokeContains("Compute Monitor")
             && content.smokeRetention(label: "Retention", selectedTitle: retentionPolicy.labelKey)
@@ -919,7 +835,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             && PrimaryMetric.gpuPower.title(in: invalidSample) == "GPU Power —"
             && estimate.display.contains("estimated")
             && content.smokeContains("Network") && content.smokeContains("Download") && content.smokeContains("Upload")
-            && englishNetworkOrder && englishLogin
+            && englishNetworkOrder
             && PrimaryMetric.network.title(in: service.snapshot).hasPrefix("NET ↑")
             && content.smokeLayoutFits()
         let telemetryUnchanged = service.snapshot["total"]?.number == cpuValue
@@ -931,7 +847,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         selected = priorMode
         configureStatusLayout()
         render(service.snapshot)
-        content.setLoginItemStatus(SMAppService.mainApp.status)
         togglePopover()
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { [weak self] in
             guard let self else { return }
@@ -940,7 +855,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             let cpuLive = self.service.snapshot["total"]?.number != nil
             let gpuLive = self.service.snapshot["gpuActive"]?.number != nil
             let passed = opened && switched && fixedWidth && chinese && english && telemetryUnchanged && closed && accessory && cpuLive && gpuLive
-            print("UI_SMOKE opened=\(opened) switched=\(switched) fixed_width=\(fixedWidth) chinese=\(chinese) english=\(english) telemetry_unchanged=\(telemetryUnchanged) closed=\(closed) accessory=\(accessory) cpu=\(cpuLive) gpu=\(gpuLive) retention=\(retentionPolicy.rawValue) login_status=\(SMAppService.mainApp.status.rawValue) initial=\(initial) result=\(passed ? "PASS" : "FAIL")")
+            print("UI_SMOKE opened=\(opened) switched=\(switched) fixed_width=\(fixedWidth) chinese=\(chinese) english=\(english) telemetry_unchanged=\(telemetryUnchanged) closed=\(closed) accessory=\(accessory) cpu=\(cpuLive) gpu=\(gpuLive) retention=\(retentionPolicy.rawValue) initial=\(initial) result=\(passed ? "PASS" : "FAIL")")
             fflush(stdout)
             NSApp.terminate(nil)
         }

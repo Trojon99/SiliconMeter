@@ -22,4 +22,5 @@ swiftc -O -target arm64-apple-macos13.0 -D STEP3_UI_SMOKE \
   .build/popover-layout/main.swift app/HistoryLogger.swift app/Localization.swift .build/TelemetryBackend.o .build/NetworkSampler.o \
   -framework AppKit -framework IOKit -lsqlite3 \
   -o .build/PopoverLayout.app/Contents/MacOS/SiliconMeter
+codesign --force --sign - .build/PopoverLayout.app
 .build/PopoverLayout.app/Contents/MacOS/SiliconMeter

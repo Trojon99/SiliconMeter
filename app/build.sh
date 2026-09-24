@@ -11,4 +11,5 @@ swiftc -O -target arm64-apple-macos13.0 -module-cache-path "$CLANG_MODULE_CACHE_
 cp app/Info.plist app/SiliconMeter.app/Contents/Info.plist
 mkdir -p app/SiliconMeter.app/Contents/Resources
 cp -R app/en.lproj app/zh-Hans.lproj app/SiliconMeter.app/Contents/Resources/
+codesign --force --sign - app/SiliconMeter.app
 printf '%s\n' 'Built app/SiliconMeter.app'

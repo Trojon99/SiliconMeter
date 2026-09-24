@@ -11,7 +11,7 @@ PY
 swiftc -O -target arm64-apple-macos13.0 -module-cache-path "$PWD/.build/ModuleCache" \
   -import-objc-header app/TelemetryBackend.h .build/primary-metric-persistence/main.swift \
   app/HistoryLogger.swift app/Localization.swift .build/TelemetryBackend.o .build/NetworkSampler.o \
-  -framework AppKit -framework IOKit -framework ServiceManagement -lsqlite3 \
+  -framework AppKit -framework IOKit -lsqlite3 \
   -o .build/primary-metric-persistence/check
 suite="io.github.trojon99.siliconmeter.primary-persistence-$$"
 trap '.build/primary-metric-persistence/check "$suite" cleanup' EXIT

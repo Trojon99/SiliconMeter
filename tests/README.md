@@ -10,8 +10,7 @@ check directory and allowlisted preference behavior. Then run
 It uses temporary homes for a fresh install, a real-structure SQLite v4 copy
 with committed WAL, and a conflict between two data directories. The UI smoke
 tests both languages, all five primary metrics, the menu-bar accessory state,
-History, Launch at Login presentation, and Quit without registering a login
-item. The script reads the real legacy database only through SQLite's backup
+History, retention, and Quit. The script reads the real legacy database only through SQLite's backup
 API; it never moves or modifies that source. For a real migration, quit the old
 app and make a complete, verified copy of its Application Support directory
 before launching the new app.
@@ -206,11 +205,8 @@ so it is kept separate from the 10/15-minute ordinary-binary CPU/RSS A/B.
 
 `sh tests/run-primary-metric-persistence.sh` verifies CPU, GPU, Temp, GPU Power,
 and NET preferences across separate processes in an isolated `UserDefaults`
-domain. `sh app/ui-smoke.sh` also checks the native Launch at Login checkbox's
-English/Chinese labels, enabled/pending/unavailable states, and on/off callback
-without modifying the user's login items. It prints the actual
-`SMAppService.mainApp.status` of the ad-hoc signed smoke bundle. Registration and
-system approval must be checked on a correctly signed distribution build.
+domain. `sh app/ui-smoke.sh` checks the English/Chinese labels, five metric
+choices, fixed status width, History, retention, and accessory behavior.
 
 After building and launching one ordinary App, run
 `python3 -u tests/run-v01-polish-stability.py` in the ordinary graphical user

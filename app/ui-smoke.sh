@@ -13,5 +13,6 @@ swiftc -O -target arm64-apple-macos13.0 -D STEP3_UI_SMOKE -module-cache-path "$C
 cp app/Info.plist .build/SiliconMeterSmoke.app/Contents/Info.plist
 mkdir -p .build/SiliconMeterSmoke.app/Contents/Resources
 cp -R app/en.lproj app/zh-Hans.lproj .build/SiliconMeterSmoke.app/Contents/Resources/
+codesign --force --sign - .build/SiliconMeterSmoke.app
 if [ "${1:-}" = "--build-only" ]; then exit 0; fi
 exec .build/SiliconMeterSmoke.app/Contents/MacOS/SiliconMeter

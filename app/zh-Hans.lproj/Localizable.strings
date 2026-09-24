@@ -48,10 +48,6 @@
 "Delete Old History" = "删除旧记录";
 "Open Data Folder" = "打开数据文件夹";
 "Language" = "语言";
-"Launch at Login" = "登录时启动";
-"Approve in System Settings" = "请在系统设置中批准";
-"Unavailable in this build" = "当前构建不可用";
-"Could not change login setting" = "无法更改登录启动设置";
 "English" = "English";
 "Simplified Chinese" = "简体中文";
 "Quit" = "退出";

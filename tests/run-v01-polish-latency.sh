@@ -17,7 +17,7 @@ swiftc -O -target arm64-apple-macos13.0 -D STEP31_REVIEW -Xcc -DSTEP31_REVIEW \
   -module-cache-path "$PWD/.build/ModuleCache" -import-objc-header app/TelemetryBackend.h \
   .build/v01-polish-latency/main.swift app/HistoryLogger.swift app/Localization.swift \
   tests/Step31Review.swift .build/v01-polish-latency/backend.o .build/v01-polish-latency/network.o \
-  -framework AppKit -framework IOKit -framework ServiceManagement -lsqlite3 \
+  -framework AppKit -framework IOKit -lsqlite3 \
   -o .build/v01-polish-latency/fixture
 .build/v01-polish-latency/fixture > docs/results/v01-polish-collector-latency.json
 cat docs/results/v01-polish-collector-latency.json
