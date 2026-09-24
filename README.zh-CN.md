@@ -14,7 +14,7 @@
 - 每项指标及语言使用固定的菜单栏宽度，数值变化不会推动相邻状态栏项目。
 - 从同一份共享快照持续写入本地 SQLite 历史；使用串行批量写入、WAL 和可配置的保留时间。
 - 支持 English 和简体中文，可立即切换，并在本地保存语言选择。
-- 在本地保留主要指标选择，并提供原生的“**登录时启动**”选项。
+- 在本地保留主要指标选择。未签名的 v0.1 不包含“登录时启动”。
 - 普通用户即可运行，无需辅助进程、常驻子进程、`powermetrics`、主动网络连接或遥测上传。
 
 ## 支持的指标
@@ -39,7 +39,14 @@ macOS 13 或更新版本的 Apple Silicon Mac，且不在 App Sandbox 中运行�
 
 ## 安装
 
-目前尚无已签名或公证的可下载版本。下述构建用于本地开发。未来公开发布时，Release 说明应包含简短的 **English** 和**简体中文**两个部分。
+SiliconMeter v0.1.0 当前以未签名、未公证的开源社区构建形式发布，未经 Apple 验证。源代码可供检查和本地构建。公开下载尚待发布；发布后按以下步骤安装：
+
+1. 从项目的 GitHub Release 下载 `SiliconMeter-0.1.0-arm64.dmg`。
+2. 打开 DMG，将 **SiliconMeter.app** 拖入**应用程序**文件夹。
+3. 从“应用程序”启动 SiliconMeter。
+4. 如果 macOS 阻止首次启动，打开**系统设置 → 隐私与安全性 → 仍要打开**，然后再次确认打开。参见 [Apple 的人工确认说明](https://support.apple.com/zh-cn/102445)。
+
+本机直接构建无法完全复现浏览器下载后的 Gatekeeper 提示。不要全局关闭 Gatekeeper。
 
 ## 从源码构建
 
@@ -50,7 +57,7 @@ sh app/build.sh
 open app/SiliconMeter.app
 ```
 
-点击菜单栏图标可查看当前遥测、选择主要指标或语言、启用**登录时启动**、打开数据文件夹，或退出。App 以辅助应用方式运行，不显示 Dock 图标。“登录时启动”使用 macOS Service Management；当前仅临时签名的开发 bundle 可能显示为不可用，正确签名的发行构建仍需单独验证。定向检查见 [tests/README.md](tests/README.md)；[产品范围](docs/PRODUCT_SCOPE.md)定义 v0.1 的边界。
+点击菜单栏图标可查看当前遥测、选择主要指标或语言、打开数据文件夹，或退出。App 以辅助应用方式运行，不显示 Dock 图标。未签名的 v0.1 不包含“登录时启动”。定向检查见 [tests/README.md](tests/README.md)；[产品范围](docs/PRODUCT_SCOPE.md)定义 v0.1 的边界。
 
 ## 数据位置
 
@@ -66,7 +73,7 @@ IOReport 和 AppleSMC 私有接口的行为可能随系统或硬件更新而变�
 
 ## 私有 API 兼容性风险
 
-完整遥测构建刻意不使用 App Sandbox，因为测试中沙盒阻止了 IOReport 和 AppleSMC 访问。未来 macOS 版本可能改变或移除这些私有接口。当前本地构建尚未做 Developer ID 签名或发行公证。
+完整遥测构建刻意不使用 App Sandbox，因为测试中沙盒阻止了 IOReport 和 AppleSMC 访问。未来 macOS 版本可能改变或移除这些私有接口。v0.1.0 社区构建没有 Developer ID 签名，也未经公证。本地 ad-hoc 代码封印只是构建细节，不代表 Apple 信任的开发者身份。
 
 ## 许可证
 

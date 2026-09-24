@@ -1,5 +1,7 @@
 # SiliconMeter v0.1 — Step 4.2 History Retention report
 
+> Historical retention validation. Step 4.4 changed v0.1.0 to an unsigned, non-notarized community release; Developer ID and notarization are future optional improvements. See [the current candidate report](V01_UNSIGNED_RELEASE_CANDIDATE.md).
+
 Date: 2026-09-24 (Australia/Sydney). Scope: local v0.1 feature freeze before signed release candidate preparation. The pre-feature identity-migration commit was `820a89f` on `release/v0.1-identity`. The telemetry backend was not changed.
 
 ## A. Retention model

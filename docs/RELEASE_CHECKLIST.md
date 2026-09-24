@@ -1,31 +1,29 @@
-# v0.1.0 release preparation checklist
+# v0.1.0 unsigned community release checklist
 
-This is a preparation checklist, not a record of a public release. Do not tag, push, sign, notarize, or publish as part of the local polish stage.
+This is preparation for a public GitHub release. Do not tag, push, or publish until the pending items are complete. Developer ID signing and Apple notarization are future optional distribution improvements, not v0.1 blockers.
 
-## Product and repository
+## Product and source
 
-- [x] Product name **SiliconMeter**, bundle ID `io.github.trojon99.siliconmeter`, version `0.1.0`, and build `1` are selected. Repository name proposed for the later GitHub release: **SiliconMeter**; no remote is configured yet.
-- [x] Add the selected MIT LICENSE with `Copyright (c) 2026 Trojon99`.
-- [ ] Verify the final release commit, clean Git working tree, and `0.1.0` / build `1` in the app bundle and both READMEs.
-- [ ] Run the English and Simplified Chinese UI smoke, including all five menu metrics, popover, History, Open Data Folder, Language, Launch at Login, and Quit.
-- [ ] Verify SQLite v4 integrity, live recording, UTC/quality semantics, and the documented local data location.
-- [ ] Verify retention preference persistence and localized 1/7/30-day/Forever choices on the signed candidate.
-- [ ] Verify fresh-install default 30 Days and existing-database-without-preference safe default Forever; no silent deletion of old history.
-- [ ] Verify destructive shortening confirmation and Cancel semantics, rolling UTC cutoff boundaries, batched cleanup, current-run/FK safety, and no automatic `VACUUM`.
+- [x] Name `SiliconMeter`, bundle ID `io.github.trojon99.siliconmeter`, version `0.1.0`, build `1`, arm64, macOS 13.0 minimum, and MIT License.
+- [x] Product scope remains Monitor + Menu Bar + Local SQLite History; CPU, GPU, Temp, GPU Power, NET, English/简体中文, retention.
+- [x] Remove Launch at Login from unsigned v0.1 after the final-identity `/Applications` candidate reported `SMAppService.mainApp.status == .notFound` and disabled its UI control.
+- [x] Build from a clean source commit and verify `Info.plist`, architecture, bundle contents, and ad-hoc resource seal. Ad-hoc sealing does not make this a signed/trusted release.
+- [x] Verify SQLite v4, retention, bilingual layout, primary-metric persistence, and data continuity.
 
-## Distribution build
+## Artifact and installation
 
-- [ ] Build the release app from a clean commit with a stable Swift/macOS toolchain.
-- [ ] Make a Developer ID Application identity and notarization credentials available, then sign the complete app bundle. Confirm bundle ID, Hardened Runtime, secure timestamp, minimal entitlements, and `LSUIElement` behavior.
-- [ ] Verify `SMAppService.mainApp` registration, enabled/disabled/requires-approval states, restart persistence, and the actual macOS Login Items setting in the signed build. The local ad-hoc development bundle reported `notFound`; this is not a signed-release pass.
-- [ ] Notarize the distribution artifact and staple the ticket where applicable.
-- [ ] Package a DMG or ZIP and verify installation/opening from a fresh location without a Dock icon.
-- [ ] Publish a SHA-256 checksum for the exact downloadable artifact.
+- [x] Build `SiliconMeter-0.1.0-arm64.dmg` with SiliconMeter.app and an Applications shortcut.
+- [x] Run `hdiutil verify`, mount, compare the contained app byte-for-byte with the final candidate, copy to an Applications-like location, launch, and unmount.
+- [x] Confirm the exact DMG app launches from `/Applications` with no Dock icon, five metrics, History, retention, and bilingual UI.
+- [x] Complete the 20-minute exact-candidate smoke, including CPU/RSS, SQLite quick_check, no crash, child process, or observed IP socket. An untouched 120-second relaunch showed no obvious idle CPU/RSS regression against the frozen baseline.
+- [x] Generate `SHA256SUMS.txt` from the final, unmodified DMG **after** all packaging work; `shasum -a 256 -c` passed.
+- [ ] Recheck the published download's SHA-256 against `SHA256SUMS.txt` after upload.
 
-## Public documentation and release
+## Documentation and public release
 
-- [ ] Verify English and Chinese READMEs agree on features, installation, data path, privacy, compatibility, and limits.
-- [ ] Recheck that the app generates no monitoring network traffic, collects no user file contents, and has no analytics, cloud upload, or per-process attribution.
-- [ ] Keep the M1 Max / macOS 27.0 test scope and IOReport/AppleSMC private-interface risk visible.
-- [ ] Prepare concise English release notes and 中文发布说明, including the local-history growth estimate and Launch at Login signing requirement.
-- [ ] After all gates pass in a separate release task, configure the intended GitHub remote, create tag `v0.1.0`, push the intended commit/tag, and create the GitHub Release with checksum and notes.
+- [x] English and Chinese READMEs describe the unsigned, non-notarized build, data path, compatibility limits, and Apple's manual Gatekeeper **Open Anyway** path.
+- [x] Prepare matched English and Chinese release notes in `docs/V01_RELEASE_NOTES.md`.
+- [ ] Confirm the intended GitHub repository and configure its remote. No remote is currently configured.
+- [ ] Review the final clean commit and artifact checksum, then create the intended `v0.1.0` tag, push, and publish the GitHub Release in a separate authorized step.
+- [ ] After publication, replace the READMEs' “public download pending” notice with the actual release link.
+- [ ] After publication, verify the actual GitHub download on a fresh Mac/account when available; the local build has no browser quarantine, so this local smoke does not prove the full Gatekeeper download path.

@@ -1,5 +1,7 @@
 # v0.1.0 SiliconMeter identity migration — 2026-09-24
 
+> Historical Step 4.1 record. Step 4.4 changed v0.1.0 to an unsigned, non-notarized community release and removed Launch at Login after the `/Applications` candidate reported `.notFound`. See [the current candidate report](V01_UNSIGNED_RELEASE_CANDIDATE.md).
+
 **Step 4.1 result: READY FOR SIGNED RELEASE CANDIDATE PREP.** This records a local identity and data-continuity change. It does not record Developer ID signing, notarization, stapling, a DMG/ZIP release package, tag, push, or GitHub Release.
 
 ## A–D. Old and new identity, app bundle, and bundle ID

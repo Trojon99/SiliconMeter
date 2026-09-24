@@ -1,5 +1,7 @@
 # SiliconMeter v0.1.0 — Step 4.3 signing blocker
 
+> Historical record of the earlier Developer ID distribution plan. Step 4.4 changed v0.1.0 to an unsigned, non-notarized community release; Developer ID and notarization are no longer current release blockers. See [the unsigned candidate report](V01_UNSIGNED_RELEASE_CANDIDATE.md).
+
 Date: 2026-09-24 (Australia/Sydney)
 
 ## Decision

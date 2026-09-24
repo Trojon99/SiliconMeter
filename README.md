@@ -14,7 +14,7 @@ Screenshots will be added with a future release. The status item shows one selec
 - A fixed menu-bar item width for each metric and language, so changing readings do not move neighboring status items.
 - Local SQLite history recorded continuously from the same shared snapshots, with a serial batched writer, WAL, and configurable retention.
 - English and Simplified Chinese UI, with immediate switching and a locally saved language choice.
-- A locally saved primary-metric choice and an optional native **Launch at Login** control.
+- A locally saved primary-metric choice. Launch at Login is not included in unsigned v0.1.
 - Ordinary-user operation without a helper, persistent child process, `powermetrics`, outgoing network connections, or telemetry upload.
 
 ## Supported metrics
@@ -39,7 +39,14 @@ Apple Silicon Mac with macOS 13 or newer, outside App Sandbox. **Tested on: Appl
 
 ## Installation
 
-There is no signed or notarized downloadable release yet. The build below is for local development. A future public release should include short **English** and **简体中文** sections in its release notes.
+SiliconMeter v0.1.0 is distributed as an unsigned, non-notarized open-source community build. It is not Apple verified. Source code is available for inspection and local builds. The public download is pending; when available, install it as follows:
+
+1. Download `SiliconMeter-0.1.0-arm64.dmg` from the project's GitHub Release.
+2. Open the DMG and drag **SiliconMeter.app** to **Applications**.
+3. Open SiliconMeter from Applications.
+4. If macOS blocks the first launch, open **System Settings → Privacy & Security → Open Anyway**, then confirm **Open**. Apple describes this [manual exception process](https://support.apple.com/en-gb/102445).
+
+This local build does not reproduce every Gatekeeper prompt that may appear after a browser download. Do not disable Gatekeeper globally.
 
 ## Build from source
 
@@ -50,7 +57,7 @@ sh app/build.sh
 open app/SiliconMeter.app
 ```
 
-Click the status item to view current telemetry, choose a primary metric or language, enable **Launch at Login**, open the data folder, or Quit. The app runs as an accessory without a Dock icon. Launch at Login uses macOS Service Management; the local ad-hoc signed development bundle may show it as unavailable, while a properly signed release build must be verified separately. Focused checks are documented in [tests/README.md](tests/README.md). [Product scope](docs/PRODUCT_SCOPE.md) defines the v0.1 boundary.
+Click the status item to view current telemetry, choose a primary metric or language, open the data folder, or Quit. The app runs as an accessory without a Dock icon. Launch at Login is not included in unsigned v0.1. Focused checks are documented in [tests/README.md](tests/README.md). [Product scope](docs/PRODUCT_SCOPE.md) defines the v0.1 boundary.
 
 ## Data location
 
@@ -66,7 +73,7 @@ Private IOReport and AppleSMC behavior can change with macOS or hardware updates
 
 ## Private API compatibility risk
 
-The full telemetry build is intentionally non-App-Sandboxed because the tested sandbox blocked IOReport and AppleSMC access. These private interfaces may break or disappear in future macOS versions. The current local build is not Developer ID signed or notarized for distribution.
+The full telemetry build is intentionally non-App-Sandboxed because the tested sandbox blocked IOReport and AppleSMC access. These private interfaces may break or disappear in future macOS versions. The v0.1.0 community build has no Developer ID signature or notarization. A local ad-hoc code seal is only a build detail; it does not establish an Apple trusted developer identity.
 
 ## License
 
