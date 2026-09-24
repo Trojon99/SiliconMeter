@@ -7,7 +7,7 @@ import plistlib
 from pathlib import Path
 p=Path('app/Info.plist')
 d=plistlib.loads(p.read_bytes())
-d['CFBundleIdentifier']='local.compute-monitor.layout-tests'
+d['CFBundleIdentifier']='io.github.trojon99.siliconmeter.layout-tests'
 Path('.build/PopoverLayout.app/Contents/Info.plist').write_bytes(plistlib.dumps(d))
 PY
 cp -R app/en.lproj app/zh-Hans.lproj .build/PopoverLayout.app/Contents/Resources/
@@ -21,5 +21,5 @@ swiftc -O -target arm64-apple-macos13.0 -D STEP3_UI_SMOKE \
   -module-cache-path "$PWD/.build/ModuleCache" -import-objc-header app/TelemetryBackend.h \
   .build/popover-layout/main.swift app/HistoryLogger.swift app/Localization.swift .build/TelemetryBackend.o .build/NetworkSampler.o \
   -framework AppKit -framework IOKit -lsqlite3 \
-  -o .build/PopoverLayout.app/Contents/MacOS/ComputeMonitor
-.build/PopoverLayout.app/Contents/MacOS/ComputeMonitor
+  -o .build/PopoverLayout.app/Contents/MacOS/SiliconMeter
+.build/PopoverLayout.app/Contents/MacOS/SiliconMeter

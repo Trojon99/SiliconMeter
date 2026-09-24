@@ -1,5 +1,21 @@
 # Step 3.1 review checks
 
+## SiliconMeter identity migration checks
+
+Build the current app and UI smoke bundle with `sh app/build.sh` and
+`sh app/ui-smoke.sh --build-only`. Compile and run
+`tests/identity_migration_fixture.swift` with `app/IdentityMigration.swift` to
+check directory and allowlisted preference behavior. Then run
+`python3 tests/run-identity-migration.py` in the ordinary graphical user session.
+It uses temporary homes for a fresh install, a real-structure SQLite v4 copy
+with committed WAL, and a conflict between two data directories. The UI smoke
+tests both languages, all five primary metrics, the menu-bar accessory state,
+History, Launch at Login presentation, and Quit without registering a login
+item. The script reads the real legacy database only through SQLite's backup
+API; it never moves or modifies that source. For a real migration, quit the old
+app and make a complete, verified copy of its Application Support directory
+before launching the new app.
+
 These are test tools, not product logging. No third-party dependency is required.
 The production build excludes all `STEP31_REVIEW` hooks.
 

@@ -12,8 +12,8 @@ import subprocess
 import time
 
 ROOT = Path(__file__).resolve().parents[1]
-APP = ROOT / 'app/ComputeMonitor.app/Contents/MacOS/ComputeMonitor'
-DB = Path.home() / 'Library/Application Support/Compute Monitor/telemetry.sqlite3'
+APP = ROOT / 'app/SiliconMeter.app/Contents/MacOS/SiliconMeter'
+DB = Path.home() / 'Library/Application Support/SiliconMeter/telemetry.sqlite3'
 OUT = ROOT / 'docs/results/network-ab.json'
 
 class TaskInfo(ctypes.Structure):
@@ -62,7 +62,7 @@ def run(label, seconds, disabled):
             time.sleep(min(30, seconds-elapsed))
     finally:
         if app.poll() is None:
-            subprocess.run(['osascript', '-e', 'tell application id "local.compute-monitor" to quit'],
+            subprocess.run(['osascript', '-e', 'tell application id "io.github.trojon99.siliconmeter" to quit'],
                            check=True, timeout=20, stdout=subprocess.DEVNULL)
             app.wait(timeout=20)
     new_runs = db_query('SELECT run_id FROM app_runs')

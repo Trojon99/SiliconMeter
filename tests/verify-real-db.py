@@ -5,9 +5,9 @@ import json
 import sqlite3
 
 root = Path(__file__).resolve().parents[1]
-db = Path.home()/'Library/Application Support/Compute Monitor/telemetry.sqlite3'
+db = Path.home()/'Library/Application Support/SiliconMeter/telemetry.sqlite3'
 tables = ('app_runs','fast_samples','slow_samples','events','writer_batches','training_sessions')
-result = {'database':'~/Library/Application Support/Compute Monitor/telemetry.sqlite3','backups':{}}
+result = {'database':'~/Library/Application Support/SiliconMeter/telemetry.sqlite3','backups':{}}
 with sqlite3.connect(f'file:{db}?mode=ro',uri=True) as current:
     result['version'] = current.execute('PRAGMA user_version').fetchone()[0]
     result['integrity'] = current.execute('PRAGMA integrity_check').fetchone()[0]

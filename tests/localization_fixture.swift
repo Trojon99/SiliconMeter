@@ -5,7 +5,7 @@ func check(_ condition: @autoclosure () -> Bool, _ message: String) {
 }
 
 let bundle = Bundle(path: CommandLine.arguments[1])!
-let suite = "local.compute-monitor.localization-check.\(UUID().uuidString)"
+let suite = "io.github.trojon99.siliconmeter.localization-check.\(UUID().uuidString)"
 let defaults = UserDefaults(suiteName: suite)!
 defer { defaults.removePersistentDomain(forName: suite) }
 

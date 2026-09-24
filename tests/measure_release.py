@@ -11,7 +11,7 @@ import sys
 import time
 
 ROOT = Path(__file__).resolve().parents[1]
-APP = ROOT / 'app/ComputeMonitor.app/Contents/MacOS/ComputeMonitor'
+APP = ROOT / 'app/SiliconMeter.app/Contents/MacOS/SiliconMeter'
 
 
 class TaskInfo(ctypes.Structure):

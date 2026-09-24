@@ -314,7 +314,7 @@ struct StatusTitleLayout {
 }
 
 final class TelemetryService {
-    private let queue = DispatchQueue(label: "local.compute-monitor.collector", qos: .utility)
+    private let queue = DispatchQueue(label: "io.github.trojon99.siliconmeter.collector", qos: .utility)
     private var backend: TelemetryBackend?
     private var timer: DispatchSourceTimer?
     private var ticks = 0
@@ -581,7 +581,7 @@ final class MonitorPopover: NSViewController {
     func update(_ snapshot: TelemetrySnapshot, selected: PrimaryMetric, history: HistoryLogger.Status?) {
         _ = view
         let tr = Localizer.shared.text
-        heading.stringValue = tr("Compute Monitor")
+        heading.stringValue = tr("SiliconMeter")
         func line(_ label: String, _ key: String) -> String {
             let value = snapshot[key]?.display ?? tr("Unavailable")
             return "\(tr(label)): \(value)"
@@ -831,6 +831,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         let chineseLogin = content.smokeLoginItem(status: .requiresApproval,
             title: "登录时启动", checked: true, detail: "请在系统设置中批准", enabled: true)
         let chinese = statusItem.button?.attributedTitle.string == statusLayout?.attributedTitle(in: service.snapshot).string
+            && content.smokeContains("SiliconMeter") && !content.smokeContains("Compute Monitor")
             && content.smokeContains("历史记录") && content.smokeContains("记录状态")
             && content.smokeContains("数据库大小") && content.smokeContains("打开数据文件夹")
             && PrimaryMetric.temperature.title(in: service.snapshot).hasPrefix("温度 ")
@@ -850,6 +851,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                 detail: "Unavailable in this build", enabled: false)
             && content.smokeLoginToggle()
         let english = statusItem.button?.attributedTitle.string == statusLayout?.attributedTitle(in: service.snapshot).string
+            && content.smokeContains("SiliconMeter") && !content.smokeContains("Compute Monitor")
             && content.smokeContains("History") && content.smokeContains("Recording")
             && content.smokeContains("Database Size") && content.smokeContains("Open Data Folder")
             && PrimaryMetric.temperature.title(in: service.snapshot).hasPrefix("Temp ")
@@ -887,6 +889,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 }
 
 let app = NSApplication.shared
+guard IdentityMigration.prepareForLaunch() else { exit(EXIT_FAILURE) }
 let delegate = AppDelegate()
 app.delegate = delegate
 app.run()

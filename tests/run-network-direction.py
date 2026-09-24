@@ -11,7 +11,7 @@ ROOT = Path(__file__).resolve().parents[1]
 PROBE = ROOT / ".build/network-direction-probe"
 RESULTS = ROOT / "docs/results"
 PRIVATE = ROOT / ".build/network-direction"
-DB = Path.home() / "Library/Application Support/Compute Monitor/telemetry.sqlite3"
+DB = Path.home() / "Library/Application Support/SiliconMeter/telemetry.sqlite3"
 
 
 def sample():

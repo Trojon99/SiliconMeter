@@ -7,7 +7,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 RESULTS = ROOT / "docs/results"
-DB = Path.home() / "Library/Application Support/Compute Monitor/telemetry.sqlite3"
+DB = Path.home() / "Library/Application Support/SiliconMeter/telemetry.sqlite3"
 PHASES = ("baseline", "download", "cooldown", "upload", "recovery")
 
 

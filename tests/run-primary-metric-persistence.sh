@@ -13,7 +13,7 @@ swiftc -O -target arm64-apple-macos13.0 -module-cache-path "$PWD/.build/ModuleCa
   app/HistoryLogger.swift app/Localization.swift .build/TelemetryBackend.o .build/NetworkSampler.o \
   -framework AppKit -framework IOKit -framework ServiceManagement -lsqlite3 \
   -o .build/primary-metric-persistence/check
-suite="local.compute-monitor.primary-persistence-$$"
+suite="io.github.trojon99.siliconmeter.primary-persistence-$$"
 trap '.build/primary-metric-persistence/check "$suite" cleanup' EXIT
 for index in 0 1 2 3 4; do
   .build/primary-metric-persistence/check "$suite" write "$index"

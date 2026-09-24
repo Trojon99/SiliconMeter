@@ -9,8 +9,8 @@ import sys
 import time
 
 ROOT = Path(__file__).resolve().parents[1]
-APP = ROOT / 'app/ComputeMonitor.app/Contents/MacOS/ComputeMonitor'
-DB = Path.home() / 'Library/Application Support/Compute Monitor/telemetry.sqlite3'
+APP = ROOT / 'app/SiliconMeter.app/Contents/MacOS/SiliconMeter'
+DB = Path.home() / 'Library/Application Support/SiliconMeter/telemetry.sqlite3'
 OUT = Path(sys.argv[1])
 
 

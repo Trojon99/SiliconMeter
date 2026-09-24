@@ -9,8 +9,8 @@ import sys
 import time
 
 ROOT = Path(__file__).resolve().parents[1]
-DB = Path.home() / 'Library/Application Support/Compute Monitor/telemetry.sqlite3'
-APP = str(ROOT / 'app/ComputeMonitor.app/Contents/MacOS/ComputeMonitor')
+DB = Path.home() / 'Library/Application Support/SiliconMeter/telemetry.sqlite3'
+APP = str(ROOT / 'app/SiliconMeter.app/Contents/MacOS/SiliconMeter')
 OUT = ROOT / 'docs/results/minimal-v01-regression.jsonl'
 
 def process():

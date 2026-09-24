@@ -7,7 +7,7 @@ import sys
 from datetime import datetime, timezone
 
 root = Path(__file__).resolve().parents[1]
-db = Path.home()/'Library/Application Support/Compute Monitor/telemetry.sqlite3'
+db = Path.home()/'Library/Application Support/SiliconMeter/telemetry.sqlite3'
 with sqlite3.connect(f'file:{db}?mode=ro', uri=True) as c:
     row = {'utc':datetime.now(timezone.utc).isoformat(), 'phase':sys.argv[1],
            'page_count':c.execute('PRAGMA page_count').fetchone()[0],

@@ -6,7 +6,7 @@ python3 - <<'PY'
 import plistlib
 from pathlib import Path
 info=plistlib.loads(Path('app/Info.plist').read_bytes())
-info['CFBundleIdentifier']='local.compute-monitor.status-width-tests'
+info['CFBundleIdentifier']='io.github.trojon99.siliconmeter.status-width-tests'
 Path('.build/StatusWidth.app/Contents/Info.plist').write_bytes(plistlib.dumps(info))
 source=Path('app/ComputeMonitor.swift').read_text().split('let app = NSApplication.shared')[0]
 Path('.build/StatusWidth.app/Contents/MacOS/main.swift').write_text(source+Path('tests/status_width_fixture.swift').read_text())

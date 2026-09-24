@@ -8,7 +8,7 @@ final class HistoryLogger {
     static let defaultFlushInterval: TimeInterval = 30
     static var defaultURL: URL {
         FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
-            .appendingPathComponent("Compute Monitor", isDirectory: true)
+            .appendingPathComponent("SiliconMeter", isDirectory: true)
             .appendingPathComponent("telemetry.sqlite3")
     }
 
@@ -42,7 +42,7 @@ final class HistoryLogger {
         .init(name: "pressure", key: "pressure", text: true),
         .init(name: "thermal", key: "thermal", text: true)
     ]
-    private let writer = DispatchQueue(label: "local.compute-monitor.history", qos: .utility)
+    private let writer = DispatchQueue(label: "io.github.trojon99.siliconmeter.history", qos: .utility)
     private let url: URL
     private let flushInterval: TimeInterval
     private let runID = UUID().uuidString

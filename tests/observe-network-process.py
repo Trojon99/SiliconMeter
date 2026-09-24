@@ -7,7 +7,7 @@ import sys
 from datetime import datetime, timezone
 
 root = Path(__file__).resolve().parents[1]
-app = str(root / 'app/ComputeMonitor.app/Contents/MacOS/ComputeMonitor')
+app = str(root / 'app/SiliconMeter.app/Contents/MacOS/SiliconMeter')
 rows = []
 for line in subprocess.check_output(['ps', '-axo', 'pid=,ppid=,args='], text=True).splitlines():
     parts = line.strip().split(None, 2)
