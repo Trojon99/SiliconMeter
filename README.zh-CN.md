@@ -22,6 +22,8 @@
 
 SiliconMeter 是一款轻量的 **Apple Silicon 性能监控器**、**macOS 菜单栏系统监控工具**和**本地遥测记录器**。它持续记录 CPU、GPU、温度、估算 GPU 功耗、网络、内存压力、交换空间和系统热状态，并将历史保存在本地 SQLite 数据库中。
 
+如果你正在寻找 **Mac CPU 监控**、**Mac GPU 监控**、**Apple Silicon 温度/功耗监控**、**网速监控**或**长期 macOS 性能历史记录**工具，SiliconMeter 把这些能力集中在一个本地优先的菜单栏 App 里。
+
 它的目标不只是告诉你“Mac 现在用了多少性能”，而是让这台 Mac 拥有一份可以回看的**性能记忆**。
 
 > **可以把它理解成“Mac 的 Garmin”。** Garmin 持续记录人的身体状态和运动表现；SiliconMeter 则持续记录 Mac 的计算状态和性能表现。
@@ -92,7 +94,7 @@ NET ↑ 1.3 MB/s ↓ 12.4 MB/s
 
 不可用或无效的指标会保持明确的不可用状态，不会被伪装成 0。估算指标会在弹出窗口和历史数据中标记为 estimate/estimated。
 
-## 为 AI 准备的历史，而不是内置 AI
+## 本地 AI / LLM / MLX 性能历史
 
 SiliconMeter 有意把**测量**和**解释**分开。
 
