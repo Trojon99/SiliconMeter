@@ -1,0 +1,6 @@
+# Keep GitHub's language summary focused on the production macOS app.
+# Validation harnesses and historical experiments are intentionally excluded
+# from language detection; they remain fully visible and versioned.
+experiments/** linguist-detectable=false
+tests/** linguist-detectable=false
+docs/** linguist-documentation
