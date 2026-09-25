@@ -22,6 +22,8 @@ Lightweight, local-first Apple Silicon performance monitoring for the macOS menu
 
 SiliconMeter is a lightweight **Apple Silicon performance monitor**, **macOS menu bar system monitor**, and **local telemetry recorder**. It tracks CPU, GPU, temperature, estimated GPU power, network activity, memory pressure, swap, and thermal state over time, then stores the history locally in SQLite.
 
+If you're looking for a **Mac CPU monitor**, **Mac GPU monitor**, **Apple Silicon temperature/power monitor**, **network speed monitor**, or **long-term macOS performance logger**, SiliconMeter combines those jobs in one local-first menu bar app.
+
 The goal is not only to show what your Mac is doing right now. It is to give the machine a **performance memory** that can be inspected later.
 
 > **Think of it as a Garmin for your Mac.** Garmin records how your body performs over time; SiliconMeter records how your Mac performs over time.
@@ -90,7 +92,7 @@ The status item keeps a stable width for each metric/language so normal value ch
 
 Unavailable or invalid values remain explicitly unavailable rather than being converted to fake zeros. Estimated metrics are labeled as estimates in the popover/history.
 
-## AI-ready history, without built-in AI
+## Local AI / LLM / MLX performance history
 
 SiliconMeter deliberately separates **measurement** from **interpretation**.
 
