@@ -259,3 +259,9 @@ feature.
 Run `sh tests/run-hardware-compatibility.sh` for the actual topology validator and CPU sampler with deterministic hardware seams. It covers 12 layouts (including M4 Air 4P/6E), reversed performance-level order, shuffled registry rows, non-contiguous P/E IDs, count mismatches, missing/duplicate/out-of-range IDs, unsupported cluster types, temperature selection/encoding/fallback, and cached sensor reads. These fixtures do not constitute device verification.
 
 `sh tests/run-checks.sh` also covers variable GPU state counts and keeps valid GPU activity when the frequency table is unavailable. `sh app/smoke.sh 4` prints actual core counts and selected sensor keys before bounded live readings. Do not publish raw device telemetry as part of a release.
+
+## Version and update checks
+
+The UI smoke and popover layout fixture verify current-version text, build tooltip, update labels and the check button's target/action in both languages. Ordinary/App UI builds include Sparkle; telemetry fixture builds leave updating disabled.
+
+After `sh app/build.sh`, run `python3 tests/run-update-checks.py` to exercise real Sparkle with a loopback feed, signed archives and an isolated App with a unique test bundle ID. Cases cover current version, tampered feed, tampered archive, missing feed and installation to the temporary App. Signing may require macOS Keychain approval for `sign_update`. Tests use a temporary Foundation home and never target Applications. Production standard update dialogs and relaunch still need a manual acceptance test.

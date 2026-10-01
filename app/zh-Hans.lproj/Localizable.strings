@@ -59,3 +59,8 @@
 "Normal" = "正常";
 "Warning" = "警告";
 "pages/s" = "页/秒";
+
+"Current version" = "当前版本";
+"Build" = "构建号";
+"Check for Updates…" = "检查更新…";
+"Automatic checks" = "自动检查";

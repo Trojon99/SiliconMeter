@@ -12,7 +12,7 @@ let popover = MonitorPopover()
 for language in AppLanguage.allCases {
     Localizer.shared.select(language)
     popover.update(snapshot, selected: .gpuPower, history: .init(recording: true, sizeBytes: 12_400_000))
-    guard popover.smokeLayoutFits() else {
+    guard popover.smokeLayoutFits() && popover.smokeUpdateControls() else {
         fputs("POPOVER_LAYOUT FAIL \(language.rawValue)\n", stderr)
         exit(1)
     }

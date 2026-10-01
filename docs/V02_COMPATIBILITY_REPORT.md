@@ -1,6 +1,6 @@
 # SiliconMeter v0.2.0 compatibility candidate report
 
-Date: 2026-10-01. Status: **LOCAL CANDIDATE READY — M4 AIR DEVICE TEST REQUIRED**.
+Date: 2026-10-01. This report covers hardware candidate build 2, preserved in `release/v0.2.0-build2/` when update candidate build 3 was created. Status: **LOCAL CANDIDATE READY — M4 AIR DEVICE TEST REQUIRED**.
 
 ## Identity and source
 
@@ -43,10 +43,10 @@ The backend smoke observed 0.021254 CPU seconds across about 8.04 seconds and no
 
 ## Artifact
 
-- Local DMG: `release/v0.2.0/SiliconMeter-0.2.0-arm64.dmg`.
+- Local DMG: `release/v0.2.0-build2/SiliconMeter-0.2.0-arm64.dmg`.
 - Size: 2,671,541 bytes.
 - SHA-256: `2826235426ee25b2cb1533f3f0731422435f2d420e1de4932393bcaf3fae39fe`.
-- Checksum file: `release/v0.2.0/SHA256SUMS.txt`.
+- Checksum file: `release/v0.2.0-build2/SHA256SUMS.txt`.
 - DMG checksum verification and `hdiutil verify`: PASS.
 - Packaged executable SHA-256: `de5ae95b6d6fce3c2ae15bd0b9997f0b31483a4e092546ab119b44224dbabe68`.
 - Artifacts remain Git-ignored. Packaging script derives the version from the App and refuses to overwrite existing files. An earlier local candidate was preserved under `.build/` before the provenance-aware final rebuild; it was never published.

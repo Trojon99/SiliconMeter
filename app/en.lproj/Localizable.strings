@@ -59,3 +59,8 @@
 "Normal" = "Normal";
 "Warning" = "Warning";
 "pages/s" = "pages/s";
+
+"Current version" = "Current version";
+"Build" = "Build";
+"Check for Updates…" = "Check for Updates…";
+"Automatic checks" = "Automatic checks";

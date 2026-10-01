@@ -4,7 +4,7 @@ English | [简体中文](README.zh-CN.md)
 
 A lightweight Apple Silicon telemetry monitor and local history recorder for the macOS menu bar. The published version **0.1.0** is available on [GitHub Releases](https://github.com/Trojon99/SiliconMeter/releases).
 
-**v0.2.0 hardware compatibility candidate:** source and a local test DMG now include dynamic P/E core grouping and M1–M4 temperature sensor selection. It is not yet published. See [changes and verification limits](docs/V02_RELEASE_NOTES.md).
+**v0.2.0 hardware compatibility candidate:** source and a local test DMG now include dynamic P/E core grouping, M1–M4 temperature sensor selection, current-version display and Sparkle update controls. It is not yet published. See [changes and verification limits](docs/V02_RELEASE_NOTES.md).
 
 ## UI preview
 
@@ -18,11 +18,17 @@ Screenshots will be added with a future release. The status item shows one selec
 - Local SQLite history recorded continuously from the same shared snapshots, with a serial batched writer, WAL, and configurable retention.
 - English and Simplified Chinese UI, with immediate switching and a locally saved language choice.
 - A locally saved primary-metric choice. Launch at Login is not included in unsigned v0.1.
-- Ordinary-user operation without a helper, persistent child process, `powermetrics`, outgoing network connections, or telemetry upload.
+- Ordinary-user operation without a monitoring helper, persistent monitoring child process, `powermetrics`, or telemetry upload. The optional update system contacts GitHub and uses temporary installation helpers.
 
 ## Supported metrics
 
 CPU total and validated P-core/E-core activity; GPU active residency, estimated weighted active frequency, and estimated GPU power; Network download/upload rate; CPU/GPU sensor temperatures; VM and unified-memory fields, swap, memory pressure, and thermal state. Network is the current aggregate receive/transmit rate across selected external network interfaces. It reads native cumulative counters and sends no test traffic. VPN tunnel counters are excluded to avoid counting traffic again on top of the underlying link. An unavailable or invalid status-item value displays `—`, never a made-up zero. Estimated values are labeled in the popover and in history quality columns.
+
+## Version and updates
+
+The popover shows the current version beside the title; its tooltip shows the build number. **Check for Updates…** opens the Sparkle update flow. **Automatic checks** enables or disables daily checks. Downloads and installation require the user's choice; silent automatic downloading is disabled. Update archives and the appcast must pass Ed25519 signature verification before use.
+
+The update feed is configured at `https://raw.githubusercontent.com/Trojon99/SiliconMeter/main/updates/appcast.xml`. It must be published with the corresponding GitHub Release assets before public update checks can work. Until then, a failed request is an update error, not proof that the App is current. Old builds require one manual installation of an updater-enabled version. See [setup, publication and test status](docs/V02_UPDATES.md).
 
 ## History logging
 
@@ -34,7 +40,7 @@ Choose **1 Day** (rolling 24 hours), **7 Days**, **30 Days**, or **Forever** in 
 
 ## Privacy
 
-All telemetry and history stay on this Mac. Network monitoring reads system interface counters and does not generate monitoring traffic or run a speed test. The app has no analytics, cloud service, telemetry upload, or per-process attribution, and it does not collect user file contents. The database stores system metrics and app-run metadata, without workload labels. Language, primary-metric, and retention choices are local `UserDefaults` preferences, outside the telemetry database.
+All telemetry and history stay on this Mac. Network monitoring reads system interface counters and does not generate monitoring traffic or run a speed test. Update checks fetch the public GitHub-hosted version feed; update downloads come from GitHub Releases. System profile submission is disabled. No telemetry or history database is sent. The app has no analytics, cloud history service, telemetry upload, or per-process attribution, and it does not collect user file contents. The database stores system metrics and app-run metadata, without workload labels. Language, primary-metric, and retention choices are local `UserDefaults` preferences, outside the telemetry database.
 
 ## System requirements
 

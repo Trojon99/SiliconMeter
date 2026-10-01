@@ -9,7 +9,7 @@ case "$version" in ''|*[!0-9.]*) printf '%s\n' 'Invalid bundle version' >&2; exi
 test "$identifier" = 'io.github.trojon99.siliconmeter'
 test "$(lipo -archs "$bundle/Contents/MacOS/SiliconMeter")" = arm64
 test -s "$bundle/Contents/Resources/AppIcon.icns"
-codesign --verify --strict "$bundle"
+codesign --verify --deep --strict "$bundle"
 output="$PWD/release/v$version"
 artifact="SiliconMeter-$version-arm64.dmg"
 if [ -e "$output/$artifact" ] || [ -e "$output/SHA256SUMS.txt" ]; then

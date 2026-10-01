@@ -412,6 +412,9 @@ final class MonitorPopover: NSViewController {
     private let text = NSTextField(labelWithString: "")
     private let modeButtons = NSStackView()
     private let heading = NSTextField(labelWithString: "")
+    private let currentVersion = NSTextField(labelWithString: "")
+    private let checkUpdates = NSButton(title: "", target: nil, action: nil)
+    private let automaticUpdates = NSButton(checkboxWithTitle: "", target: nil, action: nil)
     private let historyHeading = NSTextField(labelWithString: "")
     private let recording = NSTextField(labelWithString: "")
     private let databaseSize = NSTextField(labelWithString: "")
@@ -425,6 +428,8 @@ final class MonitorPopover: NSViewController {
     var onLanguage: ((AppLanguage) -> Void)?
     var onRetention: ((HistoryRetention) -> Void)?
     var onQuit: (() -> Void)?
+    var onCheckUpdates: (() -> Void)?
+    var onAutomaticUpdates: ((Bool) -> Void)?
 
     override func loadView() {
         let root = NSView(frame: NSRect(x: 0, y: 0, width: 400, height: 770))
@@ -440,7 +445,12 @@ final class MonitorPopover: NSViewController {
             stack.topAnchor.constraint(equalTo: root.topAnchor, constant: 14)
         ])
         heading.font = .boldSystemFont(ofSize: 14)
-        stack.addArrangedSubview(heading)
+        let titleRow = NSStackView(views: [heading, currentVersion])
+        titleRow.orientation = .horizontal
+        titleRow.spacing = 12
+        currentVersion.font = .systemFont(ofSize: 11)
+        currentVersion.textColor = .secondaryLabelColor
+        stack.addArrangedSubview(titleRow)
         text.font = .monospacedSystemFont(ofSize: 11, weight: .regular)
         text.maximumNumberOfLines = 0
         text.lineBreakMode = .byWordWrapping
@@ -484,7 +494,17 @@ final class MonitorPopover: NSViewController {
         quit.target = self
         quit.action = #selector(quitApp)
         quit.bezelStyle = .rounded
-        stack.addArrangedSubview(quit)
+        checkUpdates.target = self
+        checkUpdates.action = #selector(checkForUpdates)
+        checkUpdates.bezelStyle = .rounded
+        checkUpdates.font = .systemFont(ofSize: 11)
+        automaticUpdates.font = .systemFont(ofSize: 11)
+        automaticUpdates.target = self
+        automaticUpdates.action = #selector(changeAutomaticUpdates)
+        let actionRow = NSStackView(views: [checkUpdates, automaticUpdates, quit])
+        actionRow.orientation = .horizontal
+        actionRow.spacing = 12
+        stack.addArrangedSubview(actionRow)
         preferredContentSize = NSSize(width: 400, height: 770)
         view = root
     }
@@ -494,6 +514,13 @@ final class MonitorPopover: NSViewController {
         onMode?(mode)
     }
     @objc private func quitApp() { onQuit?() }
+    @objc private func checkForUpdates() { onCheckUpdates?() }
+    @objc private func changeAutomaticUpdates() { onAutomaticUpdates?(automaticUpdates.state == .on) }
+    func setUpdateAvailability(canCheck: Bool, automatic: Bool) {
+        _ = view
+        checkUpdates.isEnabled = canCheck
+        automaticUpdates.state = automatic ? .on : .off
+    }
     @objc private func openDataFolder() { NSWorkspace.shared.open(HistoryLogger.defaultURL.deletingLastPathComponent()) }
     @objc private func selectLanguage(_ sender: NSPopUpButton) {
         onLanguage?(sender.indexOfSelectedItem == 1 ? .simplifiedChinese : .english)
@@ -524,9 +551,26 @@ final class MonitorPopover: NSViewController {
         selectLanguage(languages)
     }
     func smokeContains(_ value: String) -> Bool {
-        [heading, text, historyHeading, recording, databaseSize, retentionLabel, languageHeading, quit].contains {
+        [heading, currentVersion, text, historyHeading, recording, databaseSize, retentionLabel, languageHeading, quit].contains {
             $0.stringValue.contains(value)
-        } || openFolder.title.contains(value)
+        } || openFolder.title.contains(value) || checkUpdates.title.contains(value) || automaticUpdates.title.contains(value)
+    }
+    func smokeUpdateControls() -> Bool {
+        let tr = Localizer.shared.text
+        let version = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? tr("Unknown")
+        let build = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String ?? tr("Unknown")
+        let labels = currentVersion.stringValue == "\(tr("Current version")): \(version)"
+            && currentVersion.toolTip == "\(tr("Build")): \(build)"
+            && checkUpdates.title == tr("Check for Updates…") && automaticUpdates.title == tr("Automatic checks")
+        let priorCallback = onCheckUpdates
+        let priorEnabled = checkUpdates.isEnabled
+        var clicked = false
+        onCheckUpdates = { clicked = true }
+        checkUpdates.isEnabled = true
+        checkUpdates.performClick(nil)
+        checkUpdates.isEnabled = priorEnabled
+        onCheckUpdates = priorCallback
+        return labels && clicked
     }
     func smokeNetworkOrder(upload: String, download: String) -> Bool {
         let lines = text.stringValue.components(separatedBy: "\n")
@@ -538,8 +582,8 @@ final class MonitorPopover: NSViewController {
     }
     func smokeLayoutFits() -> Bool {
         view.layoutSubtreeIfNeeded()
-        return [heading, text, historyHeading, recording, databaseSize, retentionLabel, retentionPopup, openFolder,
-                languageHeading, languages, quit].allSatisfy { control in
+        return [heading, currentVersion, text, historyHeading, recording, databaseSize, retentionLabel, retentionPopup, openFolder,
+                languageHeading, languages, checkUpdates, automaticUpdates, quit].allSatisfy { control in
             let frame = control.convert(control.bounds, to: view)
             return frame.minX >= 0 && frame.maxX <= view.bounds.width
                 && frame.minY >= 0 && frame.maxY <= view.bounds.height
@@ -551,6 +595,12 @@ final class MonitorPopover: NSViewController {
         _ = view
         let tr = Localizer.shared.text
         heading.stringValue = tr("SiliconMeter")
+        let version = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? tr("Unknown")
+        currentVersion.stringValue = "\(tr("Current version")): \(version)"
+        let build = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String ?? tr("Unknown")
+        currentVersion.toolTip = "\(tr("Build")): \(build)"
+        checkUpdates.title = tr("Check for Updates…")
+        automaticUpdates.title = tr("Automatic checks")
         func line(_ label: String, _ key: String) -> String {
             let value = snapshot[key]?.display ?? tr("Unavailable")
             return "\(tr(label)): \(value)"
@@ -598,6 +648,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private let statusItem = NSStatusBar.system.statusItem(withLength: 1)
     private let popover = NSPopover()
     private let content = MonitorPopover()
+#if ENABLE_APP_UPDATES
+    private var updater: UpdateController?
+#endif
     private var historyStatus: HistoryLogger.Status?
     private var statusLayout: StatusTitleLayout?
     private var statusLayouts: [String: StatusTitleLayout] = [:]
@@ -633,6 +686,25 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             self.render(self.service.snapshot)
         }
         content.onQuit = { NSApp.terminate(nil) }
+#if ENABLE_APP_UPDATES
+        let updates = UpdateController()
+        updater = updates
+        updates.onAvailability = { [weak self] canCheck, automatic in
+            self?.content.setUpdateAvailability(canCheck: canCheck, automatic: automatic)
+        }
+        content.onCheckUpdates = { [weak self] in
+            self?.popover.close()
+            self?.updater?.check()
+        }
+        content.onAutomaticUpdates = { [weak self] enabled in self?.updater?.setAutomaticChecks(enabled) }
+#if !STEP3_UI_SMOKE
+        updates.start()
+#else
+        content.setUpdateAvailability(canCheck: true, automatic: false)
+#endif
+#else
+        content.setUpdateAvailability(canCheck: false, automatic: false)
+#endif
         content.onRetention = { [weak self] requested in
             guard let self else { return }
             let chosen = HistoryRetentionPreference.select(requested, from: self.retentionPolicy) {
@@ -823,7 +895,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             && content.smokeContains("网络") && content.smokeContains("下载") && content.smokeContains("上传")
             && chineseNetworkOrder
             && PrimaryMetric.network.title(in: service.snapshot).hasPrefix("NET ↑")
-            && content.smokeLayoutFits()
+            && content.smokeLayoutFits() && content.smokeUpdateControls()
         content.smokeSelectLanguage(.english)
         let englishNetworkOrder = smokeNetworkOrder()
         let english = statusItem.button?.attributedTitle.string == statusLayout?.attributedTitle(in: service.snapshot).string
@@ -838,7 +910,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             && content.smokeContains("Network") && content.smokeContains("Download") && content.smokeContains("Upload")
             && englishNetworkOrder
             && PrimaryMetric.network.title(in: service.snapshot).hasPrefix("NET ↑")
-            && content.smokeLayoutFits()
+            && content.smokeLayoutFits() && content.smokeUpdateControls()
         let telemetryUnchanged = service.snapshot["total"]?.number == cpuValue
             && service.snapshot["gpuActive"]?.number == gpuValue
         Localizer.shared.select(priorActiveLanguage)

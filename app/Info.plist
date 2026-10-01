@@ -10,7 +10,15 @@
   <key>CFBundleIconFile</key><string>AppIcon.icns</string>
   <key>CFBundlePackageType</key><string>APPL</string>
   <key>CFBundleShortVersionString</key><string>0.2.0</string>
-  <key>CFBundleVersion</key><string>2</string>
+  <key>CFBundleVersion</key><string>3</string>
+  <key>SUFeedURL</key><string>https://raw.githubusercontent.com/Trojon99/SiliconMeter/main/updates/appcast.xml</string>
+  <key>SUPublicEDKey</key><string>AA1BcBDaGG7t5PCcSlSrVj6Lo2zcUfHo9CEPtERlX6o=</string>
+  <key>SURequireSignedFeed</key><true/>
+  <key>SUVerifyUpdateBeforeExtraction</key><true/>
+  <key>SUEnableAutomaticChecks</key><true/>
+  <key>SUScheduledCheckInterval</key><integer>86400</integer>
+  <key>SUAutomaticallyUpdate</key><false/>
+  <key>SUSendProfileInfo</key><false/>
   <key>LSMinimumSystemVersion</key><string>13.0</string>
   <key>LSUIElement</key><true/>
   <key>NSHighResolutionCapable</key><true/>
