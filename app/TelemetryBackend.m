@@ -58,28 +58,73 @@ static NSDictionary *reading(id value, NSString *unit, NSString *status, NSStrin
 static NSDictionary *missing(NSString *status, NSString *source, NSString *reason) {
     return reading(nil, @"", status, source, 0, reason);
 }
-static BOOL sysString(const char *key, const char *expected) {
-    char value[128] = {0}; size_t n = sizeof(value);
-    return sysctlbyname(key, value, &n, NULL, 0) == 0 && n > 0 && !strcmp(value, expected);
-}
-static BOOL sysCount(const char *key, int expected) {
+static int sysInt(const char *key) {
     int value = 0; size_t n = sizeof(value);
-    return sysctlbyname(key, &value, &n, NULL, 0) == 0 && n == sizeof(value) && value == expected;
+    return sysctlbyname(key, &value, &n, NULL, 0) == 0 && n == sizeof(value) ? value : -1;
 }
-static BOOL dataIs(CFTypeRef value, const char *word) {
-    return value && CFGetTypeID(value) == CFDataGetTypeID() &&
-        CFDataGetLength(value) >= (CFIndex)strlen(word) &&
-        !memcmp(CFDataGetBytePtr(value), word, strlen(word));
+static NSString *sysText(const char *key) {
+    char value[128] = {0}; size_t n = sizeof(value);
+    if (sysctlbyname(key, value, &n, NULL, 0) || !n || n > sizeof(value) || value[n - 1]) return nil;
+    return [NSString stringWithUTF8String:value];
+}
+static NSString *coreKind(CFTypeRef value) {
+    if (!value || CFGetTypeID(value) != CFDataGetTypeID()) return nil;
+    CFIndex n = CFDataGetLength(value);
+    const UInt8 *bytes = CFDataGetBytePtr(value);
+    if ((n != 1 && n != 2) || (n == 2 && bytes[1])) return nil;
+    return bytes[0] == 'P' ? @"P" : bytes[0] == 'E' ? @"E" : nil;
+}
+// Validate the actual logical CPU map; neither chip names nor CPU ordering select groups.
+typedef struct { int total, performance, efficiency; uint8_t kinds[64]; } CPUTopology;
+static BOOL makeTopology(NSArray<NSDictionary *> *cores, int total, int performance, int efficiency,
+                         CPUTopology *topology) {
+    memset(topology, 0, sizeof(*topology));
+    if (total < 2 || total > 64 || performance <= 0 || efficiency <= 0 ||
+        performance + efficiency != total || cores.count != (NSUInteger)total) return NO;
+    CPUTopology candidate = { .total = total }; BOOL seen[64] = {0};
+    for (NSDictionary *core in cores) {
+        NSNumber *identifier = core[@"id"]; NSString *kind = core[@"kind"];
+        if (![identifier isKindOfClass:NSNumber.class]) return NO;
+        int64_t index = identifier.longLongValue;
+        if (index < 0 || index >= total || identifier.doubleValue != index || seen[index]) return NO;
+        seen[index] = YES;
+        if ([kind isEqual:@"P"]) { candidate.kinds[index] = 1; candidate.performance++; }
+        else if ([kind isEqual:@"E"]) candidate.efficiency++;
+        else return NO;
+    }
+    if (candidate.performance != performance || candidate.efficiency != efficiency) return NO;
+    *topology = candidate; return YES;
 }
 static uint32_t fourcc(const char *key) {
     return ((uint32_t)(uint8_t)key[0] << 24) | ((uint32_t)(uint8_t)key[1] << 16) |
            ((uint32_t)(uint8_t)key[2] << 8) | (uint8_t)key[3];
 }
 
+typedef struct { char key[5]; uint32_t size, type; BOOL checked; } TemperatureSensor;
+// Sensor identifiers are hardware facts cross-checked against exelban/stats Sensors/values.swift.
+// Select a readable key once; do not scan SMC or guess by prefixes on each timer tick.
+static NSArray<NSString *> *temperatureKeys(NSString *chip, BOOL gpu) {
+    NSArray *parts = [chip componentsSeparatedByString:@" "];
+    NSString *family = parts.count > 1 && [parts[0] isEqual:@"Apple"] ? parts[1] : @"";
+    if ([family isEqual:@"M1"])
+        return gpu ? @[@"Tg05", @"Tg0D", @"Tg0L", @"Tg0T"] : @[@"Tp05", @"Tp01", @"Tp0D", @"Tp0H"];
+    if ([family isEqual:@"M2"])
+        return gpu ? @[@"Tg0f", @"Tg0j"] : @[@"Tp05", @"Tp01", @"Tp09", @"Tp0D"];
+    if ([family isEqual:@"M3"])
+        return gpu ? @[@"Tf14", @"Tf18", @"Tf19", @"Tf1A", @"Tf24", @"Tf28"]
+                   : @[@"Tf04", @"Tf09", @"Tf0A", @"Tf0B", @"Tf44"];
+    if ([family isEqual:@"M4"])
+        return gpu ? @[@"Tg0G", @"Tg0H", @"Tg1U", @"Tg1k", @"Tg0K", @"Tg0L", @"Tg0d", @"Tg0e", @"Tg0j", @"Tg0k"]
+                   : @[@"Tp05", @"Tp01", @"Tp09", @"Tp0D"];
+    return @[];
+}
+
 @implementation TelemetryBackend {
     mach_port_t _host;
     uint64_t _physical;
     BOOL _topologyValid;
+    CPUTopology _cpuTopology;
+    TemperatureSensor _cpuSensor, _gpuSensor;
     uint32_t _ticks[64][CPU_STATE_MAX];
     natural_t _tickCount;
     double _cpuTime;
@@ -87,8 +132,6 @@ static uint32_t fourcc(const char *key) {
     IRChannel _gpu, _energy;
     NSArray<NSNumber *> *_gpuFrequencies;
     io_connect_t _smc;
-    uint32_t _tpSize, _tpType, _tgSize, _tgType;
-    BOOL _tpChecked, _tgChecked;
     dispatch_source_t _pressureSource;
     NSUInteger _pressureEvents;
     int _pressureFlag;
@@ -115,10 +158,16 @@ static uint32_t fourcc(const char *key) {
     }
     io_service_t service = IOServiceGetMatchingService(kIOMainPortDefault, IOServiceMatching("AppleSMC"));
     if (service) { IOServiceOpen(service, mach_task_self(), 0, &_smc); IOObjectRelease(service); }
+    [self selectTemperature:&_cpuSensor keys:temperatureKeys(sysText("machdep.cpu.brand_string"), NO)];
+    [self selectTemperature:&_gpuSensor keys:temperatureKeys(sysText("machdep.cpu.brand_string"), YES)];
     _capabilities = @{ @"topology": _topologyValid ? @"measured" : @"unavailable",
                        @"gpu": _gpu.ready ? @"measured" : @"unavailable",
                        @"gpuPower": _energy.ready ? @"estimated" : @"unavailable",
-                       @"smc": _smc ? @"measured" : @"unavailable" };
+                       @"smc": _smc ? @"measured" : @"unavailable",
+                       @"performanceCores": @(_cpuTopology.performance).stringValue,
+                       @"efficiencyCores": @(_cpuTopology.efficiency).stringValue,
+                       @"cpuTemperatureSensor": _cpuSensor.key[0] ? [NSString stringWithUTF8String:_cpuSensor.key] : @"unavailable",
+                       @"gpuTemperatureSensor": _gpuSensor.key[0] ? [NSString stringWithUTF8String:_gpuSensor.key] : @"unavailable" };
     _pressureSource = dispatch_source_create(DISPATCH_SOURCE_TYPE_MEMORYPRESSURE, 0,
         DISPATCH_MEMORYPRESSURE_NORMAL | DISPATCH_MEMORYPRESSURE_WARN | DISPATCH_MEMORYPRESSURE_CRITICAL,
         dispatch_get_global_queue(QOS_CLASS_UTILITY, 0));
@@ -143,56 +192,72 @@ static uint32_t fourcc(const char *key) {
 }
 
 - (BOOL)validateTopology {
-    if (!sysString("machdep.cpu.brand_string", "Apple M1 Max") || !sysCount("hw.ncpu", 10) ||
-        !sysCount("hw.perflevel0.logicalcpu", 8) || !sysCount("hw.perflevel1.logicalcpu", 2) ||
-        !sysString("hw.perflevel0.name", "Performance") ||
-        !sysString("hw.perflevel1.name", "Efficiency")) return NO;
+    memset(&_cpuTopology, 0, sizeof(_cpuTopology));
+    int total = sysInt("hw.logicalcpu"), levels = sysInt("hw.nperflevels");
+    if (total < 2 || total > 64 || levels < 2 || levels > 8) return NO;
+    int performance = 0, efficiency = 0;
+    for (int level = 0; level < levels; level++) {
+        NSString *prefix = [NSString stringWithFormat:@"hw.perflevel%d", level];
+        NSString *name = sysText([[prefix stringByAppendingString:@".name"] UTF8String]);
+        int count = sysInt([[prefix stringByAppendingString:@".logicalcpu"] UTF8String]);
+        if (count < 1 || count > total) return NO;
+        if ([name isEqual:@"Performance"]) performance += count;
+        else if ([name isEqual:@"Efficiency"]) efficiency += count;
+        else return NO;
+    }
+    return makeTopology([self readCPUCores], total, performance, efficiency, &_cpuTopology);
+}
+
+- (NSArray<NSDictionary *> *)readCPUCores {
     io_registry_entry_t cpus = IORegistryEntryFromPath(kIOMainPortDefault, "IODeviceTree:/cpus");
-    if (!cpus) return NO;
+    if (!cpus) return @[];
     io_iterator_t iterator = 0;
     kern_return_t kr = IORegistryEntryGetChildIterator(cpus, kIODeviceTreePlane, &iterator);
     IOObjectRelease(cpus);
-    if (kr != KERN_SUCCESS) return NO;
-    const int8_t expected[10] = {0,0,1,1,1,1,1,1,1,1};
-    BOOL seen[10] = {0}; int found = 0; BOOL valid = YES;
+    if (kr != KERN_SUCCESS) return @[];
+    NSMutableArray *cores = [NSMutableArray array];
     io_registry_entry_t entry;
     while ((entry = IOIteratorNext(iterator))) {
-        CFTypeRef id = IORegistryEntryCreateCFProperty(entry, CFSTR("logical-cpu-id"), kCFAllocatorDefault, 0);
+        CFTypeRef identifier = IORegistryEntryCreateCFProperty(entry, CFSTR("logical-cpu-id"), kCFAllocatorDefault, 0);
         CFTypeRef kind = IORegistryEntryCreateCFProperty(entry, CFSTR("cluster-type"), kCFAllocatorDefault, 0);
-        int64_t index = -1;
-        if (id && CFGetTypeID(id) == CFNumberGetTypeID() && CFNumberGetValue(id, kCFNumberSInt64Type, &index)) {
-            if (index < 0 || index >= 10 || seen[index]) valid = NO;
-            else { seen[index] = YES; found++; if (!dataIs(kind, expected[index] ? "P" : "E")) valid = NO; }
-        }
-        if (id) CFRelease(id);
+        NSString *type = coreKind(kind); int64_t index = -1;
+        if (identifier && CFGetTypeID(identifier) == CFNumberGetTypeID() && !CFNumberIsFloatType(identifier))
+            CFNumberGetValue(identifier, kCFNumberSInt64Type, &index);
+        [cores addObject:@{ @"id": @(index), @"kind": type ?: @"unknown" }];
+        if (identifier) CFRelease(identifier);
         if (kind) CFRelease(kind);
         IOObjectRelease(entry);
     }
     IOObjectRelease(iterator);
-    return valid && found == 10;
+    return cores;
 }
 
 - (NSArray<NSNumber *> *)readGPUFrequencies {
     io_iterator_t iterator = 0;
     if (IOServiceGetMatchingServices(kIOMainPortDefault, IOServiceMatching("AppleARMIODevice"), &iterator) != KERN_SUCCESS) return @[];
-    NSMutableArray<NSNumber *> *result = [NSMutableArray array];
+    NSMutableArray<NSArray<NSNumber *> *> *tables = [NSMutableArray array];
     io_registry_entry_t entry;
     while ((entry = IOIteratorNext(iterator))) {
         io_name_t name = {0}; IORegistryEntryGetName(entry, name);
         if (!strcmp(name, "pmgr")) {
             CFTypeRef data = IORegistryEntryCreateCFProperty(entry, CFSTR("voltage-states9"), kCFAllocatorDefault, 0);
-            if (data && CFGetTypeID(data) == CFDataGetTypeID()) {
+            NSMutableArray<NSNumber *> *table = [NSMutableArray array];
+            if (data && CFGetTypeID(data) == CFDataGetTypeID() && CFDataGetLength(data) % 8 == 0) {
                 const uint8_t *bytes = CFDataGetBytePtr(data);
                 for (CFIndex offset = 0; offset + 8 <= CFDataGetLength(data); offset += 8) {
                     uint32_t hz = 0; memcpy(&hz, bytes + offset, 4);
-                    [result addObject:@(hz / 1e6)];
+                    [table addObject:@(hz / 1e6)];
                 }
             }
+            [tables addObject:table];
             if (data) CFRelease(data);
         }
         IOObjectRelease(entry);
     }
     IOObjectRelease(iterator);
+    // Multiple dies must agree; concatenating tables would silently mislabel states.
+    NSArray *result = tables.firstObject ?: @[];
+    for (NSArray *table in tables) if (![table isEqual:result]) return @[];
     return result;
 }
 
@@ -258,16 +323,16 @@ static uint32_t fourcc(const char *key) {
         if (!ticks) valid = NO;
         double usage = ticks ? (double)busy / ticks : 0;
         total += usage;
-        if (i < 2) e += usage; else p += usage;
+        if (_cpuTopology.kinds[i]) p += usage; else e += usage;
     }
     vm_deallocate(mach_task_self(), (vm_address_t)data, words * sizeof(integer_t));
     double window = now - _cpuTime; _tickCount = count; _cpuTime = now;
-    BOOL grouped = valid && _topologyValid && count == 10;
+    BOOL grouped = valid && _topologyValid && count == (natural_t)_cpuTopology.total;
     return @{ @"total": valid ? reading(@(total / count), @"ratio", @"measured", @"host_processor_info", window, nil)
                               : missing(@"unavailable", @"host_processor_info", @"baseline_or_window"),
-              @"p": grouped ? reading(@(p / 8), @"ratio", @"measured", @"host_processor_info+IODeviceTree", window, nil)
+              @"p": grouped ? reading(@(p / _cpuTopology.performance), @"ratio", @"measured", @"host_processor_info+IODeviceTree", window, nil)
                              : missing(@"unavailable", @"host_processor_info+IODeviceTree", @"topology_or_baseline"),
-              @"e": grouped ? reading(@(e / 2), @"ratio", @"measured", @"host_processor_info+IODeviceTree", window, nil)
+              @"e": grouped ? reading(@(e / _cpuTopology.efficiency), @"ratio", @"measured", @"host_processor_info+IODeviceTree", window, nil)
                              : missing(@"unavailable", @"host_processor_info+IODeviceTree", @"topology_or_baseline") };
 }
 
@@ -301,32 +366,34 @@ static uint32_t fourcc(const char *key) {
     if (!entries || CFArrayGetCount(entries) != 1) result = missing(@"invalid", source, @"channel_count_mismatch");
     else if (isGPU) {
         CFDictionaryRef item = CFArrayGetValueAtIndex(entries, 0);
+        int stateCount = _ir.count(item);
         BOOL valid = [(__bridge NSString *)_ir.name(item) isEqualToString:@"GPUPH"] &&
-            [(__bridge NSString *)_ir.unit(item) isEqualToString:@"24Mticks"] && _ir.count(item) == 16;
-        BOOL seen[16] = {0}; double all = 0, active = 0, weighted = 0;
-        for (int i = 0; valid && i < 16; i++) {
+            [(__bridge NSString *)_ir.unit(item) isEqualToString:@"24Mticks"] && stateCount >= 2 && stateCount <= 64;
+        BOOL seen[64] = {0}, frequencyValid = YES; double all = 0, active = 0, weighted = 0;
+        for (int i = 0; valid && i < stateCount; i++) {
             NSString *state = (__bridge NSString *)_ir.stateName(item, i);
             int index = -1;
             if ([state isEqualToString:@"OFF"]) index = 0;
             else if ([state hasPrefix:@"P"]) {
                 NSString *number = [state substringFromIndex:1];
                 int parsed = number.intValue;
-                if (parsed >= 1 && parsed <= 15 && [number isEqualToString:[NSString stringWithFormat:@"%d", parsed]]) index = parsed;
+                if (parsed >= 1 && parsed < stateCount && [number isEqualToString:[NSString stringWithFormat:@"%d", parsed]]) index = parsed;
             }
             int64_t ticks = _ir.residency(item, i);
-            if (index < 0 || seen[index] || ticks < 0 || ticks == INT64_MIN) { valid = NO; break; }
+            if (index < 0 || seen[index] || ticks < 0) { valid = NO; break; }
             seen[index] = YES; all += ticks;
             if (index > 0) {
                 active += ticks;
-                if (ticks > 0 && (NSUInteger)index >= _gpuFrequencies.count) valid = NO;
-                else if ((NSUInteger)index < _gpuFrequencies.count) weighted += ticks * _gpuFrequencies[index].doubleValue;
+                double mhz = (NSUInteger)index < _gpuFrequencies.count ? _gpuFrequencies[index].doubleValue : 0;
+                if (ticks > 0 && (!isfinite(mhz) || mhz <= 0)) frequencyValid = NO;
+                else if (ticks > 0) weighted += ticks * mhz;
             }
         }
-        for (int i = 0; i < 16; i++) if (!seen[i]) valid = NO;
+        for (int i = 0; valid && i < stateCount; i++) if (!seen[i]) valid = NO;
         valid = valid && all > 0 && active <= all && isfinite(active / all);
         if (valid) result = @{ @"active": reading(@(active / all), @"ratio", @"measured", source, window, nil),
-                               @"frequency": active > 0 ? reading(@(weighted / active), @"MHz", @"estimated", @"IOReport+voltage-states9", window, nil)
-                                                        : missing(@"unavailable", @"IOReport+voltage-states9", @"no_active_residency") };
+                               @"frequency": active > 0 && frequencyValid ? reading(@(weighted / active), @"MHz", @"estimated", @"IOReport+voltage-states9", window, nil)
+                                   : missing(@"unavailable", @"IOReport+voltage-states9", active > 0 ? @"frequency_table_unavailable" : @"no_active_residency") };
         else result = missing(@"invalid", source, @"gpu_state_or_unit_mismatch");
     } else {
         CFDictionaryRef item = CFArrayGetValueAtIndex(entries, 0);
@@ -391,6 +458,24 @@ static uint32_t fourcc(const char *key) {
     else return missing(@"unavailable", source, @"unsupported_encoding");
     if (!isfinite(value) || value < 0 || value > 125) return missing(@"invalid", source, @"sensor_range_or_encoding");
     return reading(@(value), @"°C", @"measured", source, 0, nil);
+}
+
+- (void)selectTemperature:(TemperatureSensor *)sensor keys:(NSArray<NSString *> *)keys {
+    memset(sensor, 0, sizeof(*sensor));
+    for (NSString *key in keys) {
+        TemperatureSensor candidate = {0}; memcpy(candidate.key, key.UTF8String, 4);
+        NSDictionary *value = [self smc:candidate.key size:&candidate.size type:&candidate.type checked:&candidate.checked];
+        if ([value[@"status"] isEqual:@"measured"] && [value[@"value"] doubleValue] > 0) {
+            *sensor = candidate; return;
+        }
+    }
+}
+- (NSDictionary *)temperature:(TemperatureSensor *)sensor {
+    if (!sensor->key[0]) return missing(@"unavailable", @"AppleSMC", @"no_supported_temperature_sensor");
+    NSDictionary *value = [self smc:sensor->key size:&sensor->size type:&sensor->type checked:&sensor->checked];
+    if (value[@"value"] && [value[@"value"] doubleValue] <= 0)
+        return missing(@"invalid", value[@"source"], @"inactive_temperature_sensor");
+    return value;
 }
 
 - (NSDictionary *)vm {
@@ -458,8 +543,8 @@ static uint32_t fourcc(const char *key) {
 - (NSDictionary<NSString *, NSDictionary *> *)sampleSlow {
     NSMutableDictionary *result = [[self vm] mutableCopy];
     result[@"swapUsed"] = [self swap];
-    result[@"cpuTemperature"] = [self smc:"Tp05" size:&_tpSize type:&_tpType checked:&_tpChecked];
-    result[@"gpuTemperature"] = [self smc:"Tg05" size:&_tgSize type:&_tgType checked:&_tgChecked];
+    result[@"cpuTemperature"] = [self temperature:&_cpuSensor];
+    result[@"gpuTemperature"] = [self temperature:&_gpuSensor];
     result[@"gpuPower"] = [self sampleChannel:&_energy gpu:NO];
     [result addEntriesFromDictionary:[self samplePressure]];
     return result;

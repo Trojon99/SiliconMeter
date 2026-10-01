@@ -2,7 +2,9 @@ English | [简体中文](README.zh-CN.md)
 
 # SiliconMeter
 
-A lightweight Apple Silicon telemetry monitor and local history recorder for the macOS menu bar. Version **0.1.0** is available on [GitHub Releases](https://github.com/Trojon99/SiliconMeter/releases).
+A lightweight Apple Silicon telemetry monitor and local history recorder for the macOS menu bar. The published version **0.1.0** is available on [GitHub Releases](https://github.com/Trojon99/SiliconMeter/releases).
+
+**v0.2.0 hardware compatibility candidate:** source and a local test DMG now include dynamic P/E core grouping and M1–M4 temperature sensor selection. It is not yet published. See [changes and verification limits](docs/V02_RELEASE_NOTES.md).
 
 ## UI preview
 
@@ -20,7 +22,7 @@ Screenshots will be added with a future release. The status item shows one selec
 
 ## Supported metrics
 
-CPU total and validated P-core/E-core activity; GPU active residency, estimated weighted active frequency, and estimated GPU power; Network download/upload rate; Tp05/Tg05 temperatures; VM and unified-memory fields, swap, memory pressure, and thermal state. Network is the current aggregate receive/transmit rate across selected external network interfaces. It reads native cumulative counters and sends no test traffic. VPN tunnel counters are excluded to avoid counting traffic again on top of the underlying link. An unavailable or invalid status-item value displays `—`, never a made-up zero. Estimated values are labeled in the popover and in history quality columns.
+CPU total and validated P-core/E-core activity; GPU active residency, estimated weighted active frequency, and estimated GPU power; Network download/upload rate; CPU/GPU sensor temperatures; VM and unified-memory fields, swap, memory pressure, and thermal state. Network is the current aggregate receive/transmit rate across selected external network interfaces. It reads native cumulative counters and sends no test traffic. VPN tunnel counters are excluded to avoid counting traffic again on top of the underlying link. An unavailable or invalid status-item value displays `—`, never a made-up zero. Estimated values are labeled in the popover and in history quality columns.
 
 ## History logging
 
@@ -36,7 +38,7 @@ All telemetry and history stay on this Mac. Network monitoring reads system inte
 
 ## System requirements
 
-Apple Silicon Mac with macOS 13 or newer, outside App Sandbox. **Tested on: Apple M1 Max, macOS 27.0 (build 26A428).** Other Apple Silicon chips and macOS releases are best effort; compatibility is not guaranteed. No root privilege is required.
+Apple Silicon Mac with macOS 13 or newer, outside App Sandbox. **Real hardware tested: Apple M1 Max.** v0.1.0 was tested on macOS 27.0 (build 26A428); see the [v0.2.0 verification report](docs/V02_COMPATIBILITY_REPORT.md) for current checks. v0.2.0 detects P/E grouping from system metadata rather than a chip-model list, with M1–M4 temperature candidates. M4 Air and other chips still require real device checks; compatibility is not guaranteed. No root privilege is required.
 
 ## Installation
 
@@ -58,7 +60,7 @@ sh app/build.sh
 open app/SiliconMeter.app
 ```
 
-Click the status item to view current telemetry, choose a primary metric or language, open the data folder, or Quit. The app runs as an accessory without a Dock icon. Launch at Login is not included in unsigned v0.1. Focused checks are documented in [tests/README.md](tests/README.md). [Product scope](docs/PRODUCT_SCOPE.md) defines the v0.1 boundary.
+Click the status item to view current telemetry, choose a primary metric or language, open the data folder, or Quit. The app runs as an accessory without a Dock icon. Launch at Login is not included in unsigned v0.1. To package the built App into a new version directory, run `sh app/package.sh`; it refuses to overwrite an existing artifact. Focused checks are documented in [tests/README.md](tests/README.md). [Product scope](docs/PRODUCT_SCOPE.md) defines the v0.1 boundary.
 
 ## Data location
 

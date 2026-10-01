@@ -2,7 +2,9 @@
 
 # SiliconMeter
 
-轻量、低功耗的 Apple Silicon 菜单栏系统监控与本地历史记录工具。**0.1.0** 已在 [GitHub Releases](https://github.com/Trojon99/SiliconMeter/releases) 发布。
+轻量、低功耗的 Apple Silicon 菜单栏系统监控与本地历史记录工具。公开版本 **0.1.0** 已在 [GitHub Releases](https://github.com/Trojon99/SiliconMeter/releases) 发布。
+
+**v0.2.0 硬件兼容候选版：**源码和本地测试 DMG 已加入动态性能核/能效核分组及 M1–M4 温度传感器选择，尚未公开发布。参见[变更和验证范围](docs/V02_RELEASE_NOTES.md)。
 
 ## 界面预览
 
@@ -20,7 +22,7 @@
 
 ## 支持的指标
 
-CPU 总占用及经过验证的性能核/能效核占用；GPU 活跃比例、估算的活跃加权频率与 GPU 功耗；网络下载/上传速率；Tp05/Tg05 温度；虚拟内存与统一内存字段、交换空间、内存压力及系统热状态。Network 的定义是：当前选定外部网络接口实际接收/发送流量的汇总速率。App 只读取原生累计计数器，不发送测试流量；VPN 隧道计数不会与底层链路重复相加。菜单栏中不可用或无效的数值显示为 `—`，不会伪装成零。估算值在弹出窗口和历史记录的质量字段中标明。
+CPU 总占用及经过验证的性能核/能效核占用；GPU 活跃比例、估算的活跃加权频率与 GPU 功耗；网络下载/上传速率；CPU/GPU 传感器温度；虚拟内存与统一内存字段、交换空间、内存压力及系统热状态。Network 的定义是：当前选定外部网络接口实际接收/发送流量的汇总速率。App 只读取原生累计计数器，不发送测试流量；VPN 隧道计数不会与底层链路重复相加。菜单栏中不可用或无效的数值显示为 `—`，不会伪装成零。估算值在弹出窗口和历史记录的质量字段中标明。
 
 ## 历史记录
 
@@ -36,7 +38,7 @@ CPU 总占用及经过验证的性能核/能效核占用；GPU 活跃比例、�
 
 ## 系统要求
 
-macOS 13 或更新版本的 Apple Silicon Mac，且不在 App Sandbox 中运行。**已测试：Apple M1 Max、macOS 27.0（build 26A428）。**其他 Apple Silicon 芯片和 macOS 版本仅尽力兼容，不保证可用。不需要 root 权限。
+macOS 13 或更新版本的 Apple Silicon Mac，且不在 App Sandbox 中运行。**实机已测试：Apple M1 Max。**v0.1.0 的测试环境是 macOS 27.0（build 26A428）；本轮检查见 [v0.2.0 验证报告](docs/V02_COMPATIBILITY_REPORT.md)。v0.2.0 根据系统信息动态识别核心分组，并提供 M1–M4 温度传感器候选。M4 Air 及其他芯片仍需实机确认，不保证所有指标可用。不需要 root 权限。
 
 ## 安装
 
@@ -58,7 +60,7 @@ sh app/build.sh
 open app/SiliconMeter.app
 ```
 
-点击菜单栏图标可查看当前遥测、选择主要指标或语言、打开数据文件夹，或退出。App 以辅助应用方式运行，不显示 Dock 图标。未签名的 v0.1 不包含“登录时启动”。定向检查见 [tests/README.md](tests/README.md)；[产品范围](docs/PRODUCT_SCOPE.md)定义 v0.1 的边界。
+点击菜单栏图标可查看当前遥测、选择主要指标或语言、打开数据文件夹，或退出。App 以辅助应用方式运行，不显示 Dock 图标。未签名的 v0.1 不包含“登录时启动”。运行 `sh app/package.sh` 可将已构建 App 打包到新版本目录；脚本不会覆盖已有安装包。定向检查见 [tests/README.md](tests/README.md)；[产品范围](docs/PRODUCT_SCOPE.md)定义 v0.1 的边界。
 
 ## 数据位置
 

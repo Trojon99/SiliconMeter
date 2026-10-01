@@ -26,8 +26,8 @@
 "Swap in" = "换入";
 "Swap out" = "换出";
 "Thermal" = "温度";
-"CPU Tp05" = "CPU Tp05";
-"GPU Tg05" = "GPU Tg05";
+"CPU temperature" = "CPU 温度";
+"GPU temperature" = "GPU 温度";
 "System thermal" = "系统热状态";
 "History" = "历史记录";
 "Recording" = "记录状态";

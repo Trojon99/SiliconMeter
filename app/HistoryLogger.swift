@@ -300,7 +300,7 @@ final class HistoryLogger {
             if uptime - lastFlushUptime >= flushInterval { flush() }
         }
     }
-    func start(topologyVerified: Bool) {
+    func start(topologyVerified: Bool, capabilities: [String: String] = [:]) {
         writer.async { [self] in
             do { try FileManager.default.createDirectory(at: url.deletingLastPathComponent(), withIntermediateDirectories: true) }
             catch { fputs("History directory: \(error)\n", stderr); return }
@@ -346,6 +346,19 @@ final class HistoryLogger {
                 .integer(Self.ms(Date().timeIntervalSince1970)),
                 .integer(Self.ms(ProcessInfo.processInfo.systemUptime)),
                 .text("app_start"), .null, .null, .text(Quality.measured.rawValue)]))
+            // Legacy temperature column names remain readable; record the actual source per run.
+            for (capability, kind) in [("cpuTemperatureSensor", "cpu_temperature_sensor"),
+                                       ("gpuTemperatureSensor", "gpu_temperature_sensor"),
+                                       ("performanceCores", "cpu_performance_cores"),
+                                       ("efficiencyCores", "cpu_efficiency_cores")] {
+                guard let value = capabilities[capability] else { continue }
+                let available = value != "unavailable" && value != "0"
+                pending.append(Row(table: "events", values: [.null, .text(runID),
+                    .integer(Self.ms(Date().timeIntervalSince1970)),
+                    .integer(Self.ms(ProcessInfo.processInfo.systemUptime)),
+                    .text(kind), .null, .text(value),
+                    .text(available ? Quality.measured.rawValue : Quality.unavailable.rawValue)]))
+            }
             startCleanupIfDue(now: Date(), force: false, completion: nil)
             scheduleMaintenanceCheck()
         }

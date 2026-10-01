@@ -253,3 +253,9 @@ each in separate test homes. It reports CPU, RSS, thread count, sample counts,
 recording cadence, and committed batch counts. Sample gaps measure recording
 cadence, not collector function latency; no production hook was added for this
 feature.
+
+## v0.2.0 hardware compatibility
+
+Run `sh tests/run-hardware-compatibility.sh` for the actual topology validator and CPU sampler with deterministic hardware seams. It covers 12 layouts (including M4 Air 4P/6E), reversed performance-level order, shuffled registry rows, non-contiguous P/E IDs, count mismatches, missing/duplicate/out-of-range IDs, unsupported cluster types, temperature selection/encoding/fallback, and cached sensor reads. These fixtures do not constitute device verification.
+
+`sh tests/run-checks.sh` also covers variable GPU state counts and keeps valid GPU activity when the frequency table is unavailable. `sh app/smoke.sh 4` prints actual core counts and selected sensor keys before bounded live readings. Do not publish raw device telemetry as part of a release.

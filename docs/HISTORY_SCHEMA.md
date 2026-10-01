@@ -107,3 +107,15 @@ FROM events WHERE kind = 'thermal_change' ORDER BY utc_ms;
 ```
 
 The schema is directly usable by ordinary SQLite clients and future local analysis code. It contains no high-frequency JSON blob.
+
+## v0.2.0 sensor and topology provenance
+
+Schema v4 is retained for upgrades. For app runs with `app_version = '0.2.0'`, the legacy `slow_samples.cpu_tp05_c` and `gpu_tg05_c` column names hold the selected CPU/GPU sensor temperature, which can come from a different SMC key. Do not infer the source from those column names. The `events` rows `cpu_temperature_sensor` and `gpu_temperature_sensor` store the selected four-character key in `new_value` for each `run_id`; `unavailable` records failure to select a sensor. `cpu_performance_cores` and `cpu_efficiency_cores` record the verified group sizes; zero with unavailable quality means validation failed. Pre-v0.2 runs keep their original fixed-key meaning. These extra startup events do not change earlier rows or require a database migration.
+
+```sql
+SELECT r.app_version, e.kind, e.new_value, e.quality
+FROM app_runs AS r JOIN events AS e USING (run_id)
+WHERE e.kind IN ('cpu_temperature_sensor', 'gpu_temperature_sensor',
+                 'cpu_performance_cores', 'cpu_efficiency_cores')
+ORDER BY r.start_utc_ms, e.kind;
+```

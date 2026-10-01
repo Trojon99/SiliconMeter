@@ -26,8 +26,8 @@
 "Swap in" = "Swap in";
 "Swap out" = "Swap out";
 "Thermal" = "Thermal";
-"CPU Tp05" = "CPU Tp05";
-"GPU Tg05" = "GPU Tg05";
+"CPU temperature" = "CPU temperature";
+"GPU temperature" = "GPU temperature";
 "System thermal" = "System thermal";
 "History" = "History";
 "Recording" = "Recording";

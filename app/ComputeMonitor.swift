@@ -332,7 +332,8 @@ final class TelemetryService {
             autoreleasepool {
                 let collector = TelemetryBackend()
                 self.backend = collector
-                self.history?.start(topologyVerified: collector.capabilities["topology"] == "measured")
+                self.history?.start(topologyVerified: collector.capabilities["topology"] == "measured",
+                                    capabilities: collector.capabilities)
                 collector.pressureChanged = { [weak self] in
                     self?.queue.async { [weak self] in
                         guard let self, !self.stopped, let collector = self.backend else { return }
@@ -562,8 +563,8 @@ final class MonitorPopover: NSViewController {
             line("Wired", "wired"), line("Compressed", "compressed"),
             line("Pressure", "pressure"), line("Swap used", "swapUsed"),
             line("Swap in", "swapIn"), line("Swap out", "swapOut"), "",
-            tr("Thermal"), line("CPU Tp05", "cpuTemperature"),
-            line("GPU Tg05", "gpuTemperature"), line("System thermal", "thermal"), "",
+            tr("Thermal"), line("CPU temperature", "cpuTemperature"),
+            line("GPU temperature", "gpuTemperature"), line("System thermal", "thermal"), "",
             tr("Network"), line("Upload", "network_tx_bytes_per_sec"),
             line("Download", "network_rx_bytes_per_sec")
         ]

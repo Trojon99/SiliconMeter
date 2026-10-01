@@ -80,6 +80,8 @@ static void baseline(IRChannel *channel, double age) {
 
 @implementation TelemetryBackend (FaultChecks)
 - (void)runFaultChecks {
+    uint32_t _tpSize = 0, _tpType = 0, _tgSize = 0, _tgType = 0;
+    BOOL _tpChecked = NO, _tgChecked = NO;
     io_connect_t savedSMC = _smc;
     _smc = 1; mockSMC = YES; _tpChecked = NO; _tgChecked = NO;
     for (int i = 0; i < 12; i++) {
@@ -137,7 +139,7 @@ static void baseline(IRChannel *channel, double age) {
     v = [self sampleChannel:&channel gpu:NO];
     CHECK(status(v, @"estimated"));
     CHECK(fabs([v[@"value"] doubleValue] * [v[@"window_s"] doubleValue] - 31) < 1e-8);
-    CHECK([v[@"value"] doubleValue] > 4.9 && [v[@"value"] doubleValue] <= 5.0);
+    CHECK([v[@"value"] doubleValue] > 4.9 && [v[@"value"] doubleValue] <= 5.0 + 1e-6);
     sampleFails = YES;
     CHECK(status([self sampleChannel:&channel gpu:NO], @"invalid")); CHECK(channel.previous == NULL);
     sampleFails = NO;
@@ -174,11 +176,24 @@ static void baseline(IRChannel *channel, double age) {
     CHECK([v[@"active"][@"value"] doubleValue] == 0);
     CHECK(status(v[@"frequency"], @"unavailable")); CHECK(v[@"frequency"][@"value"] == nil);
     states[15] = @{ @"name": @"P15", @"n": @1 };
-    baseline(&channel, 2); CHECK(status([self sampleChannel:&channel gpu:YES], @"invalid"));
+    baseline(&channel, 2); v = [self sampleChannel:&channel gpu:YES];
+    CHECK(status(v[@"active"], @"measured")); CHECK(status(v[@"frequency"], @"unavailable"));
     states[15] = @{ @"name": @"P15", @"n": @(INT64_MIN) };
     baseline(&channel, 2); CHECK(status([self sampleChannel:&channel gpu:YES], @"invalid"));
     states[15] = @{ @"name": @"P14", @"n": @0 };
     baseline(&channel, 2); CHECK(status([self sampleChannel:&channel gpu:YES], @"invalid"));
+    // Variable GPU state counts and unavailable frequency tables preserve valid activity.
+    for (NSNumber *count in @[@4, @20]) {
+        NSMutableArray *variable = [NSMutableArray array];
+        for (int i = 0; i < count.intValue; i++)
+            [variable addObject:@{ @"name": i ? [NSString stringWithFormat:@"P%d", i] : @"OFF", @"n": @(i < 2 ? 100 : 0) }];
+        fixture = @{ @"IOReportChannels": @[@{ @"name": @"GPUPH", @"unit": @"24Mticks", @"states": variable }] };
+        _gpuFrequencies = @[]; baseline(&channel, 2); v = [self sampleChannel:&channel gpu:YES];
+        CHECK(status(v[@"active"], @"measured")); CHECK([v[@"active"][@"value"] doubleValue] == 0.5);
+        CHECK(status(v[@"frequency"], @"unavailable"));
+        variable[0] = @{ @"name": @"P1", @"n": @100 };
+        baseline(&channel, 2); CHECK(status([self sampleChannel:&channel gpu:YES], @"invalid"));
+    }
     if (channel.previous) CFRelease(channel.previous);
     CFRelease(channel.channels);
     _ir = saved;
