@@ -1,6 +1,6 @@
 # SiliconMeter v0.2.0 build 3 — version and update controls
 
-Date: 2026-10-02. Status: **SIGNED RELEASE CANDIDATE VERIFIED; PUBLIC FEED PUBLICATION PENDING**.
+Date: 2026-10-02. Status: **RELEASED; SIGNED PUBLIC FEED VERIFIED**.
 
 ## User interface
 
@@ -18,7 +18,7 @@ Production and UI smoke builds embed Sparkle 2.10.0. The SDK is downloaded to th
 
 The public Ed25519 key is embedded as SUPublicEDKey. The corresponding private key was generated under Keychain account `io.github.trojon99.siliconmeter` and has not been exported or put in source. Both signed-feed validation and validation before extraction are enabled. The signed update archive is distinct from Apple Developer ID signing; this candidate still lacks Developer ID signing and notarization.
 
-Configured production feed: `https://raw.githubusercontent.com/Trojon99/SiliconMeter/main/updates/appcast.xml`. Before publication it returned HTTP 404. The signed feed is prepared locally; the public publication and download results will be recorded in `V02_GITHUB_RELEASE_REPORT.md`. A failed request remains an update error rather than proof that the App is current.
+Configured production feed: `https://raw.githubusercontent.com/Trojon99/SiliconMeter/main/updates/appcast.xml`. Before publication it returned HTTP 404. The release and signed feed are now public. Anonymous download, signature, actual HTTPS Sparkle checks and packaged-App smoke results are recorded in [V02_GITHUB_RELEASE_REPORT.md](V02_GITHUB_RELEASE_REPORT.md). A failed request remains an update error rather than proof that the App is current.
 
 Update requests fetch version information and release assets. System profile submission is disabled; metrics and history databases do not enter these requests. Sparkle may launch temporary update helpers. No updater is started by telemetry fixture builds, and UI smoke suppresses the scheduled updater to avoid background network requests.
 
@@ -31,7 +31,7 @@ Update requests fetch version information and release assets. System profile sub
 - DMG checksum and hdiutil verification: PASS. Read-only mounting confirmed version/build identity, binary and icon equality, and deep code-signature verification of the embedded framework.
 - Exact packaged App run: PASS, 36 seconds in a temporary data directory; SQLite v4 quick_check ok, 15 fast and 5 slow committed rows with CPU P/E, GPU, temperature, power and network data. The ordinary App was terminated after checking its committed batch; normal Quit was separately exercised by UI smoke.
 - Signed-update checks: **PASS**, six real Sparkle cases: current build, damaged signed feed, damaged archive, missing feed (HTTP 404), replacement of a non-running temporary App with the production binary, and quit/replacement/relaunch of a running harmless AppKit fixture. Signature failures are verified from the Sparkle error domain and underlying validation error. Both installation cases verify build 3, exact donor plist/binary/icon and code seal. The live fixture writes a launch marker with its unique bundle ID/build and does not run telemetry.
-- Public update check: **PENDING FEED PUBLICATION** (currently HTTP 404).
+- Public update checks: **PASS** over HTTPS using the exact configured feed. A build 3 temporary host reports no update; a build 2 temporary host reports version 3 available. Both dismiss any available update and leave the host unchanged. The downloaded raw feed exactly matches the signed repository file; its Ed25519 signature verifies.
 - Standard update dialogs, the production monitoring App’s update/restart lifecycle, browser Gatekeeper for this new DMG, and M4 Air: manual acceptance remains required. The harmless live fixture demonstrates Sparkle’s quit/relaunch path; it does not exercise production history flushing during an update.
 
 `tests/run-update-checks.py` performs actual Sparkle checks using a loopback feed and temporary App copies with unique test bundle IDs. The installed App and its user database are not targeted. Signing subprocesses have bounded timeouts. `tests/run-public-update-checks.py` checks the signed publication feed in current-build and older-build hosts without downloading/installing an update.
