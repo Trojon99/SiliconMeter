@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><!-- sparkle-sign-warning:
+IMPORTANT: This file was signed by Sparkle. Any modifications to this file requires re-signing this file with generate_appcast or sign_update! The signed signature will be embedded at the end of this file.
+--><rss xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle" version="2.0">
+  <channel>
+    <title>SiliconMeter updates</title>
+    <link>https://github.com/Trojon99/SiliconMeter</link>
+    <language>en</language>
+    <item>
+      <title>SiliconMeter 0.2.0</title>
+      <link>https://github.com/Trojon99/SiliconMeter/releases/tag/v0.2.0</link>
+      <pubDate>Fri, 02 Oct 2026 03:47:22 +0000</pubDate>
+      <sparkle:version>3</sparkle:version>
+      <sparkle:shortVersionString>0.2.0</sparkle:shortVersionString>
+      <sparkle:minimumSystemVersion>13.0</sparkle:minimumSystemVersion>
+      <description>Version display, signed in-app updates, dynamic CPU core groups and M1–M4 sensor candidates. M4 Air real-device verification remains pending. / 当前版本、签名应用内升级、动态核心分组及 M1–M4 传感器候选；M4 Air 尚未实机验证。</description>
+      <enclosure url="https://github.com/Trojon99/SiliconMeter/releases/download/v0.2.0/SiliconMeter-0.2.0-arm64.dmg" length="3282170" type="application/octet-stream" sparkle:edSignature="5ktzn/CPKSY9rCvqZ4ISJhDtHIXzUqgPZmm/NMtF7jfX81Hh47/i5/zeE20AW4iBh93x8FTECglkK4kB9Z9kDg=="></enclosure>
+    </item>
+  </channel>
+</rss><!-- sparkle-signatures:
+edSignature: 4Q7dhuwcVRO/ALbSScAx2FV2+hTkuxMFguJhjcClQelNOMtp6KanrBrP1qQO9pLm4XFlZ7N31+75Lz5MhBJIAw==
+length: 1506
+-->
