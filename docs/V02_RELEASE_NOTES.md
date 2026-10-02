@@ -1,31 +1,73 @@
-# SiliconMeter v0.2.0 — hardware compatibility candidate
+# SiliconMeter v0.2.0
 
 ## English
 
-This is a local unsigned, non-notarized candidate. It has not been published to GitHub.
+Apple Silicon menu bar monitoring with broader hardware detection and signed in-app updates. Version **0.2.0**, build **3**. Requires an Apple Silicon Mac running macOS 13 or newer.
 
-- CPU P/E activity uses the device's logical CPU IDs and cluster types, checked against the performance-level counts from macOS. The M1 Max model restriction and fixed 8P/2E layout have been removed. Each group shows the mean utilization of its actual cores; M4 Air's 4P/6E layout is included in the deterministic checks.
-- CPU and GPU temperature choose a readable sensor from generation-specific M1–M4 candidates at launch. M4 GPU candidates include `Tg0G` and `Tg0H`; the UI uses general temperature labels instead of always claiming `Tp05`/`Tg05`. Each temperature is one selected sensor, not an average, per-core count, or die maximum.
-- GPU activity accepts validated variable state counts. Missing or inconsistent frequency tables make frequency unavailable without suppressing valid activity. Multiple GPU frequency tables must agree.
-- The latest local candidate is 0.2.0, build 3, with version display and Sparkle update controls; see [update setup and validation](V02_UPDATES.md). Hardware candidate build 2 is preserved separately. History retains schema v4 and the existing data location and preferences, with actual sensor keys and verified group sizes recorded in startup events. See the [legacy temperature-column semantics](HISTORY_SCHEMA.md#v020-sensor-and-topology-provenance).
+### Added
 
-Real hardware verification: M1 Max only. Simulated layouts and sensor responses do not prove M4 Air compatibility. M4 Air testing is required before public publication. Unknown or inaccessible metadata and sensors remain unavailable rather than reporting fabricated values. New chip generations may work for CPU grouping but need additional verified temperature sensor mappings.
+- Current version beside the popover title, with the build number in its tooltip.
+- **Check for Updates…** and optional daily automatic checks using Sparkle. Downloads and installation require your choice; system profile submission is disabled.
+- Ed25519 verification of both the update feed and archive before extraction. Future releases can be installed from inside the App.
 
-Quit v0.1.0 before replacing it with the new App. Download candidates only from the maintainer; open the DMG and drag SiliconMeter.app to Applications. If macOS blocks launch, use System Settings → Privacy & Security → Open Anyway. No Developer ID signature or notarization is included.
+### Improved
+
+- CPU performance/efficiency activity uses validated logical CPU IDs, cluster types and macOS core counts. The fixed M1 Max 8P/2E restriction is removed; tests include M4 Air’s 4P/6E layout. Each group shows the average utilization of its actual cores.
+- CPU/GPU temperature chooses a readable sensor from M1–M4 candidates at launch. General temperature labels replace the fixed Tp05/Tg05 labels. Each reading represents one selected sensor, not a die maximum or average.
+- GPU activity supports validated variable state counts. Missing or inconsistent frequency tables affect frequency availability while preserving valid activity.
+- SQLite schema v4, existing history location and preferences are retained. Startup events record actual sensor keys and verified core group sizes; see [history semantics](https://github.com/Trojon99/SiliconMeter/blob/main/docs/HISTORY_SCHEMA.md#v020-sensor-and-topology-provenance).
+
+### Install and upgrade
+
+1. Quit the older SiliconMeter App.
+2. Download `SiliconMeter-0.2.0-arm64.dmg` and drag **SiliconMeter.app** to **Applications**.
+3. If macOS blocks the first launch, use **System Settings → Privacy & Security → Open Anyway**, then confirm Open.
+
+**v0.1.0 needs this one manual installation:** it has no updater. Starting with v0.2.0, use Check for Updates for later releases. This is an **unsigned, non-notarized community build** without an Apple Developer ID identity. Update signatures do not replace Apple signing or notarization.
+
+### Verification and limitations
+
+Real hardware tested: **M1 Max**. M4 Air core layouts and M1–M4 sensor responses are covered by deterministic tests; **M4 Air has not been verified on a real device**. Unknown or inaccessible metadata/sensors remain unavailable. GPU frequency and power are estimates. Private IOReport/AppleSMC behavior may change across hardware and macOS releases.
+
+Signed update tests use real Sparkle against isolated temporary Apps, including damaged-feed/archive rejection, production-binary installation to a non-running temporary App, and quit/replacement/relaunch of a harmless running AppKit fixture. Standard dialogs, updating a live running App with restart, and browser-download Gatekeeper still require manual acceptance. See [verification details](https://github.com/Trojon99/SiliconMeter/blob/main/docs/V02_UPDATES.md).
 
 ## 简体中文
 
-这是本地未签名、未公证的候选版本，尚未在 GitHub 发布。
+Apple Silicon 菜单栏监控工具，加入更广的硬件识别与签名应用内升级。版本 **0.2.0**，构建号 **3**；需要 Apple Silicon Mac 和 macOS 13 或更新系统。
 
-- 性能核/能效核占用改为按设备实际逻辑核心编号和核心类型分组，并与 macOS 提供的核心数量交叉检查；移除了 M1 Max 型号限制和固定的 8P/2E 布局。每组显示实际核心的平均占用；确定性测试包含 M4 Air 的 4P/6E 布局。
-- 启动时从 M1–M4 各代的候选温度传感器中选择可读的一项，新增 M4 GPU 的 `Tg0G`、`Tg0H` 等候选。界面改用“CPU 温度”“GPU 温度”。每项温度代表一个选中的传感器，不是核心数量、平均值或全芯片最高温度。
-- GPU 活跃比例支持经过验证的可变状态数量。缺失或不一致的频率表只影响频率显示，不再导致有效的 GPU 活跃比例同时失效。多个 GPU 频率表必须一致。
-- 最新本地候选为 0.2.0、构建号 3，加入版本显示及 Sparkle 升级控件，参见[升级配置与验证](V02_UPDATES.md)；硬件候选构建号 2 另行保留。沿用 SQLite v4、原数据位置和偏好设置；启动事件记录实际传感器键及已验证的核心组大小，旧温度列名的含义见[表结构说明](HISTORY_SCHEMA.md#v020-sensor-and-topology-provenance)。
+### 新增
 
-目前仅在 M1 Max 上完成实机验证。模拟布局和传感器测试不能代替 M4 Air 实测；公开发布前仍需在 M4 Air 上确认。未知或无法读取的核心信息和传感器继续显示不可用，不填造数据。新一代芯片可能满足动态 CPU 分组条件，但温度仍需要经过核对的传感器映射。
+- 标题旁显示当前版本，鼠标提示显示构建号。
+- 基于 Sparkle 的**检查更新…**和可选的每日自动检查；下载、安装需要用户选择，关闭系统信息上报。
+- 版本清单及更新包均通过 Ed25519 签名验证后才使用，并在解压前验证安装包。后续版本可在 App 内安装。
 
-升级前先退出 v0.1.0，再将 DMG 中的 SiliconMeter.app 拖入“应用程序”。如首次启动被阻止，使用“系统设置 → 隐私与安全性 → 仍要打开”。本版本没有 Developer ID 签名或 Apple 公证。
+### 改进
 
-## Sensor mapping reference
+- 性能核/能效核占用按经过验证的逻辑核心编号、核心类型及 macOS 核心数量分组，移除固定的 M1 Max 8P/2E 限制；测试包含 M4 Air 的 4P/6E 布局。每组显示其实际核心的平均占用。
+- 启动时从 M1–M4 候选中选择可读的 CPU/GPU 温度传感器，使用通用温度名称，替换固定 Tp05/Tg05 标签。每项是一个选中传感器的读数，不是全芯片最高温度或平均温度。
+- GPU 活跃比例支持经过验证的可变状态数量；缺失或不一致的频率表只影响频率显示，保留有效的活跃比例。
+- 继续使用 SQLite v4、原历史目录及偏好设置。启动事件记录实际传感器键和已验证的核心组大小，参见[历史字段含义](https://github.com/Trojon99/SiliconMeter/blob/main/docs/HISTORY_SCHEMA.md#v020-sensor-and-topology-provenance)。
 
-Temperature identifiers were cross-checked against the [Stats project's sensor definitions](https://github.com/exelban/stats/blob/master/Modules/Sensors/values.swift). SiliconMeter uses its own bounded selection and validation implementation; sensor availability still depends on the actual hardware and macOS version.
+### 安装与升级
+
+1. 退出旧 SiliconMeter。
+2. 下载 `SiliconMeter-0.2.0-arm64.dmg`，将 **SiliconMeter.app** 拖入**应用程序**。
+3. 首次启动如被阻止，使用**系统设置 → 隐私与安全性 → 仍要打开**，再次确认打开。
+
+**v0.1.0 需要先手动安装这一次**，因为旧版没有更新器；从 v0.2.0 开始，后续发行版可通过“检查更新”安装。本版是**没有 Developer ID 签名、未经 Apple 公证的社区构建**；更新签名不等同于 Apple 签名或公证。
+
+### 验证与限制
+
+已实测硬件：**M1 Max**。确定性测试覆盖 M4 Air 核心布局及 M1–M4 传感器响应；**尚未完成 M4 Air 实机验证**。未知或无法读取的核心信息和传感器继续显示不可用。GPU 频率、功耗为估算值；IOReport/AppleSMC 私有接口可能随硬件和系统更新而变化。
+
+签名更新测试使用真实 Sparkle 和隔离临时 App，包含损坏清单/安装包的拒绝、未运行临时 App 的生产程序安装，以及无遥测 AppKit 测试 App 的退出、替换和重启。标准更新窗口、正在运行 App 的升级与重启、浏览器下载后的 Gatekeeper 仍需人工验收。参见[详细验证记录](https://github.com/Trojon99/SiliconMeter/blob/main/docs/V02_UPDATES.md)。
+
+## SHA-256
+
+`SiliconMeter-0.2.0-arm64.dmg`
+
+```text
+c4e91b28caaa636aca33adbf09199a6905cf622756cc2c6b3254bdf3af1bdb50
+```
+
+Temperature identifiers were cross-checked against the [Stats sensor definitions](https://github.com/exelban/stats/blob/master/Modules/Sensors/values.swift). Availability depends on the actual device and macOS version.

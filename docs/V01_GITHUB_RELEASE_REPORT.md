@@ -1,6 +1,6 @@
 # SiliconMeter v0.1.0 GitHub release report — 2026-09-24
 
-**SILICONMETER V0.1.0 RELEASED. MANUAL GATEKEEPER TEST: REQUIRED.**
+**SILICONMETER V0.1.0 RELEASED. MANUAL GATEKEEPER BROWSER-DOWNLOAD TEST: PASS.**
 
 ## A. Repository
 
@@ -12,7 +12,7 @@ Public. Only sanitized `main` and the `v0.1.0` tag were pushed. The raw-history 
 
 ## C. main commit
 
-At release publication, GitHub `main` was `f67d7ea554010d16846c36b195ecd40200007ef2`, the verified icon-bearing v0.1.0 source commit. This post-release report and the README updates advance `main` later; they do not alter the release source.
+At release publication, GitHub `main` was `f67d7ea554010d16846c36b195ecd40200007ef2`, the verified icon-bearing v0.1.0 source commit. Post-release documentation/README improvements advance `main` later; they do not alter the immutable release source or tag.
 
 ## D. Tag
 
@@ -44,24 +44,28 @@ Both assets were downloaded through their public HTTPS Release URLs without GitH
 
 ## K. Gatekeeper test
 
-**MANUAL GATEKEEPER TEST REQUIRED.** The anonymous CLI download did not carry `com.apple.quarantine`, so it cannot prove a browser download's first-launch prompt or the **System Settings → Privacy & Security → Open Anyway** flow. Gatekeeper was not disabled and quarantine was not removed to manufacture a pass. The existing installed App and user database were left untouched.
+**PASS — browser-download manual validation completed.**
+
+The release DMG was downloaded through Chrome from the public GitHub Release. The downloaded file carried `com.apple.quarantine` and GitHub release provenance metadata. After dragging SiliconMeter to Applications, macOS blocked the first launch with the expected “Apple cannot verify…” Gatekeeper warning for the unsigned/non-notarized build. The documented **System Settings → Privacy & Security → Open Anyway** flow was then used and SiliconMeter opened successfully.
+
+Gatekeeper was not globally disabled, and quarantine was not removed with command-line workarounds. This validates the installation path documented in the bilingual READMEs for the tested Mac.
 
 ## L. Final smoke
 
-The exact App copied from the public-download DMG stayed alive for 45 seconds in an isolated temporary home. Its new SQLite v4 database passed `quick_check=ok` and recorded 15 fast and 5 slow rows; CPU, GPU, GPU power, Tp05/Tg05 temperature, and network receive/transmit columns all had non-null samples. The isolated process was then terminated. A separate UI smoke from the same source passed all five primary metric choices, English/Chinese, History/retention controls, fixed menu width, accessory/no-Dock mode, and Quit. The **Open Data Folder** control and translation were present; a new Finder click-through was not performed. No long performance benchmark was repeated for this icon-only change.
+The exact App copied from the public-download DMG stayed alive for 45 seconds in an isolated temporary home. Its new SQLite v4 database passed `quick_check=ok` and recorded 15 fast and 5 slow rows; CPU, GPU, GPU power, Tp05/Tg05 temperature, and network receive/transmit columns all had non-null samples. The isolated process was then terminated. A separate UI smoke from the same source passed all five primary metric choices, English/Chinese, History/retention controls, fixed menu width, accessory/no-Dock mode, and Quit. The **Open Data Folder** control and translation were present; no long performance benchmark was repeated for this icon-only change.
 
 ## M. README bilingual status
 
-Both `README.md` and `README.zh-CN.md` now link the stable GitHub Releases page rather than saying the public download is pending. They state Apple Silicon only, the tested Apple M1 Max/macOS 27.0 build 26A428 environment, unsigned and non-notarized distribution, the manual Gatekeeper path, all five metrics, local SQLite history and retention, English/Chinese, local-only privacy, and MIT licensing.
+Both `README.md` and `README.zh-CN.md` link the stable GitHub Releases page and now lead with SiliconMeter's product purpose: lightweight Apple Silicon performance monitoring plus a local, machine-readable performance history. They explain the “Garmin for your Mac” analogy, local-AI/agent use cases, the separation between measurement and interpretation, installation, privacy, retention, limitations, and MIT licensing in both languages.
 
 ## N. Remaining limitations
 
-Browser-download Gatekeeper validation and replacement of the existing running `/Applications/SiliconMeter.app` remain manual. IOReport and AppleSMC are private interfaces; other Apple Silicon hardware and macOS versions are best effort. GPU power is estimated. There is no Developer ID signature, notarization, automatic updater, Homebrew Cask, or release automation.
+IOReport and AppleSMC are private interfaces; other Apple Silicon hardware and macOS versions are best effort. GPU power is estimated. There is no Developer ID signature, notarization, automatic updater, Homebrew Cask, or release automation. The current DMG layout is functional but can be improved in a future release with a clearer drag-to-Applications visual layout.
 
 ## O. Files changed
 
-Before the tag: six historical files had only a user-specific home-path substitution, `app/Assets.xcassets` added the formal icon sizes, `app/Info.plist` and `app/build.sh` integrated `AppIcon.icns`, and the bilingual READMEs/release notes plus `docs/V01_RELEASE_RECOVERY_REPORT.md` recorded the candidate. The DMG and checksum stayed Git-ignored. After publication: both READMEs, `docs/RELEASE_CHECKLIST.md`, `docs/V01_RELEASE_RECOVERY_REPORT.md`, and this report record the public release.
+Before the tag: six historical files had only a user-specific home-path substitution, `app/Assets.xcassets` added the formal icon sizes, `app/Info.plist` and `app/build.sh` integrated `AppIcon.icns`, and the bilingual READMEs/release notes plus `docs/V01_RELEASE_RECOVERY_REPORT.md` recorded the candidate. The DMG and checksum stayed Git-ignored. After publication: the bilingual READMEs and release documentation were updated on `main`; the immutable `v0.1.0` tag and released artifact were not moved or replaced.
 
 ## P. Commits
 
-The original unpublished 25-commit history is retained locally at `backup/pre-public-release-raw-history`; the public history preserves all 25 commits with only path redaction. The sanitized ancestry entered `main` at `05240c611a52db2b37489ed78fd48dbe000aba24`. `0c6ef5d` documented recovery, `bf7734c` added the icon, and `f67d7ea` verified the unsigned candidate and became the immutable release source. The post-release documentation commit is on `main` after the tag; inspect Git history for its SHA.
+The original unpublished 25-commit history is retained locally at `backup/pre-public-release-raw-history`; the public history preserves all 25 commits with only path redaction. The sanitized ancestry entered `main` at `05240c611a52db2b37489ed78fd48dbe000aba24`. `0c6ef5d` documented recovery, `bf7734c` added the icon, and `f67d7ea` verified the unsigned candidate and became the immutable release source. Post-release documentation commits are on `main` after the tag.

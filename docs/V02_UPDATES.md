@@ -1,6 +1,6 @@
 # SiliconMeter v0.2.0 build 3 — version and update controls
 
-Date: 2026-10-01. Status: **LOCAL UI CANDIDATE; SIGNED UPDATE TEST AND PUBLIC FEED PENDING**.
+Date: 2026-10-02. Status: **SIGNED RELEASE CANDIDATE VERIFIED; PUBLIC FEED PUBLICATION PENDING**.
 
 ## User interface
 
@@ -18,7 +18,7 @@ Production and UI smoke builds embed Sparkle 2.10.0. The SDK is downloaded to th
 
 The public Ed25519 key is embedded as SUPublicEDKey. The corresponding private key was generated under Keychain account `io.github.trojon99.siliconmeter` and has not been exported or put in source. Both signed-feed validation and validation before extraction are enabled. The signed update archive is distinct from Apple Developer ID signing; this candidate still lacks Developer ID signing and notarization.
 
-Configured production feed: `https://raw.githubusercontent.com/Trojon99/SiliconMeter/main/updates/appcast.xml`. A direct request on this date returned **HTTP 404**. No feed or new Release has been pushed or published in this task. Checking this candidate before publishing the feed will report a request error; it cannot yet serve public updates.
+Configured production feed: `https://raw.githubusercontent.com/Trojon99/SiliconMeter/main/updates/appcast.xml`. Before publication it returned HTTP 404. The signed feed is prepared locally; the public publication and download results will be recorded in `V02_GITHUB_RELEASE_REPORT.md`. A failed request remains an update error rather than proof that the App is current.
 
 Update requests fetch version information and release assets. System profile submission is disabled; metrics and history databases do not enter these requests. Sparkle may launch temporary update helpers. No updater is started by telemetry fixture builds, and UI smoke suppresses the scheduled updater to avoid background network requests.
 
@@ -30,11 +30,11 @@ Update requests fetch version information and release assets. System profile sub
 - Backend fault checks: PASS, 101 assertions. Metric service checks: PASS, 48 assertions.
 - DMG checksum and hdiutil verification: PASS. Read-only mounting confirmed version/build identity, binary and icon equality, and deep code-signature verification of the embedded framework.
 - Exact packaged App run: PASS, 36 seconds in a temporary data directory; SQLite v4 quick_check ok, 15 fast and 5 slow committed rows with CPU P/E, GPU, temperature, power and network data. The ordinary App was terminated after checking its committed batch; normal Quit was separately exercised by UI smoke.
-- Signing test: **PENDING MACOS KEYCHAIN AUTHORIZATION**. The real Sparkle test harness reached `sign_update`, which is waiting for access to the Keychain private key. No successful feed, archive or installation test is claimed.
+- Signed-update checks: **PASS**, six real Sparkle cases: current build, damaged signed feed, damaged archive, missing feed (HTTP 404), replacement of a non-running temporary App with the production binary, and quit/replacement/relaunch of a running harmless AppKit fixture. Signature failures are verified from the Sparkle error domain and underlying validation error. Both installation cases verify build 3, exact donor plist/binary/icon and code seal. The live fixture writes a launch marker with its unique bundle ID/build and does not run telemetry.
 - Public update check: **PENDING FEED PUBLICATION** (currently HTTP 404).
-- Standard update dialogs, installing from a live running App and restarting, browser Gatekeeper, and M4 Air: manual acceptance remains required.
+- Standard update dialogs, the production monitoring App’s update/restart lifecycle, browser Gatekeeper for this new DMG, and M4 Air: manual acceptance remains required. The harmless live fixture demonstrates Sparkle’s quit/relaunch path; it does not exercise production history flushing during an update.
 
-`tests/run-update-checks.py` is prepared for actual Sparkle checks using a loopback feed and temporary App copies with unique test bundle IDs. Planned cases are current version, tampered feed, tampered archive, missing feed and installation to the temporary App. These cases remain pending until signing is authorized. The test does not target the user's installed App. Signing subprocesses have a timeout in the checked-in runner.
+`tests/run-update-checks.py` performs actual Sparkle checks using a loopback feed and temporary App copies with unique test bundle IDs. The installed App and its user database are not targeted. Signing subprocesses have bounded timeouts. `tests/run-public-update-checks.py` checks the signed publication feed in current-build and older-build hosts without downloading/installing an update.
 
 ## Candidate artifact
 
@@ -47,7 +47,7 @@ Update requests fetch version information and release assets. System profile sub
 
 ## Maintainer publication workflow
 
-1. Complete the signed-update tests and a live App installation/restart acceptance test; verify M4 Air compatibility.
+1. Complete signed-update tests and record device/UI acceptance limits. On 2026-10-02 the maintainer explicitly authorized publication with M4 Air real-device verification still outstanding; this is disclosed in both READMEs and release notes.
 2. Run `sh app/build.sh`, then `sh app/package.sh` for a new candidate. Existing artifacts are not overwritten; preserve an unpublished candidate before rebuilding, and increase the build number for later updates.
 3. Run `sh app/prepare-update.sh`. It checks that the Keychain public key matches the App, copies the DMG/checksum to a separate publication directory, and uses Sparkle's generate_appcast to create and sign `appcast.xml`. Permit the signing tool's Keychain access when macOS asks. The private key remains in the Keychain.
 4. Verify the prepared candidate, then publish the matching GitHub Release assets. Copy the generated signed feed into `updates/appcast.xml` and commit/push it only after the assets are available. Do not edit a signed feed after generation; regenerate/sign it if it changes.
@@ -56,3 +56,7 @@ Update requests fetch version information and release assets. System profile sub
 This repository does not add a GitHub Actions workflow or perform publication automatically. Pushing source alone does not produce a signed update. Older builds need one manual installation of this updater-enabled version before they can discover later updates.
 
 References: [Sparkle setup](https://sparkle-project.org/documentation/), [programmatic integration](https://sparkle-project.org/documentation/programmatic-setup/), [publishing](https://sparkle-project.org/documentation/publishing/).
+
+## Publication signing — 2026-10-02
+
+`sign_update` was granted Keychain access and completed the six test cases. `generate_appcast` separately waited for Keychain authorization; that task-owned process was stopped. The release feed was then constructed as standard RSS from the verified candidate’s version/build/minimum OS and exact archive size, with the immutable Release asset URL. The already authorized official `sign_update` signed the exact DMG and the complete appcast, and verified the appcast signature. No private key was exported. Both the feed and its archive signature are checked again before publication. Future maintainers can use the normal `prepare-update.sh`/`generate_appcast` workflow after granting that tool Keychain access.

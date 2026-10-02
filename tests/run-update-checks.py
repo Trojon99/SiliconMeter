@@ -11,6 +11,7 @@ import shutil
 import subprocess
 import tempfile
 import threading
+import time
 import uuid
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -48,6 +49,9 @@ def main():
         'NSAppTransportSecurity': {'NSAllowsLocalNetworking': True}}))
     run('ditto', str(SDK / 'Sparkle.framework'), str(harness / 'Contents/Frameworks/Sparkle.framework'))
     run('codesign', '--force', '--sign', '-', str(harness))
+    probe = ROOT / '.build/UpdateRelaunchProbe'
+    run('clang', '-O2', '-Wall', '-Wextra', '-mmacosx-version-min=13.0', '-fobjc-arc',
+        str(ROOT / 'tests/update_relaunch_probe.m'), '-framework', 'AppKit', '-o', str(probe))
     results = []
     with tempfile.TemporaryDirectory(prefix='siliconmeter-update-test-') as temporary:
         work = Path(temporary)
@@ -59,7 +63,7 @@ def main():
         thread = threading.Thread(target=server.serve_forever, daemon=True); thread.start()
         try:
             prefix = f'http://127.0.0.1:{server.server_port}'
-            for mode in ('current', 'bad-feed', 'bad-archive', 'offline', 'install'):
+            for mode in ('current', 'bad-feed', 'bad-archive', 'offline', 'install', 'live-install'):
                 identifier = 'io.github.trojon99.siliconmeter.update-fixture.' + uuid.uuid4().hex
                 target = work / mode / 'SiliconMeter.app'; target.parent.mkdir()
                 run('ditto', str(ROOT / 'app/SiliconMeter.app'), str(target))
@@ -68,6 +72,16 @@ def main():
                 donor = work / ('donor-' + mode) / 'SiliconMeter.app'; donor.parent.mkdir()
                 run('ditto', str(ROOT / 'app/SiliconMeter.app'), str(donor))
                 update_plist(donor, 3, identifier)
+                launch_marker = work / 'relaunched.json'
+                if mode == 'live-install':
+                    shutil.copy2(harness / 'Contents/MacOS/UpdateHarness', target / 'Contents/MacOS/SiliconMeter')
+                    run('codesign', '--force', '--sign', '-', str(target))
+                    shutil.copy2(probe, donor / 'Contents/MacOS/SiliconMeter')
+                    info_path = donor / 'Contents/Info.plist'
+                    info = plistlib.loads(info_path.read_bytes())
+                    info['UpdateTestLaunchMarker'] = str(launch_marker)
+                    info_path.write_bytes(plistlib.dumps(info))
+                    run('codesign', '--force', '--sign', '-', str(donor))
                 archive = served / (mode + '.zip')
                 run('ditto', '-c', '-k', '--sequesterRsrc', '--keepParent', str(donor), str(archive))
                 signature = run(str(SDK / 'bin/sign_update'), '--account', ACCOUNT, '-p', str(archive)).stdout.strip()
@@ -90,13 +104,22 @@ def main():
                 home = work / ('home-' + mode); home.mkdir()
                 environment = dict(os.environ, CFFIXED_USER_HOME=str(home))
                 url = prefix + ('/missing.xml' if mode == 'offline' else '/' + feed.name)
-                result = subprocess.run([str(harness / 'Contents/MacOS/UpdateHarness'), str(target), url, mode],
+                executable = target / 'Contents/MacOS/SiliconMeter' if mode == 'live-install' else harness / 'Contents/MacOS/UpdateHarness'
+                result = subprocess.run([str(executable), str(target), url, mode],
                                         env=environment, capture_output=True, text=True, timeout=60)
                 (ROOT / f'.build/update-{mode}.log').write_text(result.stdout + result.stderr)
                 assert result.returncode == 0, (mode, result.stdout, result.stderr[-1500:])
+                if mode == 'live-install':
+                    deadline = time.monotonic() + 20
+                    while not launch_marker.exists() and time.monotonic() < deadline:
+                        time.sleep(0.1)
+                    assert launch_marker.exists(), 'Replacement App did not relaunch'
+                    launched = json.loads(launch_marker.read_text())
+                    assert launched['identifier'] == identifier and launched['build'] == '3'
+                    assert 'UPDATE_READY' in result.stdout
                 installed = plistlib.loads((target / 'Contents/Info.plist').read_bytes())
                 assert installed['CFBundleIdentifier'] == identifier
-                if mode == 'install':
+                if mode in ('install', 'live-install'):
                     assert installed['CFBundleVersion'] == '3'
                     assert (target / 'Contents/Info.plist').read_bytes() == (donor / 'Contents/Info.plist').read_bytes()
                     for name in ['MacOS/SiliconMeter', 'Resources/AppIcon.icns']:
@@ -105,7 +128,8 @@ def main():
                 else:
                     assert (target / 'Contents/Info.plist').read_bytes() == original_info
                 results.append({'mode': mode, 'result': 'PASS', 'build': installed['CFBundleVersion'],
-                                'events': result.stdout.strip().splitlines()})
+                                'events': result.stdout.strip().splitlines(),
+                                'relaunch_verified': mode == 'live-install'})
         finally:
             server.shutdown(); server.server_close(); thread.join(timeout=5)
     (ROOT / '.build/update-checks.json').write_text(json.dumps(results, indent=2) + '\n')

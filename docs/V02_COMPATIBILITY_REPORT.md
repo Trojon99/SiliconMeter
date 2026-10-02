@@ -62,3 +62,7 @@ The backend smoke observed 0.021254 CPU seconds across about 8.04 seconds and no
 ## Files changed
 
 `app/TelemetryBackend.m`, `app/ComputeMonitor.swift`, `app/HistoryLogger.swift`, `app/Info.plist`, both localization resources, `app/package.sh`, `tests/backend_faults.m`, the new hardware compatibility fixture and runner, both READMEs, `tests/README.md`, `docs/HISTORY_SCHEMA.md`, and the new v0.2.0 notes/report. Historical v0.1.0 reports remain as release provenance.
+
+## Publication decision — 2026-10-02
+
+The maintainer explicitly authorized publishing v0.2.0 after adding updater controls. Build 3 is the release candidate; the build 2 facts above are retained as historical evidence. M4 Air was not available for real-device testing. This limitation is disclosed in both READMEs and release notes; deterministic layout tests do not establish real-device compatibility. Publication proceeds with this best-effort scope rather than claiming that the device acceptance checks above passed.

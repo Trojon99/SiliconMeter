@@ -1,4 +1,4 @@
-# Minimal Monitor v0.1 product scope
+# SiliconMeter product scope
 
 SiliconMeter is a lightweight Apple Silicon macOS menu-bar telemetry monitor and local history recorder.
 
@@ -13,3 +13,7 @@ Supported languages: **English** and **Simplified Chinese (zh-Hans)**. Localizat
 Local LLM/ML work, compilation, rendering, and other sustained workloads are possible external uses for the timestamps and metrics. The monitor does not interpret workload meaning. It has no workload-specific UI, process attribution, analysis, recommendations, model integration, automatic tuning, chart dashboard, HTTP API, or socket service.
 
 Network means the current aggregate receive/transmit rate across selected external network interfaces. It reads native cumulative counters on the existing fast cadence, without active speed tests, subprocesses, connections, or a new timer. VPN tunnel counters are not added to the underlying physical link.
+
+## v0.2.0 updates
+
+The popover displays the current version/build and provides manual and optional daily checks through Sparkle. Update checks read a public GitHub feed; downloads come from GitHub Releases. Both feed and archive require Ed25519 validation. Downloads and installation require the user’s choice. System profile submission is disabled; telemetry and history remain local. Installation uses temporary Sparkle helpers. No persistent monitoring helper or server is added.
